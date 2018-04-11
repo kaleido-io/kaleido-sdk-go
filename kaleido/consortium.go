@@ -43,13 +43,13 @@ func NewClient(api string, apiKey string) KaleidoClient {
 }
 
 func (c *KaleidoClient) CreateConsortium(consortium *Consortium) (*resty.Response, error) {
-	return c.Client.R().SetBody(consortium).Post("/consortia")
+	return c.Client.R().SetBody(consortium).SetResult(consortium).Post("/consortia")
 }
 
 func (c *KaleidoClient) ListConsortium(resultBox *[]Consortium) (*resty.Response, error) {
 	return c.Client.R().SetResult(resultBox).Get("/consortia")
 }
 
-func (c *KaleidoClient) DeleteConsortium(consortium *Consortium) (*resty.Response, error) {
-	return c.Client.R().Delete(fmt.Sprintf("/consortia/%s", consortium.Id))
+func (c *KaleidoClient) DeleteConsortium(consortiumId string) (*resty.Response, error) {
+	return c.Client.R().Delete(fmt.Sprintf("/consortia/%s", consortiumId))
 }

@@ -28,7 +28,7 @@ func TestConsortiumCreationListDeletion(t *testing.T) {
 	for _, x := range consortia {
 		t.Logf("\n%v", x)
 		if x.Name == "testConsortium" && (x.State != DELETED && x.State != DELETE_PENDING) {
-			res, err = client.DeleteConsortium(&x)
+			res, err = client.DeleteConsortium(x.Id)
 			if err != nil {
 				t.Fatal(err)
 			}
