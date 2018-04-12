@@ -68,6 +68,19 @@ func TestNodeCreation(t *testing.T) {
 		t.Fatalf("Creating node failed status code: %d", res.StatusCode())
 	}
 
+	var fetchedNode Node
+	res, err = client.GetNode(consortium.Id, env.Id, node.Id, &fetchedNode)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if res.StatusCode() != 200 {
+		t.Fatalf("Failed node fetch status code: %d", res.StatusCode())
+	}
+
+	if node.Id != fetchedNode.Id {
+		t.Fatalf("Fetched node id %s does not match %s.", fetchedNode.Id, node.Id)
+	}
+
 	nodes = nil
 	res, err = client.ListNodes(consortium.Id, env.Id, &nodes)
 

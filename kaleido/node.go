@@ -6,6 +6,10 @@ import (
 	resty "gopkg.in/resty.v1"
 )
 
+const (
+	nodeBasePath = "/consortia/%s/environments/%s/nodes"
+)
+
 type Node struct {
 	Name         string `json:"name"`
 	MembershipId string `json:"membership_id"`
@@ -21,16 +25,21 @@ func NewNode(name, membershipId string) Node {
 }
 
 func (c *KaleidoClient) CreateNode(consortium, envId string, node *Node) (*resty.Response, error) {
-	path := fmt.Sprintf("/consortia/%s/environments/%s/nodes", consortium, envId)
+	path := fmt.Sprintf(nodeBasePath, consortium, envId)
 	return c.Client.R().SetResult(node).SetBody(node).Post(path)
 }
 
 func (c *KaleidoClient) DeleteNode(consortium, envId, nodeId string) (*resty.Response, error) {
-	path := fmt.Sprintf("/consortia/%s/environments/%s/nodes/%s", consortium, envId, nodeId)
+	path := fmt.Sprintf(nodeBasePath+"/%s", consortium, envId, nodeId)
 	return c.Client.R().Delete(path)
 }
 
 func (c *KaleidoClient) ListNodes(consortium, envId string, resultBox *[]Node) (*resty.Response, error) {
-	path := fmt.Sprintf("/consortia/%s/environments/%s/nodes", consortium, envId)
+	path := fmt.Sprintf(nodeBasePath, consortium, envId)
+	return c.Client.R().SetResult(resultBox).Get(path)
+}
+
+func (c *KaleidoClient) GetNode(consortiumId, envId, nodeId string, resultBox *Node) (*resty.Response, error) {
+	path := fmt.Sprintf(nodeBasePath+"/%s", consortiumId, envId, nodeId)
 	return c.Client.R().SetResult(resultBox).Get(path)
 }
