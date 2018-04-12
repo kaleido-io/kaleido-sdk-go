@@ -21,14 +21,27 @@ func TestEnvironmentCreationDeletion(t *testing.T) {
 	}
 
 	env := NewEnvironment("testingEnvironment", "just test", "quorum", "raft")
-	_, err = client.CreateEnvironment(consortium.Id, &env)
+	res, err := client.CreateEnvironment(consortium.Id, &env)
+
 	if err != nil {
 		t.Error(err)
+	}
+
+	if res.StatusCode() != 201 {
+		t.Fatalf("Could not create environment status code: %d", res.StatusCode())
 	}
 	t.Logf("Env: %v", env)
 
 	//Delete all testing environments
-	client.ListEnvironments(consortium.Id, &envs)
+	res, err = client.ListEnvironments(consortium.Id, &envs)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if res.StatusCode() != 200 {
+		t.Fatalf("Could not list environments status code: %d", res.StatusCode())
+	}
+
 	for _, v := range envs {
 		res, err := client.DeleteEnvironment(consortium.Id, v.Id)
 		if err != nil {
