@@ -15,7 +15,7 @@ type Environment struct {
 }
 
 const (
-	BASE_PATH = "/consortia/%s/environments"
+	envBasePath = "/consortia/%s/environments"
 )
 
 func NewEnvironment(name, description, provider, consensus string) Environment {
@@ -29,16 +29,16 @@ func NewEnvironment(name, description, provider, consensus string) Environment {
 }
 
 func (c *KaleidoClient) ListEnvironments(consortiumId string, resultBox *[]Environment) (*resty.Response, error) {
-	path := fmt.Sprintf(BASE_PATH, consortiumId)
+	path := fmt.Sprintf(envBasePath, consortiumId)
 	return c.Client.R().SetResult(resultBox).Get(path)
 }
 
 func (c *KaleidoClient) CreateEnvironment(consortiumId string, environment *Environment) (*resty.Response, error) {
-	path := fmt.Sprintf(BASE_PATH, consortiumId)
+	path := fmt.Sprintf(envBasePath, consortiumId)
 	return c.Client.R().SetResult(environment).SetBody(environment).Post(path)
 }
 
 func (c *KaleidoClient) DeleteEnvironment(consortiumId, environmentId string) (*resty.Response, error) {
-	path := fmt.Sprintf(BASE_PATH+"/%s", consortiumId, environmentId)
+	path := fmt.Sprintf(envBasePath+"/%s", consortiumId, environmentId)
 	return c.Client.R().Delete(path)
 }
