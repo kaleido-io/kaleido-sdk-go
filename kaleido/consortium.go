@@ -50,6 +50,11 @@ func (c *KaleidoClient) ListConsortium(resultBox *[]Consortium) (*resty.Response
 	return c.Client.R().SetResult(resultBox).Get("/consortia")
 }
 
+func (c *KaleidoClient) GetConsortium(id string, resultBox *Consortium) (*resty.Response, error) {
+	path := fmt.Sprintf("/consortia/%s", id)
+	return c.Client.R().SetResult(resultBox).Get(path)
+}
+
 func (c *KaleidoClient) DeleteConsortium(consortiumId string) (*resty.Response, error) {
 	return c.Client.R().Delete(fmt.Sprintf("/consortia/%s", consortiumId))
 }

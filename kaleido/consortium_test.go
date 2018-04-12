@@ -15,6 +15,21 @@ func TestConsortiumCreationListDeletion(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	var consortium2 Consortium
+	res, err = client.GetConsortium(consortium.Id, &consortium2)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+	if res.StatusCode() != 200 {
+		t.Fatalf("Unable to fetch consortium %s response was: %d.", consortium.Id, res.StatusCode())
+	}
+
+	if consortium.Id != consortium2.Id {
+		t.Fatalf("Fetched consortium id mismatch: expected %s found %s", consortium.Id, consortium2.Id)
+	}
+
 	var consortia []Consortium
 	_, err = client.ListConsortium(&consortia)
 	if err != nil {
