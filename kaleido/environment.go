@@ -42,3 +42,8 @@ func (c *KaleidoClient) DeleteEnvironment(consortiumId, environmentId string) (*
 	path := fmt.Sprintf(envBasePath+"/%s", consortiumId, environmentId)
 	return c.Client.R().Delete(path)
 }
+
+func (c *KaleidoClient) GetEnvironment(consortiumId, environmentId string, resultBox *Environment) (*resty.Response, error) {
+	path := fmt.Sprintf(envBasePath+"/%s", consortiumId, environmentId)
+	return c.Client.R().SetResult(resultBox).Get(path)
+}

@@ -24,13 +24,28 @@ func TestEnvironmentCreationDeletion(t *testing.T) {
 	res, err := client.CreateEnvironment(consortium.Id, &env)
 
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if res.StatusCode() != 201 {
 		t.Fatalf("Could not create environment status code: %d", res.StatusCode())
 	}
 	t.Logf("Env: %v", env)
+
+	var env2 Environment
+	res, err = client.GetEnvironment(consortium.Id, env.Id, &env2)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if res.StatusCode() != 200 {
+		t.Fatalf("Could not get environment %s. Status was %d", env.Id, res.StatusCode())
+	}
+
+	if env.Id != env2.Id {
+		t.Fatalf("Id mismatch on GetEnvironment %s and %s", env.Id, env2.Id)
+	}
 
 	//Delete all testing environments
 	res, err = client.ListEnvironments(consortium.Id, &envs)
