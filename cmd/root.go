@@ -10,6 +10,22 @@ import (
   "github.com/spf13/viper"
 )
 
+// for create command
+var name string
+var desc string
+var mode string
+var provider string
+var consensus string
+
+// use for both create, list, get and delete commands
+var consortiumId string
+var membershipId string
+var environmentId string
+var nodeId string
+
+// for delete command
+var deleteId string
+
 var rootCmd = &cobra.Command{
   Use: "kld",
   Short: "Command Line Tool for Kaleido resources management",
@@ -45,6 +61,8 @@ func init() {
 
   rootCmd.AddCommand(newCreateCmd())
   rootCmd.AddCommand(newDeleteCmd())
+  rootCmd.AddCommand(newListCmd())
+  rootCmd.AddCommand(newGetCmd())
 }
 
 func initConfig() {

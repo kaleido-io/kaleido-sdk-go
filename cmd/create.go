@@ -16,6 +16,9 @@ var createCmd = &cobra.Command{
 
 func newCreateCmd() *cobra.Command {
   createCmd.AddCommand(newConsortiumCreateCmd())
+  createCmd.AddCommand(newMembershipCreateCmd())
+  createCmd.AddCommand(newEnvironmentCreateCmd())
+  createCmd.AddCommand(newNodeCreateCmd())
 
   return createCmd
 }
