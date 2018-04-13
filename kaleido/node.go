@@ -11,16 +11,23 @@ const (
 )
 
 type Node struct {
-	Name         string `json:"name"`
-	MembershipId string `json:"membership_id"`
-	Id           string `json:"_id,omitempty"`
+	Name          string `json:"name"`
+	MembershipId  string `json:"membership_id"`
+	Id            string `json:"_id,omitempty"`
+	State         string `json:"state,omitempty"`
+	Role          string `json:"role,omitempty"`
+	Provider      string `json:"provider,omitempty"`
+	ConsensusType string `json:"consensus_type,omitempty"`
 }
 
 func NewNode(name, membershipId string) Node {
 	return Node{
-		Name:         name,
-		MembershipId: membershipId,
-		Id:           "",
+		Name:          name,
+		MembershipId:  membershipId,
+		Id:            "",
+		State:         "",
+		Provider:      "",
+		ConsensusType: "",
 	}
 }
 

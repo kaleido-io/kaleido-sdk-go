@@ -6,6 +6,7 @@ import (
 )
 
 func TestNodeCreation(t *testing.T) {
+	consensusType := "raft"
 	client := NewClient(os.Getenv("KALEIDO_API"), os.Getenv("KALEIDO_API_KEY"))
 	consortium := NewConsortium("nodeTestConsortium", "node creation", "single-org")
 	res, err := client.CreateConsortium(&consortium)
@@ -17,7 +18,7 @@ func TestNodeCreation(t *testing.T) {
 		t.Fatalf("Could not create consortium status code: %d.", res.StatusCode())
 	}
 	defer client.DeleteConsortium(consortium.Id)
-	env := NewEnvironment("nodeCreate", "just create some nodes", "quorum", "raft")
+	env := NewEnvironment("nodeCreate", "just create some nodes", "quorum", consensusType)
 
 	res, err = client.CreateEnvironment(consortium.Id, &env)
 
@@ -79,6 +80,14 @@ func TestNodeCreation(t *testing.T) {
 
 	if node.Id != fetchedNode.Id {
 		t.Fatalf("Fetched node id %s does not match %s.", fetchedNode.Id, node.Id)
+	}
+
+	if node.ConsensusType != consensusType {
+		t.Fatalf("Fetched node %s has wrong consensusType %s", node.Id, node.ConsensusType)
+	}
+
+	if node.State == "" {
+		t.Fatalf("Fetched node %s should have a state.", node.Id)
 	}
 
 	nodes = nil
