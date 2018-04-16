@@ -16,6 +16,8 @@ var deleteCmd = &cobra.Command{
 
 func newDeleteCmd() *cobra.Command {
   deleteCmd.AddCommand(newConsortiumDeleteCmd())
+  deleteCmd.AddCommand(newMembershipDeleteCmd())
+  deleteCmd.AddCommand(newEnvironmentDeleteCmd())
 
   return deleteCmd
 }

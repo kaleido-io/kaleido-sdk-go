@@ -1,40 +1,58 @@
 package cmd
 
 import (
+  "encoding/json"
   "fmt"
+  "os"
 
   kld "github.com/consensys/photic-sdk-go/kaleido"
   "github.com/spf13/cobra"
-  "github.com/spf13/viper"
 )
 
-// for create command
-var name string
-var desc string
-var mode string
+var consortiumListCmd = &cobra.Command{
+  Use: "consortium",
+  Short: "List the consortiums under the user's account",
+  Run: func(cmd *cobra.Command, args []string) {
+    client := getNewClient()
+    var consortiums []kld.Consortium
+    _, err := client.ListConsortium(&consortiums)
+    if err != nil {
+      fmt.Printf("Failed to list consortiums. %v\n", err)
+      os.Exit(1)
+    }
 
-// for delete command
-var deleteId string
+    encoded, _ := json.Marshal(consortiums)
+    fmt.Printf("\n%+v\n", string(encoded))
+  },
+}
+
+var consortiumGetCmd = &cobra.Command{
+  Use: "consortium",
+  Short: "Get the consortium details",
+  Run: func(cmd *cobra.Command, args []string) {
+    client := getNewClient()
+    var consortium kld.Consortium
+    res, err := client.GetConsortium(consortiumId, &consortium)
+    validateGetResponse(res, err, "consortium")
+  },
+}
 
 var consortiumCreateCmd = &cobra.Command{
   Use: "consortium",
   Short: "Create a consortium",
   Run: func(cmd *cobra.Command, args []string) {
+    validateName()
+
     if mode != "single-org" && mode != "multi-org" {
-      panic(fmt.Sprintf("Invalid consortium mode: %n\n", mode))
+      fmt.Printf("Invalid consortium mode: %n\n", mode)
+      os.Exit(1)
     }
 
-    client := kld.NewClient(viper.GetString("api.url"), viper.GetString("api.key"))
+    client := getNewClient()
     consortium := kld.NewConsortium(name, desc, mode)
     res, err := client.CreateConsortium(&consortium)
-    if res.StatusCode() != 201 {
-      panic(fmt.Sprintf("Could not create consortium status code: %d.", res.StatusCode()))
-    }
-    if err != nil {
-      panic(err)
-    }
 
-    fmt.Printf("\n%+v\n", res)
+    validateCreationResponse(res, err, "consortium")
   },
 }
 
@@ -42,8 +60,24 @@ var consortiumDeleteCmd = &cobra.Command{
   Use: "consortium",
   Short: "Delete a consortium",
   Run: func(cmd *cobra.Command, args []string) {
-    fmt.Printf("API URL: %s\n", viper.Get("api.url"))
+    validateDeleteId("consortium")
+
+    client := getNewClient()
+    res, err := client.DeleteConsortium(deleteId)
+
+    validateDeletionResponse(res, err, "consortium")
   },
+}
+
+func newConsortiumGetCmd() *cobra.Command {
+  flags := consortiumGetCmd.Flags()
+  flags.StringVar(&consortiumId, "id", "", "Id of the consortium to retrieve")
+
+  return consortiumGetCmd
+}
+
+func newConsortiumListCmd() *cobra.Command {
+  return consortiumListCmd
 }
 
 func newConsortiumCreateCmd() *cobra.Command {
