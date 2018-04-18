@@ -1,12 +1,36 @@
 package cmd
 
 import (
+  "encoding/json"
   "fmt"
   "os"
 
   kld "github.com/consensys/photic-sdk-go/kaleido"
   "github.com/spf13/cobra"
 )
+
+var membershipListCmd = &cobra.Command{
+  Use: "membership",
+  Short: "List memberships of a consortium",
+  Run: func(cmd *cobra.Command, args []string) {
+    if consortiumId == "" {
+      fmt.Println("Missing required parameter: --consortiumId for the consortium to list memberships of")
+      os.Exit(1)
+    }
+
+    client := getNewClient()
+    var memberships []kld.Membership
+    _, err := client.ListMemberships(consortiumId, &memberships)
+
+    if err != nil {
+      fmt.Printf("Failed to list memberships. %v\n", err)
+      os.Exit(1)
+    }
+
+    encoded, _ := json.Marshal(memberships)
+    fmt.Printf("\n%+v\n", string(encoded))
+  },
+}
 
 var membershipGetCmd = &cobra.Command{
   Use: "membership",
@@ -55,6 +79,13 @@ var membershipDeleteCmd = &cobra.Command{
 
     validateDeletionResponse(res, err, "membership")
   },
+}
+
+func newMembershipListCmd() *cobra.Command {
+  flags := membershipListCmd.Flags()
+  flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium to retrieve the memberships from")
+
+  return membershipListCmd
 }
 
 func newMembershipGetCmd() *cobra.Command {

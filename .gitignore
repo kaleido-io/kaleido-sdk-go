@@ -1,4 +1,4 @@
 vendor
 Gopkg.lock
 photic-sdk-go
-kld
+kld*
