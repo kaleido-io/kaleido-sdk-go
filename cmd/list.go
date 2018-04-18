@@ -18,6 +18,7 @@ func newListCmd() *cobra.Command {
   listCmd.AddCommand(newConsortiumListCmd())
   listCmd.AddCommand(newEnvironmentListCmd())
   listCmd.AddCommand(newNodeListCmd())
+  listCmd.AddCommand(newMembershipListCmd())
 
   return listCmd
 }
