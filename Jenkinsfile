@@ -11,6 +11,6 @@ node {
     }
 
     stage('build for linux amd64') {
-        sh('docker run --rm -v "$PWD":/go/src/github.com/consensys/photic-sdk-go -w /go/src/github.com/consensys/photic-sdk-go -e GOOS=linux -e GOARCH=amd64  golang:1.10 go build -o kld-linux -v')
+        sh('docker run --rm -v "$PWD":/go/src/github.com/consensys/photic-sdk-go -w /go/src/github.com/consensys/photic-sdk-go -e GOOS=linux -e GOARCH=amd64 --entrypoint "/go/src/github.com/consensys/photic-sdk-go/build/build.sh" golang:1.10 linux')
     }
 }
