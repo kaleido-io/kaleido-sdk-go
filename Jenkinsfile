@@ -11,6 +11,14 @@ node {
     }
 
     stage('build for linux amd64') {
-        sh('docker run --rm -v "$PWD":/go/src/github.com/consensys/photic-sdk-go -w /go/src/github.com/consensys/photic-sdk-go -e GOOS=linux -e GOARCH=amd64 --entrypoint "/go/src/github.com/consensys/photic-sdk-go/build/build.sh" golang:1.10 linux')
+        sh('docker run --rm -v "$PWD":/go/src/github.com/consensys/photic-sdk-go -w /go/src/github.com/consensys/photic-sdk-go -e GOOS=linux -e GOARCH=amd64 --entrypoint "/go/src/github.com/consensys/photic-sdk-go/scripts/build.sh" golang:1.10 linux')
+    }
+
+    stage('build for windows amd64') {
+        sh('docker run --rm -v "$PWD":/go/src/github.com/consensys/photic-sdk-go -w /go/src/github.com/consensys/photic-sdk-go -e GOOS=windows -e GOARCH=amd64 --entrypoint "/go/src/github.com/consensys/photic-sdk-go/scripts/build.sh" golang:1.10 win.exe')
+    }
+
+    stage('build for mac amd64') {
+        sh('docker run --rm -v "$PWD":/go/src/github.com/consensys/photic-sdk-go -w /go/src/github.com/consensys/photic-sdk-go -e GOOS=darwin -e GOARCH=amd64 --entrypoint "/go/src/github.com/consensys/photic-sdk-go/scripts/build.sh" golang:1.10 mac')
     }
 }
