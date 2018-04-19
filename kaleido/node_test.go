@@ -3,10 +3,11 @@ package kaleido
 import (
 	"os"
 	"testing"
+	"time"
 )
 
 func TestNodeCreation(t *testing.T) {
-	consensusType := "raft"
+	consensusType := "ibft"
 	client := NewClient(os.Getenv("KALEIDO_API"), os.Getenv("KALEIDO_API_KEY"))
 	consortium := NewConsortium("nodeTestConsortium", "node creation", "single-org")
 	res, err := client.CreateConsortium(&consortium)
@@ -80,6 +81,26 @@ func TestNodeCreation(t *testing.T) {
 
 	if node.Id != fetchedNode.Id {
 		t.Fatalf("Fetched node id %s does not match %s.", fetchedNode.Id, node.Id)
+	}
+
+	for fetchedNode.State != "started" {
+		time.Sleep(time.Second)
+		res, err = client.GetNode(consortium.Id, env.Id, node.Id, &fetchedNode)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if res.StatusCode() != 200 {
+			t.Fatalf("Failed node fetch status code: %d", res.StatusCode())
+		}
+		t.Logf("Node state is not started: %v", fetchedNode)
+	}
+
+	if fetchedNode.Urls.RPC == "" {
+		t.Fatalf("Fetched node id %s missing RPC was '%s'.", fetchedNode.Id, fetchedNode.Urls.RPC)
+	}
+
+	if fetchedNode.Urls.WSS == "" {
+		t.Fatalf("Fetched node id %s missing WSS, was '%s'.", fetchedNode.Id, fetchedNode.Urls.WSS)
 	}
 
 	if node.ConsensusType != consensusType {
