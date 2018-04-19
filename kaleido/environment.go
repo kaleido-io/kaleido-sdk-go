@@ -12,6 +12,7 @@ type Environment struct {
 	Provider      string `json:"provider"`
 	ConsensusType string `json:"consensus_type"`
 	Id            string `json:"_id,omitempty"`
+	State         string `json:"state,omitempty"`
 }
 
 const (

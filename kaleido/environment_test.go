@@ -47,6 +47,10 @@ func TestEnvironmentCreationDeletion(t *testing.T) {
 		t.Fatalf("Id mismatch on GetEnvironment %s and %s", env.Id, env2.Id)
 	}
 
+	if env2.State == "" {
+		t.Fatal("Fetched environment should have a state was empty.")
+	}
+
 	//Delete all testing environments
 	res, err = client.ListEnvironments(consortium.Id, &envs)
 	if err != nil {
