@@ -15,7 +15,7 @@ type AppKey struct {
 }
 
 const (
-	appKeyBasePath = "/consortia/%s/environments/%s/appkeys"
+	appKeyBasePath = "/consortia/%s/environments/%s/appcreds"
 )
 
 func NewAppKey(membershipId string) AppKey {
