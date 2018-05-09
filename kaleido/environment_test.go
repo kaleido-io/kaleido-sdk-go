@@ -16,8 +16,8 @@ func TestEnvironmentCreationDeletion(t *testing.T) {
 	var envs []Environment
 	client.ListEnvironments(consortium.Id, &envs)
 	t.Logf("Envs: %v", envs)
-	if len(envs) != 1 {
-		t.Fatalf("New consortiums have a single auto generated environment.")
+	if len(envs) != 0 {
+		t.Fatalf("New consortium should be empty.")
 	}
 
 	env := NewEnvironment("testingEnvironment", "just test", "quorum", "raft")

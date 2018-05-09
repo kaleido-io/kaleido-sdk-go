@@ -20,22 +20,17 @@ func TestAppKey(t *testing.T) {
 
 	defer client.DeleteConsortium(consortium.Id)
 
-	var envs []Environment
-	res, err = client.ListEnvironments(consortium.Id, &envs)
+	var env Environment
+	client.CreateEnvironment(consortium.Id, &env)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if res.StatusCode() != 200 {
+	if res.StatusCode() != 201 {
 		t.Fatalf("Could not create environment! Status: %d.", res.StatusCode())
 	}
-	t.Logf("Envs: %v", envs)
-	if len(envs) != 1 {
-		t.Fatalf("New consortium has unexpected number of envs %d.", len(envs))
-	}
 
-	env := envs[0]
 	var members []Membership
 	res, err = client.ListMemberships(consortium.Id, &members)
 
