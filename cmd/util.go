@@ -4,7 +4,7 @@ import (
   "fmt"
   "os"
 
-  kld "github.com/consensys/photic-sdk-go/kaleido"
+  kld "github.com/kaleido-io/kaleido-sdk-go/kaleido"
   "github.com/spf13/viper"
   "gopkg.in/resty.v1"
 )
