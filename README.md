@@ -18,19 +18,19 @@ brew install dep
 The follow are regular steps to set up a typical golang dev environment. If you are already familiar with this language you can skip to the next section.
 
 1. decide a folder as your container for all golang projects, and set `GOPATH` environment variable to point to it
-2. create a folder `$GOPATH/src/github.com/consensys` and `cd` to it
+2. create a folder `$GOPATH/src/github.com/kaleido-io` and `cd` to it
 3. clone the repository in this folder, or if you have already cloned it somewhere else, move the project to this folder
 
 You should have the following directory holding the project source:
 ```
-$GOPATH/src/github.com/consensys/photic-sdk-go
+$GOPATH/src/github.com/kaleido-io/kaleido-sdk-go
 ```
 
 ## Install Dependencies
 
 Use `dep` to install the dependent golang packages, from the root of the project:
 ```
-cd $GOPATH/src/github.com/consensys/photic-sdk-go
+cd $GOPATH/src/github.com/kaleido-io/kaleido-sdk-go
 dep ensure
 ```
 
@@ -55,7 +55,7 @@ To use the CLI to do something, such as create a consortium, you first need to p
 Create a `.kld.yaml` (or .kld.json or .kld.toml based on your preferences) file in the home directory and give these values:
 ```
 api:
-  url: https://control-dev.photic.io/api/v1
+  url: https://console.kaleido.io/api/v1
   key: <your API Key>
 ```
 
@@ -66,7 +66,7 @@ The configuration file can be at any location and called by any name, you can te
 
 You can also use environment variables. Use all capital letters with `KLD_` as the prefix, for instance:
 ```
-KLD_API_URL=http://console.kali.do/api/v1
+KLD_API_URL=http://console.kaleido.io/api/v1
 KLD_API_KEY=blahblah
 ```
 
