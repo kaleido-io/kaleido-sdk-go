@@ -22,6 +22,7 @@ var consortiumId string
 var membershipId string
 var environmentId string
 var nodeId string
+var apiKeyId string
 
 // for delete command
 var deleteId string

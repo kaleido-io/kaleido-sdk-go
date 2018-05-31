@@ -52,6 +52,18 @@ func validateConsortiumId(resourceName string, isCreate ...bool) {
   }
 }
 
+func validateApiKeyId(resourceName string, isGet ...bool) {
+  if apiKeyId == "" {
+    if len(isGet) == 0 || isGet[0] {
+      fmt.Printf("Missing required parameter: --apiKeyId to get the api key %s to\n", resourceName)
+    } else {
+      fmt.Printf("Missing required parameter: --apiKeyId to delete the api key the %s from\n", resourceName)
+    }
+
+    os.Exit(1)
+  }
+}
+
 func validateEnvironmentId(resourceName string, isCreate ...bool) {
   if environmentId == "" {
     if len(isCreate) == 0 || isCreate[0] {
