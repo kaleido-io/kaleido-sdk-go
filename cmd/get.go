@@ -1,25 +1,25 @@
 package cmd
 
 import (
-  "fmt"
+	"fmt"
 
-  "github.com/spf13/cobra"
+	"github.com/spf13/cobra"
 )
 
 var getCmd = &cobra.Command{
-  Use: "get",
-  Short: "Get details of a resource: consortium, membership, environment, node, appKeys",
-  Run: func(cmd *cobra.Command, args []string) {
-    fmt.Println("get command")
-  },
+	Use: "get",
+	Short: "Get details of a resource: consortium, membership, environment, node, appcreds",
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("get command")
+	},
 }
 
 func newGetCmd() *cobra.Command {
-  getCmd.AddCommand(newConsortiumGetCmd())
-  getCmd.AddCommand(newMembershipGetCmd())
-  getCmd.AddCommand(newEnvironmentGetCmd())
+	getCmd.AddCommand(newConsortiumGetCmd())
+	getCmd.AddCommand(newMembershipGetCmd())
+	getCmd.AddCommand(newEnvironmentGetCmd())
 	getCmd.AddCommand(newNodeGetCmd())
-	getCmd.AddCommand(newAppKeyGetCmd())
+	getCmd.AddCommand(newAppCredsGetCmd())
 
-  return getCmd
+	return getCmd
 }

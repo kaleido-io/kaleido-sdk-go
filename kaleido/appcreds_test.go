@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestAppKey(t *testing.T) {
+func TestAppCreds(t *testing.T) {
 	client := NewClient(os.Getenv("KALEIDO_API"), os.Getenv("KALEIDO_API_KEY"))
 	consortium := NewConsortium("apiKeyTest", "creating api key", "single-org")
 	res, err := client.CreateConsortium(&consortium)
@@ -44,40 +44,40 @@ func TestAppKey(t *testing.T) {
 
 	member := members[0]
 
-	appKey := NewAppKey(member.Id)
-	res, err = client.CreateAppKey(consortium.Id, env.Id, &appKey)
+	appcreds := NewAppCreds(member.Id)
+	res, err = client.CreateAppCreds(consortium.Id, env.Id, &appcreds)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	if res.StatusCode() != 201 {
-		t.Fatalf("Could not create AppKey! Status: %d.", res.StatusCode())
+		t.Fatalf("Could not create AppCreds! Status: %d.", res.StatusCode())
 	}
 
-	if appKey.Password == "" {
-		t.Fatalf("AppKey did not include a password! %v", appKey)
+	if appcreds.Password == "" {
+		t.Fatalf("AppCreds did not include a password! %v", appcreds)
 	}
 
-	if appKey.Username == "" {
-		t.Fatalf("AppKey did not include a username! %v", appKey)
+	if appcreds.Username == "" {
+		t.Fatalf("AppCreds did not include a username! %v", appcreds)
 	}
 
-	var appKey2 AppKey
-	res, err = client.GetAppKey(consortium.Id, env.Id, appKey.Id, &appKey2)
+	var appcreds2 AppCreds
+	res, err = client.GetAppCreds(consortium.Id, env.Id, appcreds.Id, &appcreds2)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 	if res.StatusCode() != 200 {
-		t.Fatalf("Failed to fetch remote AppKey for id %s. Status: %d", appKey.Id, res.StatusCode())
+		t.Fatalf("Failed to fetch remote AppCreds for id %s. Status: %d", appcreds.Id, res.StatusCode())
 	}
-	if appKey.Id != appKey2.Id {
-		t.Fatalf("Fetched AppKey %s id did not match original %s.", appKey.Id, appKey2.Id)
+	if appcreds.Id != appcreds2.Id {
+		t.Fatalf("Fetched AppCreds %s id did not match original %s.", appcreds.Id, appcreds2.Id)
 	}
 
-	var appKeys []AppKey
-	res, err = client.ListAppKeys(consortium.Id, env.Id, &appKeys)
+	var appcreds []AppCreds
+	res, err = client.ListAppCreds(consortium.Id, env.Id, &appcreds)
 
 	if err != nil {
 		t.Fatal(err)
@@ -87,17 +87,17 @@ func TestAppKey(t *testing.T) {
 		t.Fatalf("Failed to list App Keys. Status: %d.", res.StatusCode())
 	}
 
-	if len(appKeys) != 1 {
-		t.Fatalf("Expected 1 AppKey found %d.", len(appKeys))
+	if len(appcreds) != 1 {
+		t.Fatalf("Expected 1 AppCreds found %d.", len(appcreds))
 	}
 
-	res, err = client.DeleteAppKey(consortium.Id, env.Id, appKey.Id)
+	res, err = client.DeleteAppCreds(consortium.Id, env.Id, appcreds.Id)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	if res.StatusCode() != 204 {
-		t.Fatalf("Could not delete AppKey %s. Status: %d", appKey.Id, res.StatusCode())
+		t.Fatalf("Could not delete AppCreds %s. Status: %d", appcreds.Id, res.StatusCode())
 	}
 }
