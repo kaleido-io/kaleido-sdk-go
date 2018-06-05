@@ -1,23 +1,24 @@
 package cmd
 
 import (
-  "fmt"
+	"fmt"
 
-  "github.com/spf13/cobra"
+	"github.com/spf13/cobra"
 )
 
 var deleteCmd = &cobra.Command{
-  Use: "delete",
-  Short: "Delete various resources: consortium, membership, environment, node",
-  Run: func(cmd *cobra.Command, args []string) {
-    fmt.Println("Delete command")
-  },
+	Use: "delete",
+	Short: "Delete various resources: consortium, membership, environment, node, appcreds",
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("Delete command")
+	},
 }
 
 func newDeleteCmd() *cobra.Command {
-  deleteCmd.AddCommand(newConsortiumDeleteCmd())
-  deleteCmd.AddCommand(newMembershipDeleteCmd())
-  deleteCmd.AddCommand(newEnvironmentDeleteCmd())
+	deleteCmd.AddCommand(newConsortiumDeleteCmd())
+	deleteCmd.AddCommand(newMembershipDeleteCmd())
+	deleteCmd.AddCommand(newEnvironmentDeleteCmd())
+	deleteCmd.AddCommand(newAppCredsDeleteCmd())
 
-  return deleteCmd
+	return deleteCmd
 }
