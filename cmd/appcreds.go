@@ -32,7 +32,7 @@ var appCredsCreateCmd = &cobra.Command{
 		client := getNewClient()
 		appcreds := kld.NewAppCreds(membershipId)
 		res, err := client.CreateAppCreds(consortiumId, environmentId, &appcreds)
-		validateCreationResponse(res, err, "appcreds")
+		kld.ValidateCreationResponse(res, err, "appcreds")
 	},
 }
 
@@ -46,7 +46,7 @@ var appCredsGetCmd = &cobra.Command{
 		client := getNewClient()
 		var appcreds kld.AppCreds
 		res, err := client.GetAppCreds(consortiumId, environmentId, appCredsId, &appcreds)
-		validateGetResponse(res, err, "appcreds")
+		kld.ValidateGetResponse(res, err, "appcreds")
 	},
 }
 
@@ -59,7 +59,7 @@ var appCredsDeleteCmd = &cobra.Command{
 		validateAppCredsId("appcreds", false)
 		client := getNewClient()
 		res, err := client.DeleteAppCreds(consortiumId, environmentId, appCredsId)
-		validateDeletionResponse(res, err, "appcreds")
+		kld.ValidateDeletionResponse(res, err, "appcreds")
 	},
 }
 

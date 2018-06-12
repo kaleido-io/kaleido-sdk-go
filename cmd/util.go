@@ -19,10 +19,9 @@ import (
 
 	kld "github.com/kaleido-io/kaleido-sdk-go/kaleido"
 	"github.com/spf13/viper"
-	"gopkg.in/resty.v1"
 )
 
-func getNewClient() kld.KaleidoClient {
+var getNewClient = func() kld.KaleidoClient {
 	return kld.NewClient(viper.GetString("api.url"), viper.GetString("api.key"))
 }
 
@@ -108,40 +107,4 @@ func validateDeleteId(resourceName string) {
 	}
 
 	return
-}
-
-func validateGetResponse(res *resty.Response, err error, resourceName string) {
-	if res.StatusCode() != 200 {
-		fmt.Printf("Could not retrieve %s. Status code: %d.", resourceName, res.StatusCode())
-	}
-
-	if err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Printf("\n%+v\n", res)
-	}
-}
-
-func validateCreationResponse(res *resty.Response, err error, resourceName string) {
-	if res.StatusCode() != 201 {
-		fmt.Printf("Could not create %s. Status code: %d.", resourceName, res.StatusCode())
-	}
-
-	if err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Printf("\n%+v\n", res)
-	}
-}
-
-func validateDeletionResponse(res *resty.Response, err error, resourceName string) {
-	if res.StatusCode() != 202 && res.StatusCode() != 204 {
-		fmt.Printf("%s deletion failed. Status code: %d\n", resourceName, res.StatusCode())
-	}
-
-	if err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Printf("\n%+v\n", res)
-	}
 }
