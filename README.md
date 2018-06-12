@@ -104,12 +104,108 @@ jimzhang$ ./kld create consortium -m single-org -n testConsortium234 -d "this is
 ```
 
 ## Running Tests
+To run unit tests:
+```
+make test
+```
 
+To run unit and integration tests
 ```
 export KALEIDO_API=https://xxxx
 export KALEIDO_API_KEY=xxxxx
-go test ./kaleido
+make all_tests
 ```
 
 Optionally use `go test -v ./kaleido` to view
 all test logs.
+
+# Define a consortium using a configuration file
+
+A consortium, can be defined with a YAML file. The following configuration will create a consoritum, an environment with 2 members where each member has 1 node.
+
+```
+kld create consortium -c /path/to/consortium.yaml
+```
+
+
+```
+---
+provider: quorum
+consensus: raft
+waitok: true
+consortium:
+  mode: single-org
+  description: A description
+  name: test-consortium
+  environments:
+  - name: dev
+    description: environment description
+    members:
+    - name: org1
+      nodes:
+      - name: org1-node1
+    - name: org2
+      nodes: 
+      - name: org2-node1
+```
+
+If *waitok: true* is set, it will wait until the nodes are ready so that the enpoints can be output. This is a sample output: 
+```
+{
+	"consortium_id": "e0olj47vdk",
+	"environments": [{
+		"id": "e0wy1qwc1z",
+		"members": [{
+			"appcreds": {
+				"id": "",
+				"password": "TdVJJzmpKDkZ8_wW-pNfhMASiX_l9Ouha-juhDXk_OQ",
+				"username": "e0dvjcg7kt"
+			},
+			"id": "e0wfnc3of3",
+			"name": "org1",
+			"nodes": [{
+				"block_height": 0,
+				"geth": {
+					"public_address": "",
+					"validators": null
+				},
+				"quorum": {
+					"private_address": "L8QZW8+Z7eBFVTxgmGJ/P91X/NFxRtidFQSaqqJ9LEk=",
+					"public_address": "0xcdb6a9185df7c1d3a9ffeb8e1e5f32f2a2569893"
+				},
+				"id": "8f30392ff18d681642560b123cd0b93c44f1ba8ac4830b23b54703e823e47e8dd79f822acbee7f0db6d81f7730776fcec7d62fdedd3753ff50a021e58a1067e4",
+				"urls": {
+					"rpc": "https://e0wy1qwc1z-e0q9a9cryg-rpc.eu-central-1.kaleido.io",
+					"wss": "wss://e0wy1qwc1z-e0q9a9cryg-wss.eu-central-1.kaleido.io"
+				},
+				"user_accounts": ["0x54Fe04De0E46F5C1EEF023781d0a809F58228Aa1"]
+			}]
+		}, {
+			"appcreds": {
+				"id": "",
+				"password": "ybP85DIK9mFuclVU0_znBkcmH7VEBRswQgT4mJbNInw",
+				"username": "e0axwx9q11"
+			},
+			"id": "e0rsbvcgdi",
+			"name": "org2",
+			"nodes": [{
+				"block_height": 0,
+				"geth": {
+					"public_address": "",
+					"validators": null
+				},
+				"quorum": {
+					"private_address": "18qbrglhneGmAGhcRNDBh+Q74Gjuuh+QlKctdMfQ5lE=",
+					"public_address": "0x6e26c0a4f5ce887a74d84d4a848081d900ffc364"
+				},
+				"id": "7e2b4838687f2e46d42748bd1bb0fc8a869c16b2969944532686f889d3b3bc3047393d936e1f9ac4f56455da081b7b2502de411923e3dd2bc3708ba2582e0ab3",
+				"urls": {
+					"rpc": "https://e0wy1qwc1z-e0iyv0yy28-rpc.eu-central-1.kaleido.io",
+					"wss": "wss://e0wy1qwc1z-e0iyv0yy28-wss.eu-central-1.kaleido.io"
+				},
+				"user_accounts": ["0x15C5D9bbc349eD0B0FfD5f056D74bA6ECd5E0ba9"]
+			}]
+		}]
+	}]
+}
+```

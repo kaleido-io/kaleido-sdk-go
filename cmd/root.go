@@ -29,6 +29,7 @@ var desc string
 var mode string
 var provider string
 var consensus string
+var file string
 
 // use for both create, list, get and delete commands
 var consortiumId string
@@ -41,7 +42,7 @@ var appCredsId string
 var deleteId string
 
 var rootCmd = &cobra.Command{
-	Use: "kld",
+	Use:   "kld",
 	Short: "Command Line Tool for Kaleido resources management",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Printf("API URL: %s\n", viper.Get("api.url"))

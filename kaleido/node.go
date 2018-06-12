@@ -67,3 +67,8 @@ func (c *KaleidoClient) GetNode(consortiumId, envId, nodeId string, resultBox *N
 	path := fmt.Sprintf(nodeBasePath+"/%s", consortiumId, envId, nodeId)
 	return c.Client.R().SetResult(resultBox).Get(path)
 }
+
+func (c *KaleidoClient) GetNodeStatus(consortiumId, envId, nodeId string, resultBox *Node) (*resty.Response, error) {
+	path := fmt.Sprintf(nodeBasePath+"/%s/status", consortiumId, envId, nodeId)
+	return c.Client.R().SetResult(resultBox).Get(path)
+}

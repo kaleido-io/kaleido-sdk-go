@@ -11,6 +11,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+// +build integration
+
 package kaleido
 
 import (
@@ -89,8 +92,8 @@ func TestAppCreds(t *testing.T) {
 		t.Fatalf("Fetched AppCreds %s id did not match original %s.", appcreds.Id, appcreds2.Id)
 	}
 
-	var appcreds []AppCreds
-	res, err = client.ListAppCreds(consortium.Id, env.Id, &appcreds)
+	var appcredsArray []AppCreds
+	res, err = client.ListAppCreds(consortium.Id, env.Id, &appcredsArray)
 
 	if err != nil {
 		t.Fatal(err)
@@ -100,11 +103,11 @@ func TestAppCreds(t *testing.T) {
 		t.Fatalf("Failed to list App Keys. Status: %d.", res.StatusCode())
 	}
 
-	if len(appcreds) != 1 {
-		t.Fatalf("Expected 1 AppCreds found %d.", len(appcreds))
+	if len(appcredsArray) != 1 {
+		t.Fatalf("Expected 1 AppCreds found %d.", len(appcredsArray))
 	}
 
-	res, err = client.DeleteAppCreds(consortium.Id, env.Id, appcreds.Id)
+	res, err = client.DeleteAppCreds(consortium.Id, env.Id, appcredsArray[0].Id)
 
 	if err != nil {
 		t.Fatal(err)
