@@ -22,6 +22,7 @@ func TestAppCreds(t *testing.T) {
 	client := NewClient(os.Getenv("KALEIDO_API"), os.Getenv("KALEIDO_API_KEY"))
 	consortium := NewConsortium("apiKeyTest", "creating api key", "single-org")
 	res, err := client.CreateConsortium(&consortium)
+	defer client.DeleteConsortium(consortium.Id)
 
 	if res.StatusCode() != 201 {
 		t.Fatalf("Could not create consortium status code: %d.", res.StatusCode())
@@ -30,8 +31,6 @@ func TestAppCreds(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	defer client.DeleteConsortium(consortium.Id)
 
 	var env Environment
 	client.CreateEnvironment(consortium.Id, &env)
@@ -89,8 +88,8 @@ func TestAppCreds(t *testing.T) {
 		t.Fatalf("Fetched AppCreds %s id did not match original %s.", appcreds.Id, appcreds2.Id)
 	}
 
-	var appcreds []AppCreds
-	res, err = client.ListAppCreds(consortium.Id, env.Id, &appcreds)
+	var appcredList []AppCreds
+	res, err = client.ListAppCreds(consortium.Id, env.Id, &appcredList)
 
 	if err != nil {
 		t.Fatal(err)
@@ -100,17 +99,20 @@ func TestAppCreds(t *testing.T) {
 		t.Fatalf("Failed to list App Keys. Status: %d.", res.StatusCode())
 	}
 
-	if len(appcreds) != 1 {
-		t.Fatalf("Expected 1 AppCreds found %d.", len(appcreds))
+	if len(appcredList) != 1 {
+		t.Fatalf("Expected 1 AppCreds found %d.", len(appcredList))
 	}
 
-	res, err = client.DeleteAppCreds(consortium.Id, env.Id, appcreds.Id)
+	for _, appcred := range appcredList {
+		res, err = client.DeleteAppCreds(consortium.Id, env.Id, appcred.Id)
 
-	if err != nil {
-		t.Fatal(err)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if res.StatusCode() != 204 {
+			t.Fatalf("Could not delete AppCreds %s. Status: %d", appcred.Id, res.StatusCode())
+		}
 	}
 
-	if res.StatusCode() != 204 {
-		t.Fatalf("Could not delete AppCreds %s. Status: %d", appcreds.Id, res.StatusCode())
-	}
 }

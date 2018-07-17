@@ -22,10 +22,10 @@ func TestEnvironmentCreationDeletion(t *testing.T) {
 	client := NewClient(os.Getenv("KALEIDO_API"), os.Getenv("KALEIDO_API_KEY"))
 	consortium := NewConsortium("envCreateTest", "creating an environment", "single-org")
 	_, err := client.CreateConsortium(&consortium)
+	defer client.DeleteConsortium(consortium.Id)
 	if err != nil {
 		t.Error(err)
 	}
-	defer client.DeleteConsortium(consortium.Id)
 	var envs []Environment
 	client.ListEnvironments(consortium.Id, &envs)
 	t.Logf("Envs: %v", envs)
