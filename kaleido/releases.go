@@ -24,7 +24,7 @@ const (
 type Release struct {
 	Id            string `json:"_id,omitempty"`
 	Provider      string `json:"provider,omitempty"`
-	Version       string `json:"provider,omitempty"`
+	Version       string `json:"version,omitempty"`
 	VersionPadded string `json:"version_padded,omitempty"`
 	ReleaseStatus string `json:"release_status,omitempty"`
 }

@@ -74,6 +74,48 @@ func TestEnvironmentCreationDeletion(t *testing.T) {
 		t.Fatalf("Could not list environments status code: %d", res.StatusCode())
 	}
 
+	var releases []Release
+	res, err = client.ListReleases(&releases)
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	if res.StatusCode() != 200 {
+		t.Fatalf("Could not fetch releases, status was: %d", res.StatusCode())
+	}
+
+	if len(releases) < 4 {
+		t.Fatalf("Environment needs 2 releases, but only has %d", len(releases))
+	}
+
+	lastRelease := releases[len(releases)-1]
+	var consensus string
+	if lastRelease.Provider == "geth" {
+		consensus = "poa"
+	} else {
+		consensus = "raft"
+	}
+	environment := NewEnvironment("Old Version", "oldie", lastRelease.Provider, consensus)
+	environment.ReleaseId = lastRelease.Id
+	t.Logf("Old Env Release: %s", lastRelease.Id)
+
+	t.Logf("Older Env: %v", environment)
+	res, err = client.CreateEnvironment(consortium.Id, &environment)
+	t.Logf(res.String())
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	if res.StatusCode() != 201 {
+		t.Fatalf("Could not create environment with release %s %s: status %d", lastRelease.Provider, lastRelease.Version, res.StatusCode())
+	}
+
+	if environment.ReleaseId != lastRelease.Id {
+		t.Fatalf("Environment was not created with (%s) the oldest release. Was: %s", environment.ReleaseId, lastRelease.Id)
+	}
+
 	for _, v := range envs {
 		res, err := client.DeleteEnvironment(consortium.Id, v.Id)
 		if err != nil {

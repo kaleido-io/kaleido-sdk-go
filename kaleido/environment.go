@@ -26,6 +26,7 @@ type Environment struct {
 	ConsensusType string `json:"consensus_type"`
 	Id            string `json:"_id,omitempty"`
 	State         string `json:"state,omitempty"`
+	ReleaseId     string `json:"release_id,omitempty"`
 }
 
 const (
@@ -38,7 +39,6 @@ func NewEnvironment(name, description, provider, consensus string) Environment {
 		Description:   description,
 		Provider:      provider,
 		ConsensusType: consensus,
-		Id:            "",
 	}
 }
 
