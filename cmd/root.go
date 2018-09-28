@@ -105,4 +105,6 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err != nil {
 		fmt.Printf("\nCan't read config: %v, will rely on environment variables for required configurations\n", err)
 	}
+
+	viper.SetDefault("debug", false)
 }
