@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package cmd
 
 import (
@@ -18,6 +19,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/kaleido-io/kaleido-sdk-go/cmd/registry"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -41,7 +43,7 @@ var appCredsId string
 var deleteId string
 
 var rootCmd = &cobra.Command{
-	Use: "kld",
+	Use:   "kld",
 	Short: "Command Line Tool for Kaleido resources management",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Printf("API URL: %s\n", viper.Get("api.url"))
@@ -77,6 +79,9 @@ func init() {
 	rootCmd.AddCommand(newDeleteCmd())
 	rootCmd.AddCommand(newListCmd())
 	rootCmd.AddCommand(newGetCmd())
+
+	// add registry command
+	rootCmd.AddCommand(registry.NewRegistryCmd())
 }
 
 func initConfig() {
