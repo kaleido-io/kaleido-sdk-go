@@ -14,10 +14,6 @@
 package registry
 
 import (
-	"errors"
-	"fmt"
-
-	eth "github.com/ethereum/go-ethereum/common"
 	"github.com/kaleido-io/kaleido-sdk-go/kaleido/registry"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -26,16 +22,41 @@ import (
 var orgsListCmd = &cobra.Command{
 	Use:   "orgs",
 	Short: "List the orgs",
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("orgs")
+	Args:  cobra.NoArgs,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		org := registry.Organization{}
+		var verifiedOrgs *[]registry.VerifiedOrganization
+		var err error
+		if verifiedOrgs, err = org.InvokeList(); err != nil {
+			cmd.SilenceUsage = true  // not a usage error at this point
+			cmd.SilenceErrors = true // no need to display Error:, this still displays the error that is returned from RunE
+			return err
+		}
+		jsonPrint(*verifiedOrgs)
+		return nil
 	},
 }
 
 var orgGetCmd = &cobra.Command{
-	Use:   "orgs",
+	Use:   "org",
 	Short: "Get the org details",
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Get org details")
+	Args: func(cmd *cobra.Command, args []string) error {
+		if err := cobra.ExactArgs(1)(cmd, args); err != nil {
+			return err
+		}
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		org := registry.NewOrganization(cmd, args)
+		var verified *registry.VerifiedOrganization
+		var err error
+		if verified, err = org.InvokeGet(); err != nil {
+			cmd.SilenceUsage = true  // not a usage error at this point
+			cmd.SilenceErrors = true // no need to display Error:, this still displays the error that is returned from RunE
+			return err
+		}
+		jsonPrint(*verified)
+		return nil
 	},
 }
 
@@ -64,44 +85,48 @@ var orgCreateCmd = &cobra.Command{
 	},
 }
 
-type ethereumValue struct {
-	address string
-}
-
-func (value *ethereumValue) String() string {
-	return value.address
-}
-
-func (value *ethereumValue) Set(address string) error {
-	if !eth.IsHexAddress(address) {
-		return errors.New("owner must be a valid ethereum address")
-	}
-	value.address = address
-	return nil
-}
-
-func (value *ethereumValue) Type() string {
-	return "ethereum-address"
-}
-
 var ownerAddress ethereumValue
 
-func init() {
+func initCreateOrgCmd() {
 	flags := orgCreateCmd.Flags()
-	// —proof=/path/to/cert —path=/ --owner 0xasdfasdfasdfsadfdasdf
+
 	flags.StringP("memberid", "m", "", "Membership ID of the org")
 	flags.StringP("proof", "p", "", "Path to identity certificate used when identifying organization on Kaleido")
 	flags.StringP("key", "k", "", "Path to a key that should be used for signing the payload for registration")
 	flags.VarP(&ethereumValue{}, "owner", "o", "Ethereum address for the owner of the organization")
-	viper.BindPFlag("memberid", flags.Lookup("memberid"))
-	viper.BindPFlag("proof", flags.Lookup("proof"))
-	viper.BindPFlag("key", flags.Lookup("key"))
-	viper.BindPFlag("owner", flags.Lookup("owner"))
+	viper.BindPFlag("registry.create.org.memberid", flags.Lookup("memberid"))
+	viper.BindPFlag("registry.create.org.proof", flags.Lookup("proof"))
+	viper.BindPFlag("registry.create.org.key", flags.Lookup("key"))
+	viper.BindPFlag("registry.create.org.owner", flags.Lookup("owner"))
 
 	orgCreateCmd.MarkFlagRequired("memberid")
 	orgCreateCmd.MarkFlagRequired("proof")
 	orgCreateCmd.MarkFlagRequired("key")
 	orgCreateCmd.MarkFlagRequired("owner")
+}
+
+func initGetOrgCmd() {
+	flags := orgGetCmd.Flags()
+
+	flags.StringP("memberid", "m", "", "Membership ID of the org")
+	viper.BindPFlag("registry.get.org.memberid", flags.Lookup("memberid"))
+
+	orgGetCmd.MarkFlagRequired("memberid")
+}
+
+func initListOrgCmd() {
+	flags := orgsListCmd.Flags()
+
+	flags.StringP("memberid", "m", "", "Membership ID of the org")
+	viper.BindPFlag("registry.get.orgs.memberid", flags.Lookup("memberid"))
+
+	orgsListCmd.MarkFlagRequired("memberid")
+}
+
+func init() {
+	initCreateOrgCmd()
+	initGetOrgCmd()
+	initListOrgCmd()
 
 	createCmd.AddCommand(orgCreateCmd)
 	getCmd.AddCommand(orgGetCmd)

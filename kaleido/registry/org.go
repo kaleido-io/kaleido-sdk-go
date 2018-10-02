@@ -36,13 +36,13 @@ type VerifiedOrganization struct {
 // NewOrganization creates a new organization from a command and its arguments
 func NewOrganization(cmd *cobra.Command, args []string) *Organization {
 	return &Organization{
-		Consortium:     viper.GetString("consortium"),
-		Environment:    viper.GetString("environment"),
-		MemberID:       viper.GetString("memberid"),
+		Consortium:     viper.GetString("registry.consortium"),
+		Environment:    viper.GetString("registry.environment"),
+		MemberID:       viper.GetString("registry.create.org.memberid"),
 		name:           args[0],
-		owner:          viper.GetString("owner"),
-		signingKeyFile: viper.GetString("key"),
-		certPEMFile:    viper.GetString("proof"),
+		owner:          viper.GetString("registry.create.org.owner"),
+		signingKeyFile: viper.GetString("registry.create.org.key"),
+		certPEMFile:    viper.GetString("registry.create.org.proof"),
 	}
 }
 
@@ -66,7 +66,7 @@ func (org *Organization) generateNonce() (string, error) {
 		Nonce string `json:"nonce,omitempty"`
 	}
 
-	client := utils().getClient()
+	client := utils().getAPIClient()
 	var noncePayload responseBody
 	response, err := client.R().
 		SetHeader("Content-Type", "application/json").
@@ -157,7 +157,7 @@ func (org *Organization) createSignedRequestForRegistration() (*SignedRequest, e
 // InvokeCreate registers a verified organization with the on-chain registry
 // and stores the proof on-chain
 func (org *Organization) InvokeCreate() (*VerifiedOrganization, error) {
-	client := utils().getClient()
+	client := utils().getAPIClient()
 
 	// sign payload
 	signedPayload, err := org.createSignedRequestForRegistration()
@@ -170,4 +170,28 @@ func (org *Organization) InvokeCreate() (*VerifiedOrganization, error) {
 
 	err = utils().validateCreateResponse(response, err, "identity")
 	return &verifiedOrg, err
+}
+
+// InvokeGet retrieve an organization
+func (org *Organization) InvokeGet() (*VerifiedOrganization, error) {
+	client := utils().getDirectoryClient()
+	var verifiedOrg VerifiedOrganization
+	response, err := client.R().SetResult(&verifiedOrg).Get("/orgs/" + org.name)
+
+	err = utils().validateGetResponse(response, err, "org")
+	return &verifiedOrg, err
+}
+
+// InvokeList retrieve a list of registered top-level organizations
+func (org *Organization) InvokeList() (*[]VerifiedOrganization, error) {
+	type responseBodyType struct {
+		Count int                    `json:"count,omitempty"`
+		Orgs  []VerifiedOrganization `json:"orgs,omitempty"`
+	}
+	var responseBody responseBodyType
+	client := utils().getDirectoryClient()
+	response, err := client.R().SetResult(&responseBody).Get("/orgs")
+
+	err = utils().validateGetResponse(response, err, "orgs")
+	return &responseBody.Orgs, err
 }

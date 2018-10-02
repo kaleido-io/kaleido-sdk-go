@@ -31,14 +31,16 @@ func init() {
 	registryCmd.PersistentFlags().StringP("id", "i", "", "Service ID (optional)")
 	registryCmd.PersistentFlags().StringP("consortium", "c", "", "Consortium ID")
 	registryCmd.PersistentFlags().StringP("environment", "e", "", "Environment ID")
-	viper.BindPFlag("consortium", registryCmd.PersistentFlags().Lookup("consortium"))
-	viper.BindPFlag("environment", registryCmd.PersistentFlags().Lookup("environment"))
+	registryCmd.PersistentFlags().StringP("profile", "r", "default", "Profile to use for network connections")
+	viper.BindPFlag("registry.consortium", registryCmd.PersistentFlags().Lookup("consortium"))
+	viper.BindPFlag("registry.environment", registryCmd.PersistentFlags().Lookup("environment"))
+	viper.BindPFlag("profile", registryCmd.PersistentFlags().Lookup("profile"))
 
 	registryCmd.MarkPersistentFlagRequired("consortium")
 	registryCmd.MarkPersistentFlagRequired("environment")
 
 	viper.BindPFlag("services.idregistry.id", registryCmd.PersistentFlags().Lookup("id"))
-	viper.RegisterAlias("id", "services.idregistry.id")
+	viper.RegisterAlias("registry.id", "services.idregistry.id")
 }
 
 // NewRegistryCmd registry cmd
