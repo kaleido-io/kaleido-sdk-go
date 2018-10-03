@@ -5,11 +5,8 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/accounts"
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
@@ -87,32 +84,11 @@ func (u *User) InvokeList() (*[]User, error) {
 	return &users, nil
 }
 
-func (u *User) getAccountForAddress(ks *keystore.KeyStore, hexAddress string) (*accounts.Account, error) {
-	signerAccount := common.HexToAddress(hexAddress)
-	if ks.HasAddress(signerAccount) {
-		for _, account := range ks.Accounts() {
-			if account.Address == signerAccount {
-				return &account, nil
-			}
-		}
-	}
-	return nil, fmt.Errorf("Account for address %s not found", hexAddress)
-}
-
-func (u *User) newKeyStoreTransactor(from *accounts.Account, keystore *keystore.KeyStore, chainID *big.Int) *bind.TransactOpts {
-	return &bind.TransactOpts{
-		From: from.Address,
-		Signer: func(signer types.Signer, address common.Address, tx *types.Transaction) (*types.Transaction, error) {
-			return keystore.SignTxWithPassphrase(*from, "test", tx, chainID)
-		},
-	}
-}
-
 // InvokeCreate create a user
 func (u *User) InvokeCreate() (*User, error) {
 	ks := keystore.NewKeyStore(viper.GetString("registry.create.user.keystore"), keystore.StandardScryptN, keystore.StandardScryptP)
 
-	if account, err := u.getAccountForAddress(ks, viper.GetString("registry.create.user.signer")); err == nil {
+	if account, err := utils().getAccountForAddress(ks, viper.GetString("registry.create.user.signer")); err == nil {
 		client := utils().getNodeClient()
 
 		nonce, err := client.PendingNonceAt(context.Background(), account.Address)
@@ -125,7 +101,7 @@ func (u *User) InvokeCreate() (*User, error) {
 			return nil, err
 		}
 
-		auth := u.newKeyStoreTransactor(account, ks, nil) // TODO add chain id
+		auth := utils().newKeyStoreTransactor(account, ks, nil) // TODO add chain id
 		auth.Nonce = big.NewInt(int64(nonce))
 		auth.GasPrice = gasPrice
 		auth.GasLimit = uint64(300000)

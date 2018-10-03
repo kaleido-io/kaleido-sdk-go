@@ -4,7 +4,13 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"math/big"
 
+	"github.com/ethereum/go-ethereum/accounts"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	"github.com/ethereum/go-ethereum/accounts/keystore"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
 	ethclient "github.com/ethereum/go-ethereum/ethclient"
 	"github.com/spf13/viper"
 	resty "gopkg.in/resty.v1"
@@ -13,14 +19,21 @@ import (
 type utilsInterface interface {
 	getRegistryURL() string
 	getAPIClient() *resty.Client
+
 	getDirectoryAddress() string
 	getDirectoryClient() *resty.Client
+
+	getProfilesAddress() string
+	getProfilesClient() *resty.Client
+
 	getNodeClient() *ethclient.Client
 	validateGetResponse(res *resty.Response, err error, resourceName string) error
 	validateCreateResponse(res *resty.Response, err error, resourceName string) error
 
 	generateNodeID(path string) string
 	generateUserID(path string, email string) string
+	newKeyStoreTransactor(from *accounts.Account, keystore *keystore.KeyStore, chainID *big.Int) *bind.TransactOpts
+	getAccountForAddress(ks *keystore.KeyStore, hexAddress string) (*accounts.Account, error)
 }
 
 var instance *utilsImpl
@@ -38,11 +51,16 @@ func utils() utilsInterface {
 }
 
 type utilsImpl struct {
-	registryURL      string
-	apiClient        *resty.Client
+	registryURL string
+	apiClient   *resty.Client
+
 	directoryAddress string
 	directoryClient  *resty.Client
-	nodeClient       *ethclient.Client
+
+	profilesAddress string
+	profilesClient  *resty.Client
+
+	nodeClient *ethclient.Client
 }
 
 func (u *utilsImpl) initAPIClient() {
@@ -53,14 +71,19 @@ func (u *utilsImpl) initAPIClient() {
 }
 
 func (u *utilsImpl) initDirectoryClient() error {
-	address, err := u.fetchContractAddress()
+	directory, profiles, err := u.fetchOnChainAddresses()
 	if err != nil {
 		return err
 	}
-	u.directoryAddress = address
+	u.directoryAddress = directory
+	u.profilesAddress = profiles
+
 	directoryURL := utils().getRegistryURL() + "/directories/" + u.directoryAddress
+	profilesURL := utils().getRegistryURL() + "/properties/" + u.profilesAddress
 
 	u.directoryClient = resty.New().SetHostURL(directoryURL).SetAuthToken(viper.GetString("api.key"))
+	u.profilesClient = resty.New().SetHostURL(profilesURL).SetAuthToken(viper.GetString("api.key"))
+
 	return nil
 }
 
@@ -117,6 +140,14 @@ func (u *utilsImpl) getDirectoryClient() *resty.Client {
 	return u.directoryClient
 }
 
+func (u *utilsImpl) getProfilesAddress() string {
+	return u.profilesAddress
+}
+
+func (u *utilsImpl) getProfilesClient() *resty.Client {
+	return u.profilesClient
+}
+
 func (u *utilsImpl) getNodeClient() *ethclient.Client {
 	return u.nodeClient
 }
@@ -138,7 +169,7 @@ func (u *utilsImpl) validateCreateResponse(res *resty.Response, err error, resou
 	return nil
 }
 
-func (u *utilsImpl) fetchContractAddress() (string, error) {
+func (u *utilsImpl) fetchOnChainAddresses() (string, string, error) {
 	type responseBody struct {
 		ID          string `json:"_id,omitempty"`
 		Name        string `json:"name,omitempty"`
@@ -151,13 +182,13 @@ func (u *utilsImpl) fetchContractAddress() (string, error) {
 	client := utils().getAPIClient()
 	_, err := client.R().SetResult(&directories).Get("/directories")
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 	if len(directories) < 1 {
-		return "", errors.New("Unexpected error: no directories available")
+		return "", "", errors.New("Unexpected error: no directories available")
 	}
 
-	return directories[0].Directory, nil
+	return directories[0].Directory, directories[0].Profiles, nil
 }
 
 func (u *utilsImpl) generateNodeID(path string) string {
@@ -168,4 +199,25 @@ func (u *utilsImpl) generateNodeID(path string) string {
 func (u *utilsImpl) generateUserID(path string, email string) string {
 	// TODO calculate email hass
 	return email
+}
+
+func (u *utilsImpl) newKeyStoreTransactor(from *accounts.Account, keystore *keystore.KeyStore, chainID *big.Int) *bind.TransactOpts {
+	return &bind.TransactOpts{
+		From: from.Address,
+		Signer: func(signer types.Signer, address common.Address, tx *types.Transaction) (*types.Transaction, error) {
+			return keystore.SignTxWithPassphrase(*from, "test", tx, chainID)
+		},
+	}
+}
+
+func (u *utilsImpl) getAccountForAddress(ks *keystore.KeyStore, hexAddress string) (*accounts.Account, error) {
+	signerAccount := common.HexToAddress(hexAddress)
+	if ks.HasAddress(signerAccount) {
+		for _, account := range ks.Accounts() {
+			if account.Address == signerAccount {
+				return &account, nil
+			}
+		}
+	}
+	return nil, fmt.Errorf("Account for address %s not found", hexAddress)
 }

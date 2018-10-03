@@ -19,6 +19,8 @@ import (
 	"os"
 	"strings"
 
+	"github.com/kaleido-io/kaleido-sdk-go/cmd/profile"
+
 	"github.com/kaleido-io/kaleido-sdk-go/cmd/registry"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
@@ -82,6 +84,7 @@ func init() {
 
 	// add registry command
 	rootCmd.AddCommand(registry.NewRegistryCmd())
+	rootCmd.AddCommand(profile.NewProfileCmd())
 }
 
 func initConfig() {
