@@ -104,14 +104,19 @@ func (p *Profile) GetPropertyByRevision(owner string, key string, revisionIndex 
 func (p *Profile) GetProperties(owner string) (*[]Property, error) {
 	client := utils().getProfilesClient()
 
-	type responseBodyType struct {
+	type keys struct {
 		Count  int        `json:"count,omitempty"`
 		Values []Property `json:"values,omitempty"`
 	}
+
+	type responseBodyType struct {
+		Keys keys `json:"keys,omitempty"`
+	}
+
 	var responseBody responseBodyType
 	response, err := client.R().SetResult(&responseBody).Get("/profiles/" + owner)
 	if err := utils().validateGetResponse(response, err, "profile"); err != nil {
 		return nil, err
 	}
-	return &responseBody.Values, nil
+	return &responseBody.Keys.Values, nil
 }
