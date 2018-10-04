@@ -17,7 +17,6 @@ import (
 	"github.com/kaleido-io/kaleido-sdk-go/cmd/common"
 	"github.com/kaleido-io/kaleido-sdk-go/kaleido/registry"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var usersListCmd = &cobra.Command{
@@ -25,12 +24,12 @@ var usersListCmd = &cobra.Command{
 	Short: "List the users within an org",
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		var err error
 		user := &registry.User{
-			Parent: viper.GetString("registry.get.users.parent"),
+			Parent: cmd.Flags().Lookup("parent").Value.String(),
 		}
 
 		var users *[]registry.User
-		var err error
 		if users, err = user.InvokeList(); err != nil {
 			cmd.SilenceUsage = true  // not a usage error at this point
 			cmd.SilenceErrors = true // no need to display Error:, this still displays the error that is returned from RunE
@@ -52,7 +51,7 @@ var userGetCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		user := &registry.User{
-			Parent: viper.GetString("registry.get.user.parent"),
+			Parent: cmd.Flags().Lookup("parent").Value.String(),
 			Email:  args[0],
 		}
 
@@ -77,9 +76,24 @@ var userCreateCmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		user := registry.NewUser(cmd, args)
+		var user *registry.User
+		user = &registry.User{
+			Email:       args[0],
+			Consortium:  cmd.Flags().Lookup("consortium").Value.String(),
+			Environment: cmd.Flags().Lookup("environment").Value.String(),
+			MemberID:    cmd.Flags().Lookup("memberid").Value.String(),
+			Parent:      cmd.Flags().Lookup("parent").Value.String(),
+			Owner:       cmd.Flags().Lookup("owner").Value.String(),
+		}
+
+		var keystorePath string
+		var signer string
+
+		keystorePath = cmd.Flags().Lookup("keystore").Value.String()
+		signer = cmd.Flags().Lookup("signer").Value.String()
+
 		var err error
-		if err = user.InvokeCreate(); err != nil {
+		if err = user.InvokeCreate(keystorePath, signer); err != nil {
 			cmd.SilenceUsage = true  // not a usage error at this point
 			cmd.SilenceErrors = true // no need to display Error:, this still displays the error that is returned from RunE
 			return err
@@ -92,15 +106,10 @@ func initCreateUserCmd() {
 	flags := userCreateCmd.Flags()
 
 	flags.StringP("memberid", "m", "", "Membership ID of the org")
-	flags.VarP(&common.EthereumAddress{}, "account", "a", "Ethereum to account to use")
+	flags.VarP(&common.EthereumAddress{}, "owner", "o", "Ethereum account that the user owns")
 	flags.StringP("keystore", "k", "", "Keystore path so accounts can be used to sign tx")
-	flags.StringP("signer", "s", "", "Account to use to sign tx")
+	flags.VarP(&common.EthereumAddress{}, "signer", "s", "Account to use to sign tx")
 	flags.StringP("parent", "p", "", "Path to the parent org or group")
-	viper.BindPFlag("registry.create.user.memberid", flags.Lookup("memberid"))
-	viper.BindPFlag("registry.create.user.account", flags.Lookup("account"))
-	viper.BindPFlag("registry.create.user.keystore", flags.Lookup("keystore"))
-	viper.BindPFlag("registry.create.user.signer", flags.Lookup("signer"))
-	viper.BindPFlag("registry.create.user.parent", flags.Lookup("parent"))
 
 	userCreateCmd.MarkFlagRequired("memberid")
 	userCreateCmd.MarkFlagRequired("account")
@@ -114,9 +123,6 @@ func initGetUserCmd() {
 	flags.StringP("memberid", "m", "", "Membership ID of the org")
 	flags.StringP("parent", "p", "", "Path to the parent org or group")
 
-	viper.BindPFlag("registry.get.user.memberid", flags.Lookup("memberid"))
-	viper.BindPFlag("registry.get.user.parent", flags.Lookup("parent"))
-
 	userCreateCmd.MarkFlagRequired("memberid")
 	userCreateCmd.MarkFlagRequired("parent")
 }
@@ -126,9 +132,6 @@ func initListUserCmd() {
 
 	flags.StringP("memberid", "m", "", "Membership ID of the org")
 	flags.StringP("parent", "p", "", "Path to the parent org or group")
-
-	viper.BindPFlag("registry.get.users.memberid", flags.Lookup("memberid"))
-	viper.BindPFlag("registry.get.users.parent", flags.Lookup("parent"))
 
 	userCreateCmd.MarkFlagRequired("memberid")
 	userCreateCmd.MarkFlagRequired("parent")

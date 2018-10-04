@@ -7,8 +7,6 @@ import (
 
 	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	directory "github.com/kaleido-io/kaleido-sdk-go/contracts/directory"
@@ -23,17 +21,6 @@ type User struct {
 	Parent      string `json:"parent,omitempty"`
 	UserID      string `json:"id,omitempty"`
 	Owner       string `json:"owner,omitempty"`
-}
-
-// NewUser new user for creation
-func NewUser(cmd *cobra.Command, args []string) *User {
-	return &User{
-		Email:       args[0],
-		Consortium:  viper.GetString("registry.consortium"),
-		Environment: viper.GetString("registry.environment"),
-		MemberID:    viper.GetString("registry.create.user.memberid"),
-		Parent:      viper.GetString("registry.create.user.parent"),
-	}
 }
 
 // InvokeGet get a user
@@ -85,10 +72,10 @@ func (u *User) InvokeList() (*[]User, error) {
 }
 
 // InvokeCreate create a user
-func (u *User) InvokeCreate() error {
-	ks := keystore.NewKeyStore(viper.GetString("registry.create.user.keystore"), keystore.StandardScryptN, keystore.StandardScryptP)
+func (u *User) InvokeCreate(keystorePath string, signer string) error {
+	ks := keystore.NewKeyStore(keystorePath, keystore.StandardScryptN, keystore.StandardScryptP)
 
-	if account, err := utils().getAccountForAddress(ks, viper.GetString("registry.create.user.signer")); err == nil {
+	if account, err := utils().getAccountForAddress(ks, signer); err == nil {
 		client := utils().getNodeClient()
 
 		nonce, err := client.PendingNonceAt(context.Background(), account.Address)
@@ -115,7 +102,7 @@ func (u *User) InvokeCreate() error {
 		var parent [32]byte
 		parentBytes, _ := hexutil.Decode(u.Parent)
 		copy(parent[:], parentBytes)
-		tx, err := instance.SetUserDetails(auth, parent, u.Email, account.Address)
+		tx, err := instance.SetUserDetails(auth, parent, u.Email, common.HexToAddress(u.Owner))
 		if err != nil {
 			return err
 		}

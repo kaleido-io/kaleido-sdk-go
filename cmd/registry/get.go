@@ -14,17 +14,12 @@
 package registry
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 )
 
 var getCmd = &cobra.Command{
 	Use:   "get",
 	Short: "get org(s), group(s), and user(s)",
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("get command")
-	},
 }
 
 func init() {

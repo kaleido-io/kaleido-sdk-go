@@ -15,20 +15,12 @@
 package registry
 
 import (
-	"errors"
-
 	"github.com/spf13/cobra"
 )
 
 var createCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create orgs, groups, and users",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) < 1 {
-			return errors.New("Missing required argument(s)")
-		}
-		return nil
-	},
 }
 
 func init() {

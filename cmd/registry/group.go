@@ -51,7 +51,8 @@ var groupCreateCmd = &cobra.Command{
 }
 
 func init() {
-	createCmd.AddCommand(groupCreateCmd)
-	getCmd.AddCommand(groupGetCmd)
-	getCmd.AddCommand(groupsListCmd)
+	// TODO future additions
+	// createCmd.AddCommand(groupCreateCmd)
+	// getCmd.AddCommand(groupGetCmd)
+	// getCmd.AddCommand(groupsListCmd)
 }

@@ -17,7 +17,6 @@ import (
 	"github.com/kaleido-io/kaleido-sdk-go/cmd/common"
 	"github.com/kaleido-io/kaleido-sdk-go/kaleido/registry"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var orgsListCmd = &cobra.Command{
@@ -48,7 +47,12 @@ var orgGetCmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		org := registry.NewOrganization(cmd, args)
+		org := &registry.Organization{
+			Consortium:  cmd.Flags().Lookup("consortium").Value.String(),
+			Environment: cmd.Flags().Lookup("environment").Value.String(),
+			MemberID:    cmd.Flags().Lookup("memberid").Value.String(),
+			Name:        args[0],
+		}
 		var verified *registry.VerifiedOrganization
 		var err error
 		if verified, err = org.InvokeGet(); err != nil {
@@ -72,7 +76,15 @@ var orgCreateCmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		org := registry.NewOrganization(cmd, args)
+		org := &registry.Organization{
+			Consortium:     cmd.Flags().Lookup("consortium").Value.String(),
+			Environment:    cmd.Flags().Lookup("environment").Value.String(),
+			MemberID:       cmd.Flags().Lookup("memberid").Value.String(),
+			Name:           args[0],
+			Owner:          cmd.Flags().Lookup("owner").Value.String(),
+			SigningKeyFile: cmd.Flags().Lookup("key").Value.String(),
+			CertPEMFile:    cmd.Flags().Lookup("proof").Value.String(),
+		}
 
 		var verified *registry.VerifiedOrganization
 		var err error
@@ -93,10 +105,6 @@ func initCreateOrgCmd() {
 	flags.StringP("proof", "p", "", "Path to identity certificate used when identifying organization on Kaleido")
 	flags.StringP("key", "k", "", "Path to a key that should be used for signing the payload for registration")
 	flags.VarP(&common.EthereumAddress{}, "owner", "o", "Ethereum address for the owner of the organization")
-	viper.BindPFlag("registry.create.org.memberid", flags.Lookup("memberid"))
-	viper.BindPFlag("registry.create.org.proof", flags.Lookup("proof"))
-	viper.BindPFlag("registry.create.org.key", flags.Lookup("key"))
-	viper.BindPFlag("registry.create.org.owner", flags.Lookup("owner"))
 
 	orgCreateCmd.MarkFlagRequired("memberid")
 	orgCreateCmd.MarkFlagRequired("proof")
@@ -108,7 +116,6 @@ func initGetOrgCmd() {
 	flags := orgGetCmd.Flags()
 
 	flags.StringP("memberid", "m", "", "Membership ID of the org")
-	viper.BindPFlag("registry.get.org.memberid", flags.Lookup("memberid"))
 
 	orgGetCmd.MarkFlagRequired("memberid")
 }
@@ -117,7 +124,6 @@ func initListOrgCmd() {
 	flags := orgsListCmd.Flags()
 
 	flags.StringP("memberid", "m", "", "Membership ID of the org")
-	viper.BindPFlag("registry.get.orgs.memberid", flags.Lookup("memberid"))
 
 	orgsListCmd.MarkFlagRequired("memberid")
 }

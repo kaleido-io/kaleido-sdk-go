@@ -8,8 +8,6 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	jose "gopkg.in/square/go-jose.v2"
 )
 
@@ -18,10 +16,10 @@ type Organization struct {
 	Consortium     string `json:"consortia_id,omitempty"`
 	Environment    string `json:"environment_id,omitempty"`
 	MemberID       string `json:"membership_id,omitempty"`
-	name           string
-	owner          string
-	signingKeyFile string
-	certPEMFile    string
+	Name           string
+	Owner          string
+	SigningKeyFile string
+	CertPEMFile    string
 }
 
 // VerifiedOrganization ...
@@ -31,19 +29,6 @@ type VerifiedOrganization struct {
 	Owner    string `json:"owner,omitempty"`
 	Proof    string `json:"proof,omitempty"`
 	ParentID string `json:"parent,omitempty"`
-}
-
-// NewOrganization creates a new organization from a command and its arguments
-func NewOrganization(cmd *cobra.Command, args []string) *Organization {
-	return &Organization{
-		Consortium:     viper.GetString("registry.consortium"),
-		Environment:    viper.GetString("registry.environment"),
-		MemberID:       viper.GetString("registry.create.org.memberid"),
-		name:           args[0],
-		owner:          viper.GetString("registry.create.org.owner"),
-		signingKeyFile: viper.GetString("registry.create.org.key"),
-		certPEMFile:    viper.GetString("registry.create.org.proof"),
-	}
 }
 
 // JSONWebSignature json representation of JWS
@@ -97,7 +82,7 @@ func (org *Organization) createSignedRequestForRegistration() (*SignedRequest, e
 	}
 
 	// read the key file
-	pemEncodedBytes, err := ioutil.ReadFile(org.signingKeyFile)
+	pemEncodedBytes, err := ioutil.ReadFile(org.SigningKeyFile)
 	if err != nil {
 		return nil, err
 	}
@@ -112,7 +97,7 @@ func (org *Organization) createSignedRequestForRegistration() (*SignedRequest, e
 	defer zeroKey(ecdsaKey)
 
 	// read the provided proof
-	proof, err := ioutil.ReadFile(org.certPEMFile)
+	proof, err := ioutil.ReadFile(org.CertPEMFile)
 	if err != nil {
 		return nil, err
 	}
@@ -132,9 +117,9 @@ func (org *Organization) createSignedRequestForRegistration() (*SignedRequest, e
 	jsonBytes, err := json.Marshal(map[string]interface{}{
 		"envId":   org.Environment,
 		"nonce":   nonce,
-		"name":    org.name,
+		"name":    org.Name,
 		"proof":   string(proof),
-		"address": org.owner})
+		"address": org.Owner})
 
 	if err != nil {
 		return nil, err
@@ -176,7 +161,7 @@ func (org *Organization) InvokeCreate() (*VerifiedOrganization, error) {
 func (org *Organization) InvokeGet() (*VerifiedOrganization, error) {
 	client := utils().getDirectoryClient()
 	var verifiedOrg VerifiedOrganization
-	response, err := client.R().SetResult(&verifiedOrg).Get("/orgs/" + org.name)
+	response, err := client.R().SetResult(&verifiedOrg).Get("/orgs/" + org.Name)
 
 	err = utils().validateGetResponse(response, err, "org")
 	return &verifiedOrg, err

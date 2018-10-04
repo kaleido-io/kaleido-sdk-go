@@ -59,7 +59,6 @@ func (p *Profile) SetProperty(key string, value string, revision string) error {
 		}
 
 		var compressedValue = base64.StdEncoding.EncodeToString(buffer.Bytes())
-		fmt.Println(compressedValue)
 
 		var tx *types.Transaction
 		if revision != "" {

@@ -21,7 +21,6 @@ import (
 	common "github.com/kaleido-io/kaleido-sdk-go/cmd/common"
 	"github.com/kaleido-io/kaleido-sdk-go/kaleido/registry"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var keysListCmd = &cobra.Command{
@@ -150,8 +149,6 @@ func initGetKeyCmd() {
 	flags.VarP(&common.EthereumAddress{}, "owner", "o", "Ethereum account of the owner of the profile")
 	flags.StringP("revision", "n", "", "Revision for the key")
 
-	// viper.BindPFlag("profile.get.key.owner", flags.Lookup("owner"))
-
 	keyGetCmd.MarkFlagRequired("owner")
 }
 
@@ -159,7 +156,6 @@ func initListKeysCmd() {
 	flags := keysListCmd.Flags()
 
 	flags.VarP(&common.EthereumAddress{}, "owner", "o", "Ethereum account of the owner of the profile")
-	viper.BindPFlag("profile.get.key.owner", flags.Lookup("owner"))
 
 	keysListCmd.MarkFlagRequired("owner")
 }
