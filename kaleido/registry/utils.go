@@ -157,7 +157,20 @@ func (u *utilsImpl) getNodeClient() *ethclient.Client {
 func (u *utilsImpl) validateGetResponse(res *resty.Response, err error, resourceName string) error {
 	if res.StatusCode() != 200 {
 		if err != nil {
-			fmt.Printf(err.Error())
+			fmt.Println(err.Error())
+		}
+		if res.StatusCode() >= 400 && res.StatusCode() < 500 {
+			type photicError struct {
+				ErrorMessage string `json:"errorMessage,omitempty"`
+			}
+
+			var e photicError
+			unmarshalError := json.Unmarshal(res.Body(), &e)
+			if unmarshalError != nil {
+				fmt.Println(unmarshalError)
+			} else {
+				return errors.New(e.ErrorMessage)
+			}
 		}
 		return fmt.Errorf("could not retrieve %s. status code: %d", resourceName, res.StatusCode())
 	}
@@ -166,6 +179,23 @@ func (u *utilsImpl) validateGetResponse(res *resty.Response, err error, resource
 
 func (u *utilsImpl) validateCreateResponse(res *resty.Response, err error, resourceName string) error {
 	if res.StatusCode() != 201 && res.StatusCode() != 200 {
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+
+		if res.StatusCode() >= 400 && res.StatusCode() < 500 {
+			type photicError struct {
+				ErrorMessage string `json:"errorMessage,omitempty"`
+			}
+
+			var e photicError
+			unmarshalError := json.Unmarshal(res.Body(), &e)
+			if unmarshalError != nil {
+				fmt.Println(unmarshalError)
+			} else {
+				return errors.New(e.ErrorMessage)
+			}
+		}
 		return fmt.Errorf("could not create %s. status code: %d", resourceName, res.StatusCode())
 	}
 	return nil
