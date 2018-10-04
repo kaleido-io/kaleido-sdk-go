@@ -85,7 +85,7 @@ func (u *User) InvokeList() (*[]User, error) {
 }
 
 // InvokeCreate create a user
-func (u *User) InvokeCreate() (*User, error) {
+func (u *User) InvokeCreate() error {
 	ks := keystore.NewKeyStore(viper.GetString("registry.create.user.keystore"), keystore.StandardScryptN, keystore.StandardScryptP)
 
 	if account, err := utils().getAccountForAddress(ks, viper.GetString("registry.create.user.signer")); err == nil {
@@ -93,12 +93,12 @@ func (u *User) InvokeCreate() (*User, error) {
 
 		nonce, err := client.PendingNonceAt(context.Background(), account.Address)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		gasPrice, err := client.SuggestGasPrice(context.Background())
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		auth := utils().newKeyStoreTransactor(account, ks, nil) // TODO add chain id
@@ -109,7 +109,7 @@ func (u *User) InvokeCreate() (*User, error) {
 
 		instance, err := directory.NewDirectory(common.HexToAddress(utils().getDirectoryAddress()), client)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		var parent [32]byte
@@ -117,22 +117,17 @@ func (u *User) InvokeCreate() (*User, error) {
 		copy(parent[:], parentBytes)
 		tx, err := instance.SetUserDetails(auth, parent, u.Email, account.Address)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		fmt.Println("tx sent:", tx.Hash().Hex())
 		receipt, err := client.TransactionReceipt(context.Background(), tx.Hash())
 		if err != nil {
-			return nil, err
+			return err
 		}
 		fmt.Println("tx receipt, stats", receipt.Status, "gas used = ", receipt.CumulativeGasUsed)
-		/*
-			for _, log := range receipt.Logs {
-				fmt.Printf("%+v\n", *log)
-			}
-		*/
 	} else {
-		return nil, err
+		return err
 	}
-	return nil, nil
+	return nil
 }

@@ -14,6 +14,7 @@
 package registry
 
 import (
+	"github.com/kaleido-io/kaleido-sdk-go/cmd/common"
 	"github.com/kaleido-io/kaleido-sdk-go/kaleido/registry"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -32,7 +33,7 @@ var orgsListCmd = &cobra.Command{
 			cmd.SilenceErrors = true // no need to display Error:, this still displays the error that is returned from RunE
 			return err
 		}
-		jsonPrint(*verifiedOrgs)
+		common.PrintJSON(*verifiedOrgs)
 		return nil
 	},
 }
@@ -55,7 +56,7 @@ var orgGetCmd = &cobra.Command{
 			cmd.SilenceErrors = true // no need to display Error:, this still displays the error that is returned from RunE
 			return err
 		}
-		jsonPrint(*verified)
+		common.PrintJSON(*verified)
 		return nil
 	},
 }
@@ -80,12 +81,10 @@ var orgCreateCmd = &cobra.Command{
 			cmd.SilenceErrors = true // no need to display Error:, this still displays the error that is returned from RunE
 			return err
 		}
-		jsonPrint(*verified)
+		common.PrintJSON(*verified)
 		return nil
 	},
 }
-
-var ownerAddress ethereumValue
 
 func initCreateOrgCmd() {
 	flags := orgCreateCmd.Flags()
@@ -93,7 +92,7 @@ func initCreateOrgCmd() {
 	flags.StringP("memberid", "m", "", "Membership ID of the org")
 	flags.StringP("proof", "p", "", "Path to identity certificate used when identifying organization on Kaleido")
 	flags.StringP("key", "k", "", "Path to a key that should be used for signing the payload for registration")
-	flags.VarP(&ethereumValue{}, "owner", "o", "Ethereum address for the owner of the organization")
+	flags.VarP(&common.EthereumAddress{}, "owner", "o", "Ethereum address for the owner of the organization")
 	viper.BindPFlag("registry.create.org.memberid", flags.Lookup("memberid"))
 	viper.BindPFlag("registry.create.org.proof", flags.Lookup("proof"))
 	viper.BindPFlag("registry.create.org.key", flags.Lookup("key"))

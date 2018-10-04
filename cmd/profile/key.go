@@ -55,7 +55,36 @@ var keyGetCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		revision, _ := cmd.Flags().GetString("revision")
-		fmt.Println(revision)
+		profile := registry.Profile{}
+		owner := cmd.Flags().Lookup("owner").Value.String()
+
+		cmd.SilenceErrors = true
+		cmd.SilenceUsage = true
+		key := args[0]
+		if revision == "" {
+			property, err := profile.GetProperty(owner, key)
+			if err != nil {
+				return err
+			}
+			common.PrintJSON(property)
+		} else if revision == "all" {
+			properties, err := profile.GetPropertyAllVersions(owner, key)
+			if err != nil {
+				return err
+			}
+			common.PrintJSON(properties)
+		} else {
+			revisionIndex, err := strconv.ParseInt(revision, 10, 64)
+			if err != nil {
+				return err
+			}
+
+			property, err := profile.GetPropertyByRevision(owner, key, revisionIndex)
+			if err != nil {
+				return err
+			}
+			common.PrintJSON(property)
+		}
 		return nil
 	},
 }

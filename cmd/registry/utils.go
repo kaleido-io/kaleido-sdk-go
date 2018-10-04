@@ -15,13 +15,9 @@
 package registry
 
 import (
-	"encoding/json"
-	"errors"
 	"fmt"
-	"reflect"
 	"sync"
 
-	eth "github.com/ethereum/go-ethereum/common"
 	"github.com/spf13/viper"
 	"gopkg.in/resty.v1"
 )
@@ -81,48 +77,4 @@ func (u *utilsImpl) validateCreateResponse(res *resty.Response, err error, resou
 		return fmt.Errorf("could not create %s. status code: %d", resourceName, res.StatusCode())
 	}
 	return nil
-}
-
-func jsonPrintSingle(v interface{}) error {
-	b, err := json.Marshal(v)
-	if err != nil {
-		fmt.Println(err.Error())
-	} else {
-		fmt.Println(string(b))
-	}
-	return err
-}
-
-func jsonPrint(v interface{}) error {
-	val := reflect.ValueOf(v)
-	if val.Kind() == reflect.Array {
-		for i := 0; i < val.Len(); i++ {
-			if err := jsonPrintSingle(val.Index(i)); err != nil {
-				return err
-			}
-		}
-	} else {
-		return jsonPrintSingle(v)
-	}
-	return nil
-}
-
-type ethereumValue struct {
-	address string
-}
-
-func (value *ethereumValue) String() string {
-	return value.address
-}
-
-func (value *ethereumValue) Set(address string) error {
-	if !eth.IsHexAddress(address) {
-		return errors.New("must be a valid ethereum address")
-	}
-	value.address = address
-	return nil
-}
-
-func (value *ethereumValue) Type() string {
-	return "ethereum-address"
 }

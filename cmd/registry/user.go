@@ -14,6 +14,7 @@
 package registry
 
 import (
+	"github.com/kaleido-io/kaleido-sdk-go/cmd/common"
 	"github.com/kaleido-io/kaleido-sdk-go/kaleido/registry"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -35,7 +36,7 @@ var usersListCmd = &cobra.Command{
 			cmd.SilenceErrors = true // no need to display Error:, this still displays the error that is returned from RunE
 			return err
 		}
-		jsonPrint(users)
+		common.PrintJSON(users)
 		return nil
 	},
 }
@@ -61,7 +62,7 @@ var userGetCmd = &cobra.Command{
 			cmd.SilenceErrors = true // no need to display Error:, this still displays the error that is returned from RunE
 			return err
 		}
-		jsonPrint(user)
+		common.PrintJSON(user)
 		return nil
 	},
 }
@@ -78,12 +79,11 @@ var userCreateCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		user := registry.NewUser(cmd, args)
 		var err error
-		if user, err = user.InvokeCreate(); err != nil {
+		if err = user.InvokeCreate(); err != nil {
 			cmd.SilenceUsage = true  // not a usage error at this point
 			cmd.SilenceErrors = true // no need to display Error:, this still displays the error that is returned from RunE
 			return err
 		}
-		jsonPrint(user)
 		return nil
 	},
 }
@@ -92,7 +92,7 @@ func initCreateUserCmd() {
 	flags := userCreateCmd.Flags()
 
 	flags.StringP("memberid", "m", "", "Membership ID of the org")
-	flags.VarP(&ethereumValue{}, "account", "a", "Ethereum to account to use")
+	flags.VarP(&common.EthereumAddress{}, "account", "a", "Ethereum to account to use")
 	flags.StringP("keystore", "k", "", "Keystore path so accounts can be used to sign tx")
 	flags.StringP("signer", "s", "", "Account to use to sign tx")
 	flags.StringP("parent", "p", "", "Path to the parent org or group")

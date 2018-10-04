@@ -83,7 +83,7 @@ func (p *Profile) SetProperty(key string, value string, revision string) error {
 	return nil
 }
 
-// GetProperty get a property
+// GetProperty get a property's latest revision
 func (p *Profile) GetProperty(owner string, key string) (*Property, error) {
 	client := utils().getProfilesClient()
 
@@ -101,10 +101,28 @@ func (p *Profile) GetPropertyByRevision(owner string, key string, revisionIndex 
 
 	var property Property
 	response, err := client.R().SetResult(&property).Get("/profiles/" + owner + "/" + key + "/versions/" + strconv.FormatInt(revisionIndex, 10))
-	if err := utils().validateGetResponse(response, err, "profile key"); err != nil {
+	if err := utils().validateGetResponse(response, err, "key"); err != nil {
 		return nil, err
 	}
 	return &property, nil
+}
+
+// GetPropertyAllVersions all version for the given property
+func (p *Profile) GetPropertyAllVersions(owner string, key string) (*[]Property, error) {
+	client := utils().getProfilesClient()
+
+	type responseBodyType struct {
+		Count    int        `json:"count,omitempty"`
+		Versions []Property `json:"versions,omitempty"`
+	}
+
+	var responseBody responseBodyType
+	response, err := client.R().SetResult(&responseBody).Get("/profiles/" + owner + "/" + key + "/versions")
+	if err := utils().validateGetResponse(response, err, "key"); err != nil {
+		return nil, err
+	}
+	return &responseBody.Versions, nil
+
 }
 
 // GetProperties get the latest revision of all properties associated with this owner
