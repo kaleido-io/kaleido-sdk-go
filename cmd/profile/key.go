@@ -14,11 +14,10 @@
 package profile
 
 import (
-	"fmt"
 	"strconv"
 	"time"
 
-	common "github.com/kaleido-io/kaleido-sdk-go/cmd/common"
+	common "github.com/kaleido-io/kaleido-sdk-go/common"
 	"github.com/kaleido-io/kaleido-sdk-go/kaleido/registry"
 	"github.com/spf13/cobra"
 )
@@ -31,11 +30,11 @@ var keysListCmd = &cobra.Command{
 		profile := registry.Profile{}
 		owner := cmd.Flags().Lookup("owner").Value.String()
 
-		fmt.Println(owner)
-
 		var properties *[]registry.Property
 		var err error
 		if properties, err = profile.GetProperties(owner); err != nil {
+			cmd.SilenceErrors = true
+			cmd.SilenceUsage = true
 			return err
 		}
 		common.PrintJSON(properties)

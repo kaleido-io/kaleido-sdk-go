@@ -14,7 +14,7 @@
 package registry
 
 import (
-	"github.com/kaleido-io/kaleido-sdk-go/cmd/common"
+	"github.com/kaleido-io/kaleido-sdk-go/common"
 	"github.com/kaleido-io/kaleido-sdk-go/kaleido/registry"
 	"github.com/spf13/cobra"
 )

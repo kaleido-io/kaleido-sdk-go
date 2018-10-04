@@ -1,10 +1,12 @@
 package registry
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
 	"math/big"
+	"os"
 
 	"github.com/ethereum/go-ethereum/accounts"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -44,7 +46,7 @@ func utils() utilsInterface {
 		err := instance.initialize()
 		if err != nil {
 			fmt.Println(err.Error())
-			panic(0) // hacky but will do instead of adding an err check on all utils() call
+			os.Exit(1) // hacky but will do instead of adding an err check on all utils() call
 		}
 	}
 	return instance
@@ -180,10 +182,12 @@ func (u *utilsImpl) fetchOnChainAddresses() (string, string, error) {
 	}
 	var directories []responseBody
 	client := utils().getAPIClient()
-	_, err := client.R().SetResult(&directories).Get("/directories")
+	response, err := client.R().SetResult(&directories).Get("/directories")
+	err = u.validateGetResponse(response, err, "directories")
 	if err != nil {
 		return "", "", err
 	}
+
 	if len(directories) < 1 {
 		return "", "", errors.New("Unexpected error: no directories available")
 	}
