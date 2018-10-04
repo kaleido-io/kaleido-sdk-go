@@ -1,10 +1,15 @@
 package registry
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"math/big"
 	"strconv"
+
+	"compress/gzip"
+
+	"encoding/base64"
 
 	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"github.com/ethereum/go-ethereum/common"
@@ -32,20 +37,7 @@ func (p *Profile) SetProperty(key string, value string, revision string) error {
 	if account, err := utils().getAccountForAddress(ks, p.Signer); err == nil {
 		client := utils().getNodeClient()
 
-		nonce, err := client.PendingNonceAt(context.Background(), account.Address)
-		if err != nil {
-			return err
-		}
-
-		gasPrice, err := client.SuggestGasPrice(context.Background())
-		if err != nil {
-			return err
-		}
-
 		auth := utils().newKeyStoreTransactor(account, ks, nil) // TODO add chain id
-		auth.Nonce = big.NewInt(int64(nonce))
-		auth.GasPrice = gasPrice
-		auth.GasLimit = uint64(300000)
 		auth.Value = big.NewInt(0)
 
 		instance, err := profiles.NewProperties(common.HexToAddress(utils().getProfilesAddress()), client)
@@ -53,11 +45,27 @@ func (p *Profile) SetProperty(key string, value string, revision string) error {
 			return err
 		}
 
+		// compress the data
+		var buffer bytes.Buffer
+		gz := gzip.NewWriter(&buffer)
+		if _, err := gz.Write([]byte(value)); err != nil {
+			return err
+		}
+		if err := gz.Flush(); err != nil {
+			return err
+		}
+		if err := gz.Close(); err != nil {
+			return err
+		}
+
+		var compressedValue = base64.StdEncoding.EncodeToString(buffer.Bytes())
+		fmt.Println(compressedValue)
+
 		var tx *types.Transaction
 		if revision != "" {
-			tx, err = instance.SetWithVersion(auth, key, value, revision)
+			tx, err = instance.SetWithVersion(auth, key, compressedValue, revision)
 		} else {
-			tx, err = instance.Set(auth, key, value)
+			tx, err = instance.Set(auth, key, compressedValue)
 		}
 		if err != nil {
 			return err
@@ -81,7 +89,6 @@ func (p *Profile) GetProperty(owner string, key string) (*Property, error) {
 
 	var property Property
 	response, err := client.R().SetResult(&property).Get("/profiles/" + owner + "/" + key)
-	utils().validateGetResponse(response, err, "profile key")
 	if err := utils().validateGetResponse(response, err, "profile key"); err != nil {
 		return nil, err
 	}
