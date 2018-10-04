@@ -92,6 +92,8 @@ var keySetCmd = &cobra.Command{
 		}
 
 		if err = profile.SetProperty(args[0], value, revision); err != nil {
+			cmd.SilenceErrors = true
+			cmd.SilenceUsage = true
 			return err
 		}
 
@@ -104,7 +106,7 @@ func initSetKeyCmd() {
 
 	now := time.Now().Unix()
 	flags.StringP("value", "v", "", "Value for the key")
-	flags.VarP(&common.EthereumAddress{}, "owner", "s", "Account of the profile owner")
+	flags.VarP(&common.EthereumAddress{}, "owner", "o", "Account of the profile owner")
 	flags.StringP("keystore", "k", "", "Keystore path so accounts can be used to sign tx")
 	flags.StringP("revision", "n", strconv.FormatInt(now, 10), "Revision for the key")
 
