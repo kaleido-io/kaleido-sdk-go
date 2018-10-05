@@ -20,8 +20,8 @@
 //      "args": [ "registry", "get", "users", "-p", "0x7c909827dc917047b239b495ac7dada5284053624a72c9dc0ff3f0a2434c0e17", "-c", "zzyvgergbw",  "-e", "env1", "-m", "zzhytojgmv"],
 //      "args": [ "registry", "create", "user", "a@kaleido.io", "-p", "0x7c909827dc917047b239b495ac7dada5284053624a72c9dc0ff3f0a2434c0e17", "-c", "zzyvgergbw",  "-e", "env1", "-m", "zzhytojgmv", "-a", "0xdEC89f82A6934DE1EA00CEa5A64233AdB898ACD8", "--keystore", "/Users/azeem/Library/Ethereum/keystore", "--signer", "0x0b5f0dce6b8a4dc0c245cb3924fc480f8ccb9a6e"],
 //      "args": ["registry","get","user","0x3e6a2d9477df85a3141e093810b383ea063558a4fd5ba3031bd4afbe4430e327", "-p", "0x7c909827dc917047b239b495ac7dada5284053624a72c9dc0ff3f0a2434c0e17", "-c", "zzyvgergbw",  "-e", "env1", "-m", "zzhytojgmv"],
-//      "args": ["profile", "get", "keys", "--owner", "0b5f0dce6b8a4dc0c245cb3924fc480f8ccb9a6e"],
-      "args": ["profile", "set", "key", "--owner", "0x0B5f0DCe6B8A4dc0c245Cb3924fc480f8CcB9A6e", "-k", "/Users/azeem/Library/Ethereum/keystore", "key1", "-v", "key1-value"],
+      "args": ["profile", "get", "keys", "--owner", "0x0B5f0DCe6B8A4dc0c245Cb3924fc480f8CcB9A6f"],
+//      "args": ["profile", "set", "key", "--owner", "0x0B5f0DCe6B8A4dc0c245Cb3924fc480f8CcB9A6e", "-k", "/Users/azeem/Library/Ethereum/keystore", "key1", "-v", "key1-value"],
       "showLog": false
     }
   ]

@@ -5,8 +5,12 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"strings"
 
+	"github.com/ethereum/go-ethereum/accounts/abi"
 	eth "github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/ethereum/go-ethereum/crypto/sha3"
 )
 
 // PrintJSONObject print a single json object
@@ -33,6 +37,65 @@ func PrintJSON(v interface{}) error {
 		return PrintJSONObject(v)
 	}
 	return nil
+}
+
+// RootNodeHash is the 0x0 hash for the root node in the idregistry
+const RootNodeHash = "0x0000000000000000000000000000000000000000000000000000000000000000"
+
+func encodePacked(tokens ...string) []byte {
+	stringTy, _ := abi.NewType("string")
+
+	arguments := abi.Arguments{}
+	argument := abi.Argument{
+		Type: stringTy,
+	}
+
+	for range tokens {
+		arguments = append(arguments, argument)
+	}
+
+	bytes, _ := arguments.Pack(tokens)
+	return bytes
+}
+
+func keccak256(bytes []byte) string {
+	hash := sha3.NewKeccak256()
+	hash.Write(bytes)
+
+	var buf []byte
+	buf = hash.Sum(buf)
+
+	return hexutil.Encode(buf)
+}
+
+// ChildHash calculates the hash of a child node given a parent node
+func ChildHash(parentHex string, child string) string {
+	intermediateHash := keccak256([]byte(child))
+	toHash := parentHex + intermediateHash[2:]
+	hexBytes, _ := hexutil.Decode(toHash)
+	hash := keccak256(hexBytes)
+
+	return hash
+}
+
+// PathHash calculates the hash for a path in the registry
+func PathHash(path string) (string, error) {
+	if path == "" {
+		return "", errors.New("Can't calculate hash for empty path")
+	}
+	if path == "/" {
+		return RootNodeHash, nil
+	}
+
+	hash := RootNodeHash
+	tokens := strings.Split(path, "/")
+	for _, token := range tokens {
+		if token != "" {
+			hash = ChildHash(hash, token)
+		}
+	}
+
+	return hash, nil
 }
 
 // EthereumAddress implements the pflag Value interface for flags that require ethereum address
