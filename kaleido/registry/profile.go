@@ -11,6 +11,7 @@ import (
 
 	"encoding/base64"
 
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -71,7 +72,8 @@ func (p *Profile) SetProperty(key string, value string, revision string) error {
 		}
 
 		fmt.Println("tx sent:", tx.Hash().Hex())
-		receipt, err := client.TransactionReceipt(context.Background(), tx.Hash())
+		fmt.Println("waiting for tx to be mined (may take a few seconds)...")
+		receipt, err := bind.WaitMined(context.Background(), client, tx)
 		if err != nil {
 			return err
 		}

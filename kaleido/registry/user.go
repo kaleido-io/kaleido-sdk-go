@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/big"
 
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"github.com/ethereum/go-ethereum/common"
 
@@ -110,7 +111,9 @@ func (u *User) InvokeCreate(keystorePath string, signer string) error {
 		}
 
 		fmt.Println("tx sent:", tx.Hash().Hex())
-		receipt, err := client.TransactionReceipt(context.Background(), tx.Hash())
+		fmt.Println("waiting for tx to be minded (may take a few seconds)...")
+
+		receipt, err := bind.WaitMined(context.Background(), client, tx)
 		if err != nil {
 			return err
 		}
