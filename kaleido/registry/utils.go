@@ -14,6 +14,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	ethclient "github.com/ethereum/go-ethereum/ethclient"
+	kaleido "github.com/kaleido-io/kaleido-sdk-go/common"
 	"github.com/spf13/viper"
 	resty "gopkg.in/resty.v1"
 )
@@ -226,13 +227,20 @@ func (u *utilsImpl) fetchOnChainAddresses() (string, string, error) {
 }
 
 func (u *utilsImpl) generateNodeID(path string) string {
-	// TODO calculate path hash
-	return path
+	nodeID := path
+	if path[:2] != "0x" {
+		nodeID, _ = kaleido.PathHash(path)
+	}
+	return nodeID
 }
 
 func (u *utilsImpl) generateUserID(path string, email string) string {
-	// TODO calculate email hass
-	return email
+	userID := email
+	if userID[:2] != "0x" {
+		nodeID := u.generateNodeID(path)
+		userID = kaleido.ChildHash(nodeID, email)
+	}
+	return userID
 }
 
 func (u *utilsImpl) newKeyStoreTransactor(from *accounts.Account, keystore *keystore.KeyStore, chainID *big.Int) *bind.TransactOpts {

@@ -99,8 +99,10 @@ func (u *User) InvokeCreate(keystorePath string, signer string) error {
 			return err
 		}
 
+		parentNodeID := utils().generateNodeID(u.Parent)
+
 		var parent [32]byte
-		parentBytes, _ := hexutil.Decode(u.Parent)
+		parentBytes, _ := hexutil.Decode(parentNodeID)
 		copy(parent[:], parentBytes)
 		tx, err := instance.SetUserDetails(auth, parent, u.Email, common.HexToAddress(u.Owner))
 		if err != nil {

@@ -160,8 +160,11 @@ func (org *Organization) InvokeCreate() (*VerifiedOrganization, error) {
 // InvokeGet retrieve an organization
 func (org *Organization) InvokeGet() (*VerifiedOrganization, error) {
 	client := utils().getDirectoryClient()
+
+	nodeID := utils().generateNodeID(org.Name)
+
 	var verifiedOrg VerifiedOrganization
-	response, err := client.R().SetResult(&verifiedOrg).Get("/orgs/" + org.Name)
+	response, err := client.R().SetResult(&verifiedOrg).Get("/orgs/" + nodeID)
 
 	err = utils().validateGetResponse(response, err, "org")
 	return &verifiedOrg, err
