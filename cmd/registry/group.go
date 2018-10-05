@@ -15,7 +15,6 @@ package registry
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/spf13/cobra"
 )
@@ -23,16 +22,16 @@ import (
 var groupsListCmd = &cobra.Command{
 	Use:   "groups",
 	Short: "List the groups within an org",
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("list groups")
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return errors.New("Not implemented")
 	},
 }
 
 var groupGetCmd = &cobra.Command{
 	Use:   "group",
 	Short: "Get the group details identified by a path",
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Get group details")
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return errors.New("Not implemented")
 	},
 }
 
@@ -40,13 +39,7 @@ var groupCreateCmd = &cobra.Command{
 	Use:   "group",
 	Short: "Create a group at the given path (for an org)",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) < 1 {
-			return errors.New("Missing required argument(s)")
-		}
-		return nil
-	},
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("create group")
+		return errors.New("Not implemented")
 	},
 }
 

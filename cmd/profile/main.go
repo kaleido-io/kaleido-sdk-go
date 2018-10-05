@@ -33,7 +33,6 @@ func init() {
 	viper.BindPFlag("profile", profileCmd.PersistentFlags().Lookup("profile"))
 
 	viper.BindPFlag("services.idregistry.id", profileCmd.PersistentFlags().Lookup("id"))
-	viper.RegisterAlias("registry.id", "services.idregistry.id")
 }
 
 // NewProfileCmd registry cmd

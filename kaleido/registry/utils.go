@@ -70,7 +70,7 @@ type utilsImpl struct {
 }
 
 func (u *utilsImpl) initAPIClient() {
-	u.registryURL = viper.GetString("api.url") + "/idregistry/" + viper.GetString("registry.id")
+	u.registryURL = viper.GetString("api.url") + "/idregistry/" + viper.GetString("services.idregistry.id")
 	u.apiClient = resty.New().SetHostURL(u.registryURL).SetAuthToken(viper.GetString("api.key"))
 	viper.SetDefault("api.debug", false)
 	u.apiClient.SetDebug(viper.GetBool("api.debug"))
