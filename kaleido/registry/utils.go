@@ -7,6 +7,8 @@ import (
 	"log"
 	"math/big"
 	"os"
+	"strings"
+	"syscall"
 
 	"github.com/ethereum/go-ethereum/accounts"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -16,6 +18,7 @@ import (
 	ethclient "github.com/ethereum/go-ethereum/ethclient"
 	kaleido "github.com/kaleido-io/kaleido-sdk-go/common"
 	"github.com/spf13/viper"
+	"golang.org/x/crypto/ssh/terminal"
 	resty "gopkg.in/resty.v1"
 )
 
@@ -247,7 +250,31 @@ func (u *utilsImpl) newKeyStoreTransactor(from *accounts.Account, keystore *keys
 	return &bind.TransactOpts{
 		From: from.Address,
 		Signer: func(signer types.Signer, address common.Address, tx *types.Transaction) (*types.Transaction, error) {
-			return keystore.SignTxWithPassphrase(*from, "test", tx, chainID)
+			var txSigned *types.Transaction
+			var err error
+			// attempt to sign without a passphrase
+			if txSigned, err = keystore.SignTx(*from, tx, chainID); err != nil {
+				// if it fails with authentication needed
+				if strings.HasPrefix(err.Error(), "authentication needed") {
+					// read a passphrase from the enviroment or the terminal and sign with the passphrase
+					var passphrase string
+					if passphrase = os.Getenv("KLD_GETH_KEYSTORE_PASSWORD"); passphrase == "" {
+						fmt.Printf("Password needed to unlock keystore: ")
+						bytePassword, err := terminal.ReadPassword(int(syscall.Stdin))
+						fmt.Printf("\n") // advance to the next line and don't screw someone else up
+						if err != nil {
+							return nil, err
+						}
+						passphrase = string(bytePassword)
+					}
+					return keystore.SignTxWithPassphrase(*from, passphrase, tx, chainID)
+				}
+				// failed for some other reason other than passphrase, just return whatever was returned to us
+				return txSigned, err
+			}
+			// aha, we didn't fail, you should think about securing your keystore
+			fmt.Println(">>>> warning: keystore is not secured with a passphrase <<<<")
+			return txSigned, nil
 		},
 	}
 }
