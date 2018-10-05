@@ -14,6 +14,8 @@
 package registry
 
 import (
+	"errors"
+
 	"github.com/kaleido-io/kaleido-sdk-go/common"
 	"github.com/kaleido-io/kaleido-sdk-go/kaleido/registry"
 	"github.com/spf13/cobra"
@@ -50,6 +52,11 @@ var userGetCmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		parent := cmd.Flags().Lookup("parent").Value.String()
+		if parent[:2] != "0x" && parent[:1] != "/" {
+			return errors.New("flag 'parent' value must start with either a '0x' or a '/'")
+		}
+
 		user := &registry.User{
 			Parent: cmd.Flags().Lookup("parent").Value.String(),
 			Email:  args[0],
@@ -76,13 +83,18 @@ var userCreateCmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		parent := cmd.Flags().Lookup("parent").Value.String()
+		if parent[:2] != "0x" && parent[:1] != "/" {
+			return errors.New("flag 'parent' value must start with either a '0x' or a '/'")
+		}
+
 		var user *registry.User
 		user = &registry.User{
 			Email:       args[0],
 			Consortium:  cmd.Flags().Lookup("consortium").Value.String(),
 			Environment: cmd.Flags().Lookup("environment").Value.String(),
 			MemberID:    cmd.Flags().Lookup("memberid").Value.String(),
-			Parent:      cmd.Flags().Lookup("parent").Value.String(),
+			Parent:      parent,
 			Owner:       cmd.Flags().Lookup("owner").Value.String(),
 		}
 

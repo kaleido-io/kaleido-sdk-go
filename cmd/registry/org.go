@@ -14,6 +14,8 @@
 package registry
 
 import (
+	"errors"
+
 	"github.com/kaleido-io/kaleido-sdk-go/common"
 	"github.com/kaleido-io/kaleido-sdk-go/kaleido/registry"
 	"github.com/spf13/cobra"
@@ -44,6 +46,13 @@ var orgGetCmd = &cobra.Command{
 		if err := cobra.ExactArgs(1)(cmd, args); err != nil {
 			return err
 		}
+
+		// arg[0] is the name and must start with a 0x or a /
+		name := args[0]
+		if name[:2] != "0x" && name[:1] != "/" {
+			return errors.New("name of an org must being with a 0x or must be specified as a path beginning with /")
+		}
+
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
