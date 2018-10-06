@@ -94,13 +94,9 @@ func (u *utilsImpl) initDirectoryClient() error {
 }
 
 func (u *utilsImpl) initEthClient() error {
-	urlKey := "networks." + viper.GetString("profile") + ".url"
-	if urlKey == "networks..url" {
-		return errors.New("No active profile set")
-	}
-	url := viper.GetString(urlKey)
+	url := viper.GetString("networks.url")
 	if url == "" {
-		return errors.New("Unable to retrieve node url from profile. Have you setup your profile properly?")
+		return errors.New("Unable to load node url. Have you setup your configuration (~/.kld.yaml) properly?")
 	}
 
 	var err error
