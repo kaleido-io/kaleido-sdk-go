@@ -24,11 +24,11 @@ type Organization struct {
 
 // VerifiedOrganization ...
 type VerifiedOrganization struct {
-	ID       string `json:"id,omitempty"`
-	Name     string `json:"name,omitempty"`
-	Owner    string `json:"owner,omitempty"`
-	Proof    string `json:"proof,omitempty"`
-	ParentID string `json:"parent,omitempty"`
+	ID       string            `json:"id,omitempty"`
+	Name     string            `json:"name,omitempty"`
+	Owner    string            `json:"owner,omitempty"`
+	Proof    *JSONWebSignature `json:"proof,omitempty"`
+	ParentID string            `json:"parent,omitempty"`
 }
 
 // JSONWebSignature json representation of JWS
