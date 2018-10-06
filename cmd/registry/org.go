@@ -75,9 +75,8 @@ var orgGetCmd = &cobra.Command{
 }
 
 var orgCreateCmd = &cobra.Command{
-	Use:     "org",
-	Short:   "Create an on-chain organization",
-	Example: "kld registry create org kaleido.com -c cid -e eid -p /path/to/proof/cert.pem -k /path/to/private/key -o 0xdEC89f82A6934DE1EA00CEa5A64233AdB898ACD8",
+	Use:   "org",
+	Short: "Create an on-chain organization",
 	Args: func(cmd *cobra.Command, args []string) error {
 		if err := cobra.ExactArgs(1)(cmd, args); err != nil {
 			return err
@@ -91,7 +90,7 @@ var orgCreateCmd = &cobra.Command{
 			MemberID:       cmd.Flags().Lookup("memberid").Value.String(),
 			Name:           args[0],
 			Owner:          cmd.Flags().Lookup("owner").Value.String(),
-			SigningKeyFile: cmd.Flags().Lookup("key").Value.String(),
+			SigningKeyFile: cmd.Flags().Lookup("pkcs8-key").Value.String(),
 			CertPEMFile:    cmd.Flags().Lookup("proof").Value.String(),
 		}
 
@@ -112,12 +111,12 @@ func initCreateOrgCmd() {
 
 	flags.StringP("memberid", "m", "", "Membership ID of the org")
 	flags.StringP("proof", "p", "", "Path to identity certificate used when identifying organization on Kaleido")
-	flags.StringP("key", "k", "", "Path to a key that should be used for signing the payload for registration")
+	flags.StringP("pkcs8-key", "k", "", "Path to a key that should be used for signing the payload for registration")
 	flags.VarP(&common.EthereumAddress{}, "owner", "o", "Ethereum address for the owner of the organization")
 
 	orgCreateCmd.MarkFlagRequired("memberid")
 	orgCreateCmd.MarkFlagRequired("proof")
-	orgCreateCmd.MarkFlagRequired("key")
+	orgCreateCmd.MarkFlagRequired("pkcs8-key")
 	orgCreateCmd.MarkFlagRequired("owner")
 }
 
