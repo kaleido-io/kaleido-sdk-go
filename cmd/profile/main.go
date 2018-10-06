@@ -28,11 +28,10 @@ func init() {
 	// rootCmd adds registrCmd manually
 
 	// create persistent flags for all sub-commands as this is not a complete command by itself
-	profileCmd.PersistentFlags().StringP("id", "i", "", "Service ID (optional)")
-	profileCmd.PersistentFlags().StringP("profile", "r", "default", "Profile to use for network connections")
+	profileCmd.PersistentFlags().StringP("service-id", "i", "", "Service ID (optional)")
 	viper.BindPFlag("profile", profileCmd.PersistentFlags().Lookup("profile"))
 
-	viper.BindPFlag("services.idregistry.id", profileCmd.PersistentFlags().Lookup("id"))
+	viper.BindPFlag("services.idregistry.id", profileCmd.PersistentFlags().Lookup("service-id"))
 }
 
 // NewProfileCmd registry cmd

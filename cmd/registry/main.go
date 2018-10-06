@@ -28,15 +28,14 @@ func init() {
 	// rootCmd adds registrCmd manually
 
 	// create persistent flags for all sub-commands as this is not a complete command by itself
-	registryCmd.PersistentFlags().StringP("id", "i", "", "Service ID (optional)")
+	registryCmd.PersistentFlags().StringP("service-id", "i", "", "Service ID (optional)")
 	registryCmd.PersistentFlags().StringP("consortium", "c", "", "Consortium ID")
 	registryCmd.PersistentFlags().StringP("environment", "e", "", "Environment ID")
-	registryCmd.PersistentFlags().StringP("profile", "r", "default", "Profile to use for network connections")
 
 	registryCmd.MarkPersistentFlagRequired("consortium")
 	registryCmd.MarkPersistentFlagRequired("environment")
 
-	viper.BindPFlag("services.idregistry.id", registryCmd.PersistentFlags().Lookup("id"))
+	viper.BindPFlag("services.idregistry.id", registryCmd.PersistentFlags().Lookup("service-id"))
 }
 
 // NewRegistryCmd registry cmd
