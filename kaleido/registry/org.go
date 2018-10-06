@@ -88,8 +88,8 @@ func (org *Organization) createSignedRequestForRegistration() (*SignedRequest, e
 	}
 
 	block, _ := pem.Decode(pemEncodedBytes)
-	x509Encoded := block.Bytes
-	privateKey, err := x509.ParsePKCS8PrivateKey(x509Encoded)
+	der := block.Bytes
+	privateKey, err := x509.ParsePKCS8PrivateKey(der)
 	if err != nil {
 		return nil, err
 	}
@@ -103,7 +103,16 @@ func (org *Organization) createSignedRequestForRegistration() (*SignedRequest, e
 	}
 
 	// create a new signer using ECDSA (ES256) algorithm with the given private key
-	signer, err := jose.NewSigner(jose.SigningKey{Algorithm: jose.ES256, Key: ecdsaKey}, nil)
+	var alg jose.SignatureAlgorithm
+	switch ecdsaKey.Curve.Params().BitSize {
+	case 256:
+		alg = jose.ES256
+	case 384:
+		alg = jose.ES384
+	case 521: // not a typo, ES512 == 521 curve bits
+		alg = jose.ES512
+	}
+	signer, err := jose.NewSigner(jose.SigningKey{Algorithm: alg, Key: ecdsaKey}, nil)
 	if err != nil {
 		return nil, err
 	}
