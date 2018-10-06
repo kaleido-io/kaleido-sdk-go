@@ -28,7 +28,7 @@ func init() {
 	// rootCmd adds registrCmd manually
 
 	// create persistent flags for all sub-commands as this is not a complete command by itself
-	profileCmd.PersistentFlags().StringP("service-id", "i", "", "Service ID (optional)")
+	profileCmd.PersistentFlags().StringP("service-id", "i", "", "Service ID (optional if config is setup properly)")
 	viper.BindPFlag("profile", profileCmd.PersistentFlags().Lookup("profile"))
 
 	viper.BindPFlag("services.idregistry.id", profileCmd.PersistentFlags().Lookup("service-id"))
