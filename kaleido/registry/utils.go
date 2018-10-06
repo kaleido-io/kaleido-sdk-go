@@ -40,6 +40,7 @@ type utilsInterface interface {
 	generateUserID(path string, email string) string
 	newKeyStoreTransactor(from *accounts.Account, keystore *keystore.KeyStore, chainID *big.Int) *bind.TransactOpts
 	getAccountForAddress(ks *keystore.KeyStore, hexAddress string) (*accounts.Account, error)
+	readPassword(envVarName string, prompt string) (string, error)
 }
 
 var instance *utilsImpl
@@ -242,6 +243,21 @@ func (u *utilsImpl) generateUserID(path string, email string) string {
 	return userID
 }
 
+func (u *utilsImpl) readPassword(envVarName string, prompt string) (string, error) {
+	// read a passphrase from the enviroment or the terminal and sign with the passphrase
+	var passphrase string
+	if passphrase = os.Getenv(envVarName); passphrase == "" {
+		fmt.Printf(prompt)
+		bytePassword, err := terminal.ReadPassword(int(syscall.Stdin))
+		fmt.Printf("\n") // advance to the next line and don't screw someone else up
+		if err != nil {
+			return "", err
+		}
+		passphrase = string(bytePassword)
+	}
+	return passphrase, nil
+}
+
 func (u *utilsImpl) newKeyStoreTransactor(from *accounts.Account, keystore *keystore.KeyStore, chainID *big.Int) *bind.TransactOpts {
 	return &bind.TransactOpts{
 		From: from.Address,
@@ -254,14 +270,8 @@ func (u *utilsImpl) newKeyStoreTransactor(from *accounts.Account, keystore *keys
 				if strings.HasPrefix(err.Error(), "authentication needed") {
 					// read a passphrase from the enviroment or the terminal and sign with the passphrase
 					var passphrase string
-					if passphrase = os.Getenv("KLD_GETH_KEYSTORE_PASSWORD"); passphrase == "" {
-						fmt.Printf("Password needed to unlock keystore: ")
-						bytePassword, err := terminal.ReadPassword(int(syscall.Stdin))
-						fmt.Printf("\n") // advance to the next line and don't screw someone else up
-						if err != nil {
-							return nil, err
-						}
-						passphrase = string(bytePassword)
+					if passphrase, err = u.readPassword("KLD_GETH_KEYSTORE_PASSWORD", "Password needed to unlock keystore: "); err != nil {
+						return nil, err
 					}
 					return keystore.SignTxWithPassphrase(*from, passphrase, tx, chainID)
 				}
