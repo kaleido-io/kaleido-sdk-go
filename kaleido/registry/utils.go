@@ -70,11 +70,16 @@ type utilsImpl struct {
 	nodeClient *ethclient.Client
 }
 
-func (u *utilsImpl) initAPIClient() {
-	u.registryURL = viper.GetString("api.url") + "/idregistry/" + viper.GetString("services.idregistry.id")
+func (u *utilsImpl) initAPIClient() error {
+	serviceID := viper.GetString("services.idregistry.id")
+	if serviceID == "" {
+		return errors.New("missing service id. have you setup the config file (~/.kld.yaml) or did you specify --service-id")
+	}
+	u.registryURL = viper.GetString("api.url") + "/idregistry/" + serviceID
 	u.apiClient = resty.New().SetHostURL(u.registryURL).SetAuthToken(viper.GetString("api.key"))
 	viper.SetDefault("api.debug", false)
 	u.apiClient.SetDebug(viper.GetBool("api.debug"))
+	return nil
 }
 
 func (u *utilsImpl) initDirectoryClient() error {
@@ -110,15 +115,15 @@ func (u *utilsImpl) initEthClient() error {
 }
 
 func (u *utilsImpl) initialize() error {
-	u.initAPIClient()
-
-	err := u.initDirectoryClient()
-	if err != nil {
+	if err := u.initAPIClient(); err != nil {
 		return err
 	}
 
-	err = u.initEthClient()
-	if err != nil {
+	if err := u.initDirectoryClient(); err != nil {
+		return err
+	}
+
+	if err := u.initEthClient(); err != nil {
 		return err
 	}
 
