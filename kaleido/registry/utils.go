@@ -71,10 +71,7 @@ type utilsImpl struct {
 }
 
 func (u *utilsImpl) initAPIClient() error {
-	serviceID := viper.GetString("services.idregistry.id")
-	if serviceID == "" {
-		return errors.New("missing service id. have you setup the config file (~/.kld.yaml) or did you specify --service-id")
-	}
+	serviceID := viper.GetString("service.id")
 	u.registryURL = viper.GetString("api.url") + "/idregistry/" + serviceID
 	u.apiClient = resty.New().SetHostURL(u.registryURL).SetAuthToken(viper.GetString("api.key"))
 	viper.SetDefault("api.debug", false)

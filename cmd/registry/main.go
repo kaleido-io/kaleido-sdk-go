@@ -15,6 +15,9 @@
 package registry
 
 import (
+	"errors"
+	"fmt"
+
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -22,6 +25,21 @@ import (
 var registryCmd = &cobra.Command{
 	Use:   "registry",
 	Short: "Manage on-chain indentity registry",
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		serviceID := viper.GetString("services.idregistry.id")
+		if serviceID == "" {
+			// not specified via environment, let's check our flag
+			var err error
+			if serviceID, err = cmd.Flags().GetString("service-id"); err != nil || serviceID == "" {
+				// yeah, we need it so error out
+				fmt.Println(err)
+				return errors.New("missing service id. have you setup the config file (~/.kld.yaml) or did you specify --service-id")
+			}
+		}
+		// at this point, we should have a serviceID, setup viper so other components can access it without access to cmd
+		viper.Set("service.id", serviceID)
+		return nil
+	},
 }
 
 func init() {
@@ -35,7 +53,7 @@ func init() {
 	registryCmd.MarkPersistentFlagRequired("consortium")
 	registryCmd.MarkPersistentFlagRequired("environment")
 
-	viper.BindPFlag("services.idregistry.id", registryCmd.PersistentFlags().Lookup("service-id"))
+	// viper.BindPFlag("services.idregistry.id", registryCmd.PersistentFlags().Lookup("service-id"))
 }
 
 // NewRegistryCmd registry cmd
