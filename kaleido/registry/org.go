@@ -16,10 +16,10 @@ type Organization struct {
 	Consortium     string `json:"consortia_id,omitempty"`
 	Environment    string `json:"environment_id,omitempty"`
 	MemberID       string `json:"membership_id,omitempty"`
-	Name           string
-	Owner          string
-	SigningKeyFile string
-	CertPEMFile    string
+	Name           string `json:"-"`
+	Owner          string `json:"-"`
+	SigningKeyFile string `json:"-"`
+	CertPEMFile    string `json:"-"`
 }
 
 // VerifiedOrganization ...
@@ -148,16 +148,36 @@ func (org *Organization) createSignedRequestForRegistration() (*SignedRequest, e
 	return &request, nil
 }
 
+func (org *Organization) populateServiceTargets() error {
+	var service *serviceDefinitionType
+	var err error
+	if service, err = utils().getServiceDefinition(); err != nil {
+		return err
+	}
+	org.Consortium = service.Consortium
+	org.Environment = service.Environment
+	org.MemberID = service.MemberID
+
+	return nil
+}
+
 // InvokeCreate registers a verified organization with the on-chain registry
 // and stores the proof on-chain
 func (org *Organization) InvokeCreate() (*VerifiedOrganization, error) {
-	client := utils().getAPIClient()
+	// if consortium, environment, or member is not set, retrieve it from the service definition
+	if org.Consortium == "" || org.Environment == "" || org.MemberID == "" {
+		if err := org.populateServiceTargets(); err != nil {
+			return nil, err
+		}
+	}
 
 	// sign payload
 	signedPayload, err := org.createSignedRequestForRegistration()
 	if err != nil {
 		return nil, err
 	}
+
+	client := utils().getAPIClient()
 
 	var verifiedOrg VerifiedOrganization
 	response, err := client.R().SetBody(signedPayload).SetResult(&verifiedOrg).Post("/identity")
@@ -182,7 +202,7 @@ func (org *Organization) InvokeGet() (*VerifiedOrganization, error) {
 // InvokeList retrieve a list of registered top-level organizations
 func (org *Organization) InvokeList() (*[]VerifiedOrganization, error) {
 	type responseBodyType struct {
-		Count int                    `json:"count,omitempty"`
+		Count string                 `json:"count,omitempty"`
 		Orgs  []VerifiedOrganization `json:"orgs,omitempty"`
 	}
 	var responseBody responseBodyType

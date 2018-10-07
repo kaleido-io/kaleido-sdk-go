@@ -47,8 +47,6 @@ func init() {
 
 	// create persistent flags for all sub-commands as this is not a complete command by itself
 	registryCmd.PersistentFlags().StringP("service-id", "i", "", "Service ID (optional if config is setup properly)")
-	registryCmd.PersistentFlags().StringP("consortium", "c", "", "Consortium ID")
-	registryCmd.PersistentFlags().StringP("environment", "e", "", "Environment ID")
 }
 
 // NewRegistryCmd registry cmd

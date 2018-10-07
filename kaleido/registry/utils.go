@@ -23,6 +23,8 @@ import (
 )
 
 type utilsInterface interface {
+	getServiceDefinition() (*serviceDefinitionType, error)
+
 	getRegistryURL() string
 	getAPIClient() *resty.Client
 
@@ -68,14 +70,19 @@ type utilsImpl struct {
 	profilesClient  *resty.Client
 
 	nodeClient *ethclient.Client
+
+	serviceID string
+}
+
+func (u *utilsImpl) newClient(url, authToken string) *resty.Client {
+	client := resty.New().SetHostURL(url).SetAuthToken(authToken)
+	client.SetDebug(viper.GetBool("api.debug"))
+	return client
 }
 
 func (u *utilsImpl) initAPIClient() error {
-	serviceID := viper.GetString("service.id")
-	u.registryURL = viper.GetString("api.url") + "/idregistry/" + serviceID
-	u.apiClient = resty.New().SetHostURL(u.registryURL).SetAuthToken(viper.GetString("api.key"))
-	viper.SetDefault("api.debug", false)
-	u.apiClient.SetDebug(viper.GetBool("api.debug"))
+	u.registryURL = viper.GetString("api.url") + "/idregistry/" + u.serviceID
+	u.apiClient = u.newClient(u.registryURL, viper.GetString("api.key"))
 	return nil
 }
 
@@ -90,8 +97,8 @@ func (u *utilsImpl) initDirectoryClient() error {
 	directoryURL := utils().getRegistryURL() + "/directories/" + u.directoryAddress
 	profilesURL := utils().getRegistryURL() + "/properties/" + u.profilesAddress
 
-	u.directoryClient = resty.New().SetHostURL(directoryURL).SetAuthToken(viper.GetString("api.key"))
-	u.profilesClient = resty.New().SetHostURL(profilesURL).SetAuthToken(viper.GetString("api.key"))
+	u.directoryClient = u.newClient(directoryURL, viper.GetString("api.key"))
+	u.profilesClient = u.newClient(profilesURL, viper.GetString("api.key"))
 
 	return nil
 }
@@ -112,6 +119,8 @@ func (u *utilsImpl) initEthClient() error {
 }
 
 func (u *utilsImpl) initialize() error {
+	u.serviceID = viper.GetString("service.id")
+
 	if err := u.initAPIClient(); err != nil {
 		return err
 	}
@@ -159,9 +168,6 @@ func (u *utilsImpl) getNodeClient() *ethclient.Client {
 
 func (u *utilsImpl) validateGetResponse(res *resty.Response, err error, resourceName string) error {
 	if res.StatusCode() != 200 {
-		if err != nil {
-			fmt.Println(err.Error())
-		}
 		if res.StatusCode() >= 400 && res.StatusCode() < 500 {
 			type photicError struct {
 				ErrorMessage string `json:"errorMessage,omitempty"`
@@ -177,15 +183,11 @@ func (u *utilsImpl) validateGetResponse(res *resty.Response, err error, resource
 		}
 		return fmt.Errorf("could not retrieve %s. status code: %d", resourceName, res.StatusCode())
 	}
-	return nil
+	return err
 }
 
 func (u *utilsImpl) validateCreateResponse(res *resty.Response, err error, resourceName string) error {
 	if res.StatusCode() != 201 && res.StatusCode() != 200 {
-		if err != nil {
-			fmt.Println(err.Error())
-		}
-
 		if res.StatusCode() >= 400 && res.StatusCode() < 500 {
 			type photicError struct {
 				ErrorMessage string `json:"errorMessage,omitempty"`
@@ -201,7 +203,8 @@ func (u *utilsImpl) validateCreateResponse(res *resty.Response, err error, resou
 		}
 		return fmt.Errorf("could not create %s. status code: %d", resourceName, res.StatusCode())
 	}
-	return nil
+
+	return err
 }
 
 func (u *utilsImpl) fetchOnChainAddresses() (string, string, error) {
@@ -226,6 +229,23 @@ func (u *utilsImpl) fetchOnChainAddresses() (string, string, error) {
 	}
 
 	return directories[0].Directory, directories[0].Profiles, nil
+}
+
+type serviceDefinitionType struct {
+	Consortium  string `json:"consortia_id,omitempty"`
+	Environment string `json:"environment_id,omitempty"`
+	MemberID    string `json:"membership_id,omitempty"`
+}
+
+func (u *utilsImpl) getServiceDefinition() (*serviceDefinitionType, error) {
+	client := u.newClient(viper.GetString("api.url"), viper.GetString("api.key"))
+	url := fmt.Sprintf("/services?_id=%s", u.serviceID)
+	var services []serviceDefinitionType
+	response, err := client.R().SetResult(&services).Get(url)
+	if err = u.validateGetResponse(response, err, "services"); err != nil {
+		return nil, err
+	}
+	return &services[0], nil
 }
 
 func (u *utilsImpl) generateNodeID(path string) string {

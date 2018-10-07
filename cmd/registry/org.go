@@ -57,10 +57,7 @@ var orgGetCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		org := &registry.Organization{
-			Consortium:  cmd.Flags().Lookup("consortium").Value.String(),
-			Environment: cmd.Flags().Lookup("environment").Value.String(),
-			MemberID:    cmd.Flags().Lookup("memberid").Value.String(),
-			Name:        args[0],
+			Name: args[0],
 		}
 		var verified *registry.VerifiedOrganization
 		var err error
@@ -109,31 +106,22 @@ var orgCreateCmd = &cobra.Command{
 func initCreateOrgCmd() {
 	flags := orgCreateCmd.Flags()
 
+	flags.StringP("consortium", "c", "", "Consortium ID")
+	flags.StringP("environment", "e", "", "Environment ID")
 	flags.StringP("memberid", "m", "", "Membership ID of the org")
 	flags.StringP("proof", "p", "", "Path to identity certificate used when identifying organization on Kaleido")
 	flags.StringP("pkcs8-key", "k", "", "Path to a key that should be used for signing the payload for registration")
 	flags.VarP(&common.EthereumAddress{}, "owner", "o", "Ethereum address for the owner of the organization")
 
-	orgCreateCmd.MarkFlagRequired("memberid")
 	orgCreateCmd.MarkFlagRequired("proof")
 	orgCreateCmd.MarkFlagRequired("pkcs8-key")
 	orgCreateCmd.MarkFlagRequired("owner")
 }
 
 func initGetOrgCmd() {
-	flags := orgGetCmd.Flags()
-
-	flags.StringP("memberid", "m", "", "Membership ID of the org")
-
-	orgGetCmd.MarkFlagRequired("memberid")
 }
 
 func initListOrgCmd() {
-	flags := orgsListCmd.Flags()
-
-	flags.StringP("memberid", "m", "", "Membership ID of the org")
-
-	orgsListCmd.MarkFlagRequired("memberid")
 }
 
 func init() {
