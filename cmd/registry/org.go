@@ -106,9 +106,9 @@ var orgCreateCmd = &cobra.Command{
 func initCreateOrgCmd() {
 	flags := orgCreateCmd.Flags()
 
-	flags.StringP("consortium", "c", "", "Consortium ID")
-	flags.StringP("environment", "e", "", "Environment ID")
-	flags.StringP("memberid", "m", "", "Membership ID of the org")
+	flags.StringP("consortium", "c", "", "Override consortium ID (optional)")
+	flags.StringP("environment", "e", "", "Override environment ID (optional)")
+	flags.StringP("memberid", "m", "", "Override membership ID of the org (optional)")
 	flags.StringP("proof", "p", "", "Path to identity certificate used when identifying organization on Kaleido")
 	flags.StringP("pkcs8-key", "k", "", "Path to a key that should be used for signing the payload for registration")
 	flags.VarP(&common.EthereumAddress{}, "owner", "o", "Ethereum address for the owner of the organization")
