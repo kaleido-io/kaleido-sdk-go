@@ -15,13 +15,10 @@ import (
 
 // User represents a user
 type User struct {
-	Consortium  string `json:"consortia_id,omitempty"`
-	Environment string `json:"environment_id,omitempty"`
-	MemberID    string `json:"membership_id,omitempty"`
-	Email       string `json:"email,omitempty"`
-	Parent      string `json:"parent,omitempty"`
-	UserID      string `json:"id,omitempty"`
-	Owner       string `json:"owner,omitempty"`
+	Email  string `json:"email,omitempty"`
+	Parent string `json:"parent,omitempty"`
+	UserID string `json:"id,omitempty"`
+	Owner  string `json:"owner,omitempty"`
 }
 
 // InvokeGet get a user

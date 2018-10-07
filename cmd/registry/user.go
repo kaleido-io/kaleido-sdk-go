@@ -90,12 +90,9 @@ var userCreateCmd = &cobra.Command{
 
 		var user *registry.User
 		user = &registry.User{
-			Email:       args[0],
-			Consortium:  cmd.Flags().Lookup("consortium").Value.String(),
-			Environment: cmd.Flags().Lookup("environment").Value.String(),
-			MemberID:    cmd.Flags().Lookup("memberid").Value.String(),
-			Parent:      parent,
-			Owner:       cmd.Flags().Lookup("owner").Value.String(),
+			Email:  args[0],
+			Parent: parent,
+			Owner:  cmd.Flags().Lookup("owner").Value.String(),
 		}
 
 		var keystorePath string
@@ -117,13 +114,11 @@ var userCreateCmd = &cobra.Command{
 func initCreateUserCmd() {
 	flags := userCreateCmd.Flags()
 
-	flags.StringP("memberid", "m", "", "Membership ID of the org")
 	flags.VarP(&common.EthereumAddress{}, "owner", "o", "Ethereum account that the user owns")
 	flags.StringP("keystore", "k", "", "Keystore path so accounts can be used to sign tx")
 	flags.VarP(&common.EthereumAddress{}, "signer", "s", "Account to use to sign tx")
 	flags.StringP("parent", "p", "", "Path to the parent org or group")
 
-	userCreateCmd.MarkFlagRequired("memberid")
 	userCreateCmd.MarkFlagRequired("account")
 	userCreateCmd.MarkFlagRequired("key")
 	userCreateCmd.MarkFlagRequired("parent")
@@ -132,20 +127,16 @@ func initCreateUserCmd() {
 func initGetUserCmd() {
 	flags := userGetCmd.Flags()
 
-	flags.StringP("memberid", "m", "", "Membership ID of the org")
 	flags.StringP("parent", "p", "", "Path to the parent org or group")
 
-	userCreateCmd.MarkFlagRequired("memberid")
 	userCreateCmd.MarkFlagRequired("parent")
 }
 
 func initListUserCmd() {
 	flags := usersListCmd.Flags()
 
-	flags.StringP("memberid", "m", "", "Membership ID of the org")
 	flags.StringP("parent", "p", "", "Path to the parent org or group")
 
-	userCreateCmd.MarkFlagRequired("memberid")
 	userCreateCmd.MarkFlagRequired("parent")
 }
 
