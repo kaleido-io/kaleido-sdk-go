@@ -2,12 +2,12 @@ package registry
 
 import (
 	"crypto/ecdsa"
-	"crypto/x509"
 	"encoding/json"
 	"encoding/pem"
 	"io/ioutil"
 	"strings"
 
+	"github.com/youmark/pkcs8"
 	jose "gopkg.in/square/go-jose.v2"
 )
 
@@ -89,11 +89,25 @@ func (org *Organization) createSignedRequestForRegistration() (*SignedRequest, e
 
 	block, _ := pem.Decode(pemEncodedBytes)
 	der := block.Bytes
-	privateKey, err := x509.ParsePKCS8PrivateKey(der)
-	if err != nil {
-		return nil, err
+
+	var ecdsaKey *ecdsa.PrivateKey
+	if strings.Contains(string(pemEncodedBytes), "-----BEGIN ENCRYPTED PRIVATE KEY-----") {
+		passphrase, err := utils().readPassword("KLD_PKCS8_SIGNING_KEY_PASSPHRASE", "Encrypted signing PKCS8 key requires a password:")
+		if err != nil {
+			return nil, err
+		}
+		privateKey, err := pkcs8.ParsePKCS8PrivateKey(der, []byte(passphrase))
+		if err != nil {
+			return nil, err
+		}
+		ecdsaKey = privateKey.(*ecdsa.PrivateKey)
+	} else {
+		privateKey, err := pkcs8.ParsePKCS8PrivateKey(der)
+		if err != nil {
+			return nil, err
+		}
+		ecdsaKey = privateKey.(*ecdsa.PrivateKey)
 	}
-	ecdsaKey := privateKey.(*ecdsa.PrivateKey)
 	defer zeroKey(ecdsaKey)
 
 	// read the provided proof
