@@ -73,6 +73,8 @@ func init() {
 	// e.g viper.Get('api.url') for value of "KLD_API_URL"
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 
+	rootCmd.PersistentFlags().Int64("verbose", 0, "Verbosity level of output (0 or 1)")
+
 	// config files capture defaults that can be overwritten by env variables and flags
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "Config file that captures re-usable settings such as API URl, API Key, etc. (default is $HOME/.kld.yaml)")
 	viper.BindPFlag("config", rootCmd.PersistentFlags().Lookup("config"))
