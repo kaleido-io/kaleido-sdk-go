@@ -4,6 +4,7 @@ env:
 services: 
   - docker 
 before_install:
+  - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
   - make deps
 after_success:
   - bash <(curl -s https://codecov.io/bash)
