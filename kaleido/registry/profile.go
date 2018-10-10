@@ -113,7 +113,7 @@ func (p *Profile) GetPropertyAllVersions(owner string, key string) (*[]Property,
 	client := utils().getProfilesClient()
 
 	type responseBodyType struct {
-		Count    int        `json:"count,omitempty"`
+		Count    string     `json:"count,omitempty"`
 		Versions []Property `json:"versions,omitempty"`
 	}
 
@@ -131,7 +131,7 @@ func (p *Profile) GetProperties(owner string) (*[]Property, error) {
 	client := utils().getProfilesClient()
 
 	type keys struct {
-		Count  int        `json:"count,omitempty"`
+		Count  string     `json:"count,omitempty"`
 		Values []Property `json:"values,omitempty"`
 	}
 
