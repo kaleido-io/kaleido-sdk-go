@@ -116,37 +116,38 @@ func validateDeleteId(resourceName string) {
 }
 
 func printGetResponse(res *resty.Response, err error, resourceName string) error {
-	if res.StatusCode() != 200 {
-		return errors.Errorf("Could not retrieve %s. Status code: %d, Error: %s\n", resourceName, res.StatusCode(), err.Error())
-	}
-
 	if err != nil {
 		return err
 	}
-	fmt.Printf("\n%+v\n", res)
+
+	fmt.Printf("%+v\n", res)
+	if res.StatusCode() != 200 {
+		return errors.Errorf("Could not retrieve %s. Status code: %d\n", resourceName, res.StatusCode())
+	}
+
 	return nil
 }
 
 func printCreationResponse(res *resty.Response, err error, resourceName string) error {
-	if res.StatusCode() != 201 {
-		return errors.Errorf("Could not create %s. Status code: %d, Error: %s\n", resourceName, res.StatusCode(), err.Error())
-	}
-
 	if err != nil {
 		return err
 	}
-	fmt.Printf("\n%+v\n", res)
+
+	fmt.Printf("%+v\n", res)
+	if res.StatusCode() != 201 {
+		return errors.Errorf("Could not create %s. Status code: %d\n", resourceName, res.StatusCode())
+	}
 	return nil
 }
 
 func printDeletionResponse(res *resty.Response, err error, resourceName string) error {
-	if res.StatusCode() != 202 && res.StatusCode() != 204 {
-		return errors.Errorf("%s deletion failed. Status code: %d, Error: %s\n", resourceName, res.StatusCode(), err.Error())
-	}
-
 	if err != nil {
 		return err
 	}
-	fmt.Printf("\n%+v\n", res)
+
+	fmt.Printf("%+v\n", res)
+	if res.StatusCode() != 202 && res.StatusCode() != 204 {
+		return errors.Errorf("%s deletion failed. Status code: %d\n", resourceName, res.StatusCode())
+	}
 	return nil
 }
