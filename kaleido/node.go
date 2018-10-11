@@ -31,7 +31,7 @@ type Node struct {
 	Role          string `json:"role,omitempty"`
 	Provider      string `json:"provider,omitempty"`
 	ConsensusType string `json:"consensus_type,omitempty"`
-	Urls          struct {
+	Urls          *struct {
 		RPC string `json:"rpc,omitempty"`
 		WSS string `json:"wss, omitempty"`
 	} `json:"urls,omitempty"`
