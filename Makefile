@@ -14,8 +14,10 @@ LDFLAGS="-X main.buildDate=`date -u +\"%Y-%m-%dT%H:%M:%SZ\"` -X main.buildVersio
 DEPS=https://gmplib.org/download/gmp/gmp-6.0.0a.tar.bz2
 TARGETS="windows-10.0/*,darwin-10.10/*"
 
-all: deps build test
-build: 
+all: deps build test package
+build:
+	$(GOBUILD) -o kld
+package: 
 		$(XGOCMD) -ldflags=$(LDFLAGS) -tags=prod --deps=$(DEPS) --out=$(BINARY_NAME)-$(BUILD_VERSION) --targets=$(TARGETS) -v -x .
 test:
 		$(GOTEST)  ./... -cover -coverprofile=coverage.txt -covermode=atomic
