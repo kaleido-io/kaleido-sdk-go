@@ -24,7 +24,7 @@ import (
 
 func getNewClient() kld.KaleidoClient {
 	if viper.GetString("api.url") == "" || viper.GetString("api.key") == "" {
-		fmt.Println("Missing api.url or api.key")
+		fmt.Println("Missing api-url or api-key. Have you setup your config (~/.kld.yaml), or env variables, or specified url and key via a flag?")
 		os.Exit(1)
 	}
 	return kld.NewClient(viper.GetString("api.url"), viper.GetString("api.key"))
