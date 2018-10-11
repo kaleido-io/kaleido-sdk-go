@@ -14,54 +14,90 @@
 package kaleido
 
 import (
-	"os"
 	"testing"
+
+	"github.com/nbio/st"
+	"gopkg.in/h2non/gock.v1"
 )
 
-func TestMembership(t *testing.T) {
-	client := NewClient(os.Getenv("KALEIDO_API"), os.Getenv("KALEIDO_API_KEY"))
-	consortium := NewConsortium("membershipTest", "members", "single-org")
-	res, err := client.CreateConsortium(&consortium)
-	if err != nil {
-		t.Fatal(err)
-	}
+var mockMembershipCreatePlayload = map[string]string{
+	"org_name": "member1",
+}
 
-	if res.StatusCode() != 201 {
-		t.Fatalf("Failed to create consortium with status: %d", res.StatusCode())
-	}
-	defer client.DeleteConsortium(consortium.Id)
+var mockMembership = map[string]string{
+	"org_name":     "member1",
+	"org_id":       "zzgl55vock",
+	"state":        "active",
+	"_id":          "zze8pz9jed",
+	"consortia_id": "cid",
+}
 
-	membership := NewMembership("macdonalds")
-	res, err = client.CreateMembership(consortium.Id, &membership)
+var mockMemberships = []map[string]string{mockMembership}
 
-	if err != nil {
-		t.Fatal(err)
-	}
-	if res.StatusCode() != 201 {
-		t.Fatalf("Failed to create membership with status: %d", res.StatusCode())
-	}
+func TestMembershipCreate(t *testing.T) {
+	defer gock.Off()
 
-	var membership2 Membership
-	res, err = client.GetMembership(consortium.Id, membership.Id, &membership2)
+	gock.New("http://example.com").
+		Post("/api/v1/consortia/cid/memberships").
+		MatchType("json").
+		JSON(mockMembershipCreatePlayload).
+		Reply(201).
+		JSON(mockMembership)
 
-	if err != nil {
-		t.Fatal(err)
-	}
-	if res.StatusCode() != 200 {
-		t.Logf("%s", res.Request.URL)
-		t.Fatalf("Failed to fetch membership with status: %d", res.StatusCode())
-	}
+	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
 
-	if membership.Id != membership2.Id {
-		t.Fatalf("Fetched memberhsip id %s did not match %s.", membership2.Id, membership.Id)
-	}
+	membership := NewMembership("member1")
+	_, err := client.CreateMembership("cid", &membership)
 
-	res, err = client.DeleteMembership(consortium.Id, membership.Id)
-	if err != nil {
-		t.Fatal(err)
-	}
+	st.Expect(t, err, nil)
+	st.Expect(t, gock.IsDone(), true)
+}
 
-	if res.StatusCode() != 204 {
-		t.Fatalf("Failed to delete membership %s with status: %d", membership.Id, res.StatusCode())
-	}
+func TestMembershipGet(t *testing.T) {
+	defer gock.Off()
+
+	gock.New("http://example.com").
+		Get("/api/v1/consortia/cid/memberships/zze8pz9jed").
+		Reply(200).
+		JSON(mockMembership)
+
+	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
+
+	var membership Membership
+	_, err := client.GetMembership("cid", "zze8pz9jed", &membership)
+
+	st.Expect(t, err, nil)
+	st.Expect(t, gock.IsDone(), true)
+}
+
+func TestMembershipList(t *testing.T) {
+	defer gock.Off()
+
+	gock.New("http://example.com").
+		Get("/api/v1/consortia/cid/memberships").
+		Reply(200).
+		JSON(mockMemberships)
+
+	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
+
+	var memberships []Membership
+	_, err := client.ListMemberships("cid", &memberships)
+
+	st.Expect(t, err, nil)
+	st.Expect(t, gock.IsDone(), true)
+}
+
+func TestMembershipDelete(t *testing.T) {
+	defer gock.Off()
+
+	gock.New("http://example.com").
+		Delete("/api/v1/consortia/cid/memberships/zze8pz9jed").
+		Reply(202)
+
+	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
+
+	_, err := client.DeleteMembership("cid", "zze8pz9jed")
+
+	st.Expect(t, err, nil)
+	st.Expect(t, gock.IsDone(), true)
 }

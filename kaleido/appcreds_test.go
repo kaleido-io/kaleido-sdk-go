@@ -14,105 +14,80 @@
 package kaleido
 
 import (
-	"os"
 	"testing"
+
+	"github.com/nbio/st"
+	"gopkg.in/h2non/gock.v1"
 )
 
-func TestAppCreds(t *testing.T) {
-	client := NewClient(os.Getenv("KALEIDO_API"), os.Getenv("KALEIDO_API_KEY"))
-	consortium := NewConsortium("apiKeyTest", "creating api key", "single-org")
-	res, err := client.CreateConsortium(&consortium)
-	defer client.DeleteConsortium(consortium.Id)
+var mockAppCredCreatePayload = map[string]string{
+	"membership_id": "member1",
+}
 
-	if res.StatusCode() != 201 {
-		t.Fatalf("Could not create consortium status code: %d.", res.StatusCode())
-	}
+var mockAppCred = map[string]string{
+	"membership_id": "zzzipxyjew",
+	"auth_type":     "basic_auth",
+	"_id":           "zzstcszriw",
+	"username":      "userid",
+	"password":      "userid-password",
+}
 
-	if err != nil {
-		t.Fatal(err)
-	}
+var mockAppCreds = []map[string]string{mockAppCred}
 
-	var env Environment
-	client.CreateEnvironment(consortium.Id, &env)
+func TestAppCredCreate(t *testing.T) {
+	defer gock.Off()
 
-	if err != nil {
-		t.Fatal(err)
-	}
+	gock.New("http://example.com").
+		Post("/api/v1/consortia/c1/environments/env1/appcreds").
+		MatchType("json").
+		JSON(mockAppCredCreatePayload).
+		Reply(201).
+		JSON(mockAppCred)
 
-	if res.StatusCode() != 201 {
-		t.Fatalf("Could not create environment! Status: %d.", res.StatusCode())
-	}
+	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
+	var appCreds = NewAppCreds("member1")
+	_, err := client.CreateAppCreds("c1", "env1", &appCreds)
+	st.Expect(t, err, nil)
+	st.Expect(t, gock.IsDone(), true)
+}
 
-	var members []Membership
-	res, err = client.ListMemberships(consortium.Id, &members)
+func TestAppCredGet(t *testing.T) {
+	defer gock.Off()
 
-	if err != nil {
-		t.Fatal(err)
-	}
+	gock.New("http://example.com").
+		Get("/api/v1/consortia/c1/environments/env1/appcreds/appcred1").
+		Reply(200).
+		JSON(mockAppCred)
 
-	if res.StatusCode() != 200 {
-		t.Fatalf("Could not list memberships.")
-	}
+	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
+	_, err := client.GetAppCreds("c1", "env1", "appcred1", &AppCreds{})
+	st.Expect(t, err, nil)
+	st.Expect(t, gock.IsDone(), true)
+}
 
-	member := members[0]
+func TestAppCredList(t *testing.T) {
+	defer gock.Off()
 
-	appcreds := NewAppCreds(member.Id)
-	res, err = client.CreateAppCreds(consortium.Id, env.Id, &appcreds)
+	gock.New("http://example.com").
+		Get("/api/v1/consortia/c1/environments/env1/appcreds").
+		Reply(200).
+		JSON(mockAppCreds)
 
-	if err != nil {
-		t.Fatal(err)
-	}
+	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
+	_, err := client.ListAppCreds("c1", "env1", &[]AppCreds{})
+	st.Expect(t, err, nil)
+	st.Expect(t, gock.IsDone(), true)
+}
 
-	if res.StatusCode() != 201 {
-		t.Fatalf("Could not create AppCreds! Status: %d.", res.StatusCode())
-	}
+func TestAppCredDelete(t *testing.T) {
+	defer gock.Off()
 
-	if appcreds.Password == "" {
-		t.Fatalf("AppCreds did not include a password! %v", appcreds)
-	}
+	gock.New("http://example.com").
+		Delete("/api/v1/consortia/c1/environments/env1/appcreds/appcred1").
+		Reply(202)
 
-	if appcreds.Username == "" {
-		t.Fatalf("AppCreds did not include a username! %v", appcreds)
-	}
-
-	var appcreds2 AppCreds
-	res, err = client.GetAppCreds(consortium.Id, env.Id, appcreds.Id, &appcreds2)
-
-	if err != nil {
-		t.Fatal(err)
-	}
-	if res.StatusCode() != 200 {
-		t.Fatalf("Failed to fetch remote AppCreds for id %s. Status: %d", appcreds.Id, res.StatusCode())
-	}
-	if appcreds.Id != appcreds2.Id {
-		t.Fatalf("Fetched AppCreds %s id did not match original %s.", appcreds.Id, appcreds2.Id)
-	}
-
-	var appcredList []AppCreds
-	res, err = client.ListAppCreds(consortium.Id, env.Id, &appcredList)
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if res.StatusCode() != 200 {
-		t.Fatalf("Failed to list App Keys. Status: %d.", res.StatusCode())
-	}
-
-	if len(appcredList) != 1 {
-		t.Fatalf("Expected 1 AppCreds found %d.", len(appcredList))
-	}
-
-	for _, appcred := range appcredList {
-		res, err = client.DeleteAppCreds(consortium.Id, env.Id, appcred.Id)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		if res.StatusCode() != 204 {
-			t.Fatalf("Could not delete AppCreds %s. Status: %d", appcred.Id, res.StatusCode())
-		}
-	}
-
+	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
+	_, err := client.DeleteAppCreds("c1", "env1", "appcred1")
+	st.Expect(t, err, nil)
+	st.Expect(t, gock.IsDone(), true)
 }
