@@ -18,6 +18,7 @@ import (
 	"os"
 
 	kld "github.com/kaleido-io/kaleido-sdk-go/kaleido"
+	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 	"gopkg.in/resty.v1"
 )
@@ -114,38 +115,38 @@ func validateDeleteId(resourceName string) {
 	return
 }
 
-func validateGetResponse(res *resty.Response, err error, resourceName string) {
+func printGetResponse(res *resty.Response, err error, resourceName string) error {
 	if res.StatusCode() != 200 {
-		fmt.Printf("Could not retrieve %s. Status code: %d.", resourceName, res.StatusCode())
+		return errors.Errorf("Could not retrieve %s. Status code: %d, Error: %s\n", resourceName, res.StatusCode(), err.Error())
 	}
 
 	if err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Printf("\n%+v\n", res)
+		return err
 	}
+	fmt.Printf("\n%+v\n", res)
+	return nil
 }
 
-func validateCreationResponse(res *resty.Response, err error, resourceName string) {
+func printCreationResponse(res *resty.Response, err error, resourceName string) error {
 	if res.StatusCode() != 201 {
-		fmt.Printf("Could not create %s. Status code: %d.", resourceName, res.StatusCode())
+		return errors.Errorf("Could not create %s. Status code: %d, Error: %s\n", resourceName, res.StatusCode(), err.Error())
 	}
 
 	if err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Printf("\n%+v\n", res)
+		return err
 	}
+	fmt.Printf("\n%+v\n", res)
+	return nil
 }
 
-func validateDeletionResponse(res *resty.Response, err error, resourceName string) {
+func printDeletionResponse(res *resty.Response, err error, resourceName string) error {
 	if res.StatusCode() != 202 && res.StatusCode() != 204 {
-		fmt.Printf("%s deletion failed. Status code: %d\n", resourceName, res.StatusCode())
+		return errors.Errorf("%s deletion failed. Status code: %d, Error: %s\n", resourceName, res.StatusCode(), err.Error())
 	}
 
 	if err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Printf("\n%+v\n", res)
+		return err
 	}
+	fmt.Printf("\n%+v\n", res)
+	return nil
 }
