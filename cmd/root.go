@@ -47,9 +47,6 @@ var deleteId string
 var rootCmd = &cobra.Command{
 	Use:   "kld",
 	Short: "Command Line Tool for Kaleido resources management",
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("API URL: %s\n", viper.Get("api.url"))
-	},
 }
 
 var cfgFile string

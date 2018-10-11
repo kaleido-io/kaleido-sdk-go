@@ -14,17 +14,12 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 )
 
 var createCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create various resources: consortium, membership, environment, node, appcreds",
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("create command")
-	},
 }
 
 func newCreateCmd() *cobra.Command {
