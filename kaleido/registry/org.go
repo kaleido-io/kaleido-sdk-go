@@ -2,8 +2,11 @@ package registry
 
 import (
 	"crypto/ecdsa"
+	"crypto/x509"
 	"encoding/json"
 	"encoding/pem"
+	"errors"
+	"fmt"
 	"io/ioutil"
 	"strings"
 
@@ -111,9 +114,32 @@ func (org *Organization) createSignedRequestForRegistration() (*SignedRequest, e
 	defer zeroKey(ecdsaKey)
 
 	// read the provided proof
-	proof, err := ioutil.ReadFile(org.CertPEMFile)
+	proofPEM, err := ioutil.ReadFile(org.CertPEMFile)
 	if err != nil {
 		return nil, err
+	}
+
+	certBlock, _ := pem.Decode(proofPEM)
+	if certBlock == nil {
+		return nil, errors.New("failed to parse certificate")
+	}
+	cert, err := x509.ParseCertificate(certBlock.Bytes)
+	if err != nil {
+		return nil, err
+	}
+
+	CNTokens := strings.Split(cert.Subject.CommonName, "-")
+	if len(CNTokens) != 4 {
+		return nil, errors.New("common name does not follow the format of <orgid>-<nonce>--<name>")
+	}
+
+	preferedName := CNTokens[3] + "--" + CNTokens[0]
+	if org.Name == "" {
+		org.Name = preferedName
+	}
+
+	if !strings.Contains(org.Name, CNTokens[3]) || !strings.Contains(org.Name, CNTokens[0]) {
+		return nil, fmt.Errorf("specified name does not match proof: must contain '%s' and '%s'. suggested name: %s", CNTokens[3], CNTokens[0], preferedName)
 	}
 
 	// create a new signer using ECDSA (ES256) algorithm with the given private key
@@ -141,7 +167,7 @@ func (org *Organization) createSignedRequestForRegistration() (*SignedRequest, e
 		"envId":   org.Environment,
 		"nonce":   nonce,
 		"name":    org.Name,
-		"proof":   string(proof),
+		"proof":   string(proofPEM),
 		"address": org.Owner})
 
 	if err != nil {
