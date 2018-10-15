@@ -48,6 +48,8 @@ func listEnvironments(t *testing.T, consortiumID string) *[]kaleido.Environment 
 }
 
 func TestEnvironment_Create(t *testing.T) {
+	t.Parallel()
+
 	consortium := createConsortium(t)
 	defer deleteConsortium(t, consortium.Id)
 
@@ -56,6 +58,8 @@ func TestEnvironment_Create(t *testing.T) {
 }
 
 func TestEnvironment_Get(t *testing.T) {
+	t.Parallel()
+
 	consortium := createConsortium(t)
 	defer deleteConsortium(t, consortium.Id)
 
@@ -67,6 +71,8 @@ func TestEnvironment_Get(t *testing.T) {
 }
 
 func TestEnvironment_List(t *testing.T) {
+	t.Parallel()
+
 	consortium := createConsortium(t)
 	defer deleteConsortium(t, consortium.Id)
 
@@ -81,6 +87,8 @@ func TestEnvironment_List(t *testing.T) {
 }
 
 func TestEnvironment_Delete(t *testing.T) {
+	t.Parallel()
+
 	consortium := createConsortium(t)
 	defer deleteConsortium(t, consortium.Id)
 

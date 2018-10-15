@@ -66,22 +66,25 @@ func getConsortium(t *testing.T, id string) *kaleido.Consortium {
 }
 
 func TestKaleidoConsortium_CreateAndDelete(t *testing.T) {
+	t.Parallel()
+
 	consortium := createConsortium(t)
 	defer deleteConsortium(t, consortium.Id)
 }
 
 func TestKaleidoConsortium_DeleteNonExisting(t *testing.T) {
+	t.Parallel()
+
 	deleteNonExistingConsortium(t)
 }
 
 func TestKaleidoConsortium_List(t *testing.T) {
-	origList := listConsortia(t)
+	t.Parallel()
 
 	consortium := createConsortium(t)
 	defer deleteConsortium(t, consortium.Id)
 
 	newList := listConsortia(t)
-	st.Expect(t, len(*newList), len(*origList)+1)
 
 	found := false
 	for _, c := range *newList {
@@ -93,6 +96,8 @@ func TestKaleidoConsortium_List(t *testing.T) {
 }
 
 func TestKaleidoConsortium_Get(t *testing.T) {
+	t.Parallel()
+
 	newConsortium := createConsortium(t)
 	defer deleteConsortium(t, newConsortium.Id)
 
