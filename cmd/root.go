@@ -47,15 +47,6 @@ var deleteId string
 var rootCmd = &cobra.Command{
 	Use:   "kld",
 	Short: "Command Line Tool for Kaleido resources management",
-	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		var verbose int64
-		var err error
-		if verbose, err = cmd.Flags().GetInt64("verbose"); err != nil {
-			return err
-		}
-		initConfig(verbose)
-		return nil
-	},
 }
 
 var cfgFile string
@@ -68,6 +59,7 @@ func Execute() {
 }
 
 func init() {
+	cobra.OnInitialize(initConfig)
 	// all environment variables for the "kld" command will have the "KLD" prefix
 	// e.g "KLD_API_URL"
 	viper.SetEnvPrefix("kld")
@@ -99,7 +91,8 @@ func init() {
 	rootCmd.AddCommand(profile.NewProfileCmd())
 }
 
-func initConfig(verbose int64) {
+func initConfig() {
+	verbose := 0
 	if verbose > 1 {
 		fmt.Println("initializing config")
 	}
@@ -125,5 +118,5 @@ func initConfig(verbose int64) {
 	if verbose >= 1 {
 		fmt.Println(err.Error())
 	}
-	viper.SetDefault("debug", false)
+	viper.SetDefault("api.debug", false)
 }
