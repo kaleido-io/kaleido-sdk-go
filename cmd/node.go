@@ -98,6 +98,34 @@ var nodeCreateCmd = &cobra.Command{
 	},
 }
 
+var nodeDeleteCmd = &cobra.Command{
+	Use:   "node",
+	Short: "Delete a node",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if consortiumId == "" {
+			fmt.Println("Missing required parameter: --consortiumId for the consortium that the node belongs to")
+			os.Exit(1)
+		}
+
+		if environmentId == "" {
+			fmt.Println("Missing required parameter: --environmentId for the environment that the node belongs to")
+			os.Exit(1)
+		}
+
+		if nodeId == "" {
+			fmt.Println("Missing required parameter: --id for the node to retrieve")
+			os.Exit(1)
+		}
+
+		client := getNewClient()
+		res, err := client.DeleteNode(consortiumId, environmentId, nodeId)
+
+		cmd.SilenceErrors = true
+		cmd.SilenceUsage = true
+		return printDeletionResponse(res, err, "node")
+	},
+}
+
 func newNodeListCmd() *cobra.Command {
 	flags := nodeListCmd.Flags()
 	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium to retrieve the nodes from")
@@ -123,4 +151,13 @@ func newNodeCreateCmd() *cobra.Command {
 	flags.StringVarP(&environmentId, "environment", "e", "", "Id of the environment this node is created for")
 
 	return nodeCreateCmd
+}
+
+func newNodeDeleteCmd() *cobra.Command {
+	flags := nodeDeleteCmd.Flags()
+	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium this node is created under")
+	flags.StringVarP(&environmentId, "environment", "e", "", "Id of the environment this node is created for")
+	flags.StringVarP(&nodeId, "node", "n", "", "Id of the node to retrieve")
+
+	return nodeDeleteCmd
 }
