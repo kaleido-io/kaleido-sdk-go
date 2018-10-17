@@ -28,6 +28,7 @@ func newCreateCmd() *cobra.Command {
 	createCmd.AddCommand(newEnvironmentCreateCmd())
 	createCmd.AddCommand(newNodeCreateCmd())
 	createCmd.AddCommand(newAppCredsCreateCmd())
+	createCmd.AddCommand(newServiceCreateCmd())
 
 	return createCmd
 }

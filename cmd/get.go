@@ -28,6 +28,7 @@ func newGetCmd() *cobra.Command {
 	getCmd.AddCommand(newEnvironmentGetCmd())
 	getCmd.AddCommand(newNodeGetCmd())
 	getCmd.AddCommand(newAppCredsGetCmd())
+	getCmd.AddCommand(newServiceGetCmd())
 
 	return getCmd
 }

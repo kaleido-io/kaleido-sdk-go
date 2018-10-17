@@ -40,6 +40,8 @@ var membershipId string
 var environmentId string
 var nodeId string
 var appCredsId string
+var serviceId string
+var service string
 
 // for delete command
 var deleteId string
