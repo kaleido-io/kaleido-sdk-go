@@ -20,7 +20,7 @@ import (
 )
 
 var getCmd = &cobra.Command{
-	Use: "get",
+	Use:   "get",
 	Short: "Get details of a resource: consortium, membership, environment, node, appcreds",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("get command")
@@ -32,6 +32,7 @@ func newGetCmd() *cobra.Command {
 	getCmd.AddCommand(newMembershipGetCmd())
 	getCmd.AddCommand(newEnvironmentGetCmd())
 	getCmd.AddCommand(newNodeGetCmd())
+	getCmd.AddCommand(newServiceGetCmd())
 	getCmd.AddCommand(newAppCredsGetCmd())
 
 	return getCmd

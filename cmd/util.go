@@ -53,6 +53,15 @@ func validateConsensus() {
 	return
 }
 
+func validateServiceType() {
+	if serviceType == "" {
+		fmt.Println("Missing required parameter: service")
+		os.Exit(1)
+	}
+
+	return
+}
+
 func validateConsortiumId(resourceName string, isCreate ...bool) {
 	if consortiumId == "" {
 		if len(isCreate) == 0 || isCreate[0] {

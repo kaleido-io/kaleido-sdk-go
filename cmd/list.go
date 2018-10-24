@@ -20,7 +20,7 @@ import (
 )
 
 var listCmd = &cobra.Command{
-	Use: "list",
+	Use:   "list",
 	Short: "List various resources this user account owns: consortium, membership, environment, node, appcreds",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("list command")
@@ -31,6 +31,7 @@ func newListCmd() *cobra.Command {
 	listCmd.AddCommand(newConsortiumListCmd())
 	listCmd.AddCommand(newEnvironmentListCmd())
 	listCmd.AddCommand(newNodeListCmd())
+	listCmd.AddCommand(newServiceListCmd())
 	listCmd.AddCommand(newMembershipListCmd())
 	listCmd.AddCommand(newAppCredsListCmd())
 
