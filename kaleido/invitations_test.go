@@ -31,7 +31,7 @@ func TestInvitation(t *testing.T) {
 	}
 	defer client.DeleteConsortium(consortium.Id)
 
-	invitation := NewInvitation("Test Organization","peter.broadhurst@consensys.net")
+	invitation := NewInvitation("Test Organization", "someone@example.com")
 	res, err = client.CreateInvitation(consortium.Id, &invitation)
 
 	if err != nil {
