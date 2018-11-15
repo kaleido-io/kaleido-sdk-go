@@ -34,6 +34,7 @@ func newListCmd() *cobra.Command {
 	listCmd.AddCommand(newServiceListCmd())
 	listCmd.AddCommand(newMembershipListCmd())
 	listCmd.AddCommand(newAppCredsListCmd())
+	listCmd.AddCommand(newInvitationListCmd())
 
 	return listCmd
 }
