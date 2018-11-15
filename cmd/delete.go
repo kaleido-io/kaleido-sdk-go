@@ -20,7 +20,7 @@ import (
 )
 
 var deleteCmd = &cobra.Command{
-	Use: "delete",
+	Use:   "delete",
 	Short: "Delete various resources: consortium, membership, environment, node, appcreds",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Delete command")
@@ -32,6 +32,7 @@ func newDeleteCmd() *cobra.Command {
 	deleteCmd.AddCommand(newMembershipDeleteCmd())
 	deleteCmd.AddCommand(newEnvironmentDeleteCmd())
 	deleteCmd.AddCommand(newAppCredsDeleteCmd())
+	deleteCmd.AddCommand(newInvitationDeleteCmd())
 
 	return deleteCmd
 }
