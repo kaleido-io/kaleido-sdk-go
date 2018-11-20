@@ -58,6 +58,24 @@ func validateConsensus() {
 	return
 }
 
+func validateServiceType() {
+	if serviceType == "" {
+		fmt.Println("Missing required parameter: service")
+		os.Exit(1)
+	}
+
+	return
+}
+
+func validateEmail() {
+	if email == "" {
+		fmt.Println("Missing required parameter: email")
+		os.Exit(1)
+	}
+
+	return
+}
+
 func validateConsortiumId(resourceName string, isCreate ...bool) {
 	if consortiumId == "" {
 		if len(isCreate) == 0 || isCreate[0] {
@@ -100,6 +118,18 @@ func validateMembershipId(resourceName string, isCreate ...bool) {
 			fmt.Printf("Missing required parameter: --membershipId for the membership to add the new %s to\n", resourceName)
 		} else {
 			fmt.Printf("Missing required parameter: --membershipId for the membership to delete the %s from\n", resourceName)
+		}
+
+		os.Exit(1)
+	}
+}
+
+func validateInvitationId(resourceName string, isCreate ...bool) {
+	if invitationId == "" {
+		if len(isCreate) == 0 || isCreate[0] {
+			fmt.Printf("Missing required parameter: --invitationId for the invitation to add the new %s to\n", resourceName)
+		} else {
+			fmt.Printf("Missing required parameter: --invitationId for the invitation to delete the %s from\n", resourceName)
 		}
 
 		os.Exit(1)

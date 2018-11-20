@@ -33,15 +33,18 @@ var desc string
 var mode string
 var provider string
 var consensus string
+var serviceType string
+var email string
 
 // use for both create, list, get and delete commands
 var consortiumId string
 var membershipId string
 var environmentId string
 var nodeId string
-var appCredsId string
 var serviceId string
+var appCredsId string
 var service string
+var invitationId string
 
 // for delete command
 var deleteId string

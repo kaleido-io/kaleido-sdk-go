@@ -23,9 +23,19 @@ import (
 )
 
 var serviceListCmd = &cobra.Command{
-	Use:   "services",
+	Use:   "service",
 	Short: "List deployed services in an environment",
 	Run: func(cmd *cobra.Command, args []string) {
+		if consortiumId == "" {
+			fmt.Println("Missing required parameter: --consortiumId for the consortium to list services of")
+			os.Exit(1)
+		}
+
+		if environmentId == "" {
+			fmt.Println("Missing required parameter: --environmentId for the environment to list services of")
+			os.Exit(1)
+		}
+
 		client := getNewClient()
 		var services []kld.Service
 		_, err := client.ListServices(consortiumId, environmentId, &services)
@@ -42,70 +52,95 @@ var serviceListCmd = &cobra.Command{
 
 var serviceGetCmd = &cobra.Command{
 	Use:   "service",
-	Short: "Retrieves a service details",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		client := getNewClient()
-		var services []kld.Service
-		res, err := client.GetService(consortiumId, environmentId, serviceId, &services)
+	Short: "Retrieves service details",
+	Run: func(cmd *cobra.Command, args []string) {
+		//SAS SAS client := getNewClient()
+		//SAS SAS var services []kld.Service
+		//SAS SAS res, err := client.GetService(consortiumId, environmentId, serviceId, &services)
 
-		cmd.SilenceErrors = true
-		cmd.SilenceUsage = true
-		return printGetResponse(res, err, "service")
+		//SAS SAS cmd.SilenceErrors = true
+		//SAS SAS cmd.SilenceUsage = true
+		//SAS SAS return printGetResponse(res, err, "service")
+    
+		if consortiumId == "" {
+			fmt.Println("Missing required parameter: --consortiumId for the consortium that the service belongs to")
+			os.Exit(1)
+		}
+
+		if environmentId == "" {
+			fmt.Println("Missing required parameter: --environmentId for the environment that the service belongs to")
+			os.Exit(1)
+		}
+
+		if serviceId == "" {
+			fmt.Println("Missing required parameter: --id for the service to retrieve")
+			os.Exit(1)
+		}
+
+		client := getNewClient()
+		var service kld.Service
+		res, err := client.GetService(consortiumId, environmentId, serviceId, &service)
+
+		validateGetResponse(res, err, "service")
 	},
 }
 
 var serviceCreateCmd = &cobra.Command{
 	Use:   "service",
 	Short: "Deploy a service",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Run: func(cmd *cobra.Command, args []string) {
 		validateName()
+		validateServiceType()
 		validateConsortiumId("service")
 		validateEnvironmentId("service")
 		validateMembershipId("service")
 
 		client := getNewClient()
-		service := kld.NewService(service, name, membershipId)
-		res, err := client.DeployService(consortiumId, environmentId, &service)
+		service := kld.NewService(name, serviceType, membershipId)
+		res, err := client.CreateService(consortiumId, environmentId, &service)
 
-		cmd.SilenceErrors = true
-		cmd.SilenceUsage = true
-		return printCreationResponse(res, err, "service")
+		validateCreationResponse(res, err, "service")
 	},
 }
 
-func newServicesListCmd() *cobra.Command {
+func newServiceListCmd() *cobra.Command {
 	flags := serviceListCmd.Flags()
-	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium to retrieve the nodes from")
-	flags.StringVarP(&environmentId, "environment", "e", "", "Id of the environment to retrieve the nodes from")
-
-	serviceListCmd.MarkFlagRequired("consortium")
-	serviceListCmd.MarkFlagRequired("environment")
+	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium to retrieve the services from")
+	flags.StringVarP(&environmentId, "environment", "e", "", "Id of the environment to retrieve the services from")
 
 	return serviceListCmd
 }
 
 func newServiceGetCmd() *cobra.Command {
 	flags := serviceGetCmd.Flags()
-	flags.StringVarP(&serviceId, "service-id", "s", "", "Id of the service to retrieve")
-
-	serviceGetCmd.MarkFlagRequired("service-id")
+	//SAS SAS flags.StringVarP(&serviceId, "service-id", "s", "", "Id of the service to retrieve")
+	//SAS SAS serviceGetCmd.MarkFlagRequired("service-id")
+  
+	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium to retrieve the service from")
+	flags.StringVarP(&environmentId, "environment", "e", "", "Id of the environment to retrieve the service from")
+	flags.StringVarP(&serviceId, "id", "i", "", "Id of the service to retrieve")
 
 	return serviceGetCmd
 }
 
 func newServiceCreateCmd() *cobra.Command {
 	flags := serviceCreateCmd.Flags()
-	flags.StringVarP(&service, "service", "s", "", "service to deploy (eg: idregistry, hdwallet, ipfs etc.")
-	flags.StringVarP(&name, "name", "n", "", "name of the service")
+	//SAS SAS flags.StringVarP(&service, "service", "s", "", "service to deploy (eg: idregistry, hdwallet, ipfs etc.")
+	//SAS SAS flags.StringVarP(&name, "name", "n", "", "name of the service")
 	flags.StringVarP(&membershipId, "membership", "m", "", "Id of the membership this node belongs to")
 	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium this node is created under")
 	flags.StringVarP(&environmentId, "environment", "e", "", "Id of the environment this node is created for")
 
-	serviceCreateCmd.MarkFlagRequired("consortium")
-	serviceCreateCmd.MarkFlagRequired("environment")
-	serviceCreateCmd.MarkFlagRequired("membership")
-	serviceCreateCmd.MarkFlagRequired("name")
-	serviceCreateCmd.MarkFlagRequired("service")
+	//SAS SAS serviceCreateCmd.MarkFlagRequired("consortium")
+	//SAS SAS serviceCreateCmd.MarkFlagRequired("environment")
+	//SAS SAS serviceCreateCmd.MarkFlagRequired("membership")
+	//SAS SAS serviceCreateCmd.MarkFlagRequired("name")
+	//SAS SAS serviceCreateCmd.MarkFlagRequired("service")
+	flags.StringVarP(&name, "name", "n", "", "Name of the service")
+	flags.StringVarP(&serviceType, "service", "s", "", "Type of the service")
+	flags.StringVarP(&membershipId, "membership", "m", "", "Id of the membership this service belongs to")
+	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium this service is created under")
+	flags.StringVarP(&environmentId, "environment", "e", "", "Id of the environment this service is created for")
 
 	return serviceCreateCmd
 }

@@ -19,7 +19,10 @@ import (
 
 var createCmd = &cobra.Command{
 	Use:   "create",
-	Short: "Create various resources: consortium, membership, environment, node, appcreds",
+	Short: "Create various resources: consortium, membership, environment, node, appcreds, invitation",
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("create command")
+	},
 }
 
 func newCreateCmd() *cobra.Command {
@@ -27,8 +30,9 @@ func newCreateCmd() *cobra.Command {
 	createCmd.AddCommand(newMembershipCreateCmd())
 	createCmd.AddCommand(newEnvironmentCreateCmd())
 	createCmd.AddCommand(newNodeCreateCmd())
-	createCmd.AddCommand(newAppCredsCreateCmd())
 	createCmd.AddCommand(newServiceCreateCmd())
+	createCmd.AddCommand(newAppCredsCreateCmd())
+	createCmd.AddCommand(newInvitationCreateCmd())
 
 	return createCmd
 }
