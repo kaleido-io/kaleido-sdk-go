@@ -54,14 +54,6 @@ var serviceGetCmd = &cobra.Command{
 	Use:   "service",
 	Short: "Retrieves service details",
 	Run: func(cmd *cobra.Command, args []string) {
-		//SAS SAS client := getNewClient()
-		//SAS SAS var services []kld.Service
-		//SAS SAS res, err := client.GetService(consortiumId, environmentId, serviceId, &services)
-
-		//SAS SAS cmd.SilenceErrors = true
-		//SAS SAS cmd.SilenceUsage = true
-		//SAS SAS return printGetResponse(res, err, "service")
-    
 		if consortiumId == "" {
 			fmt.Println("Missing required parameter: --consortiumId for the consortium that the service belongs to")
 			os.Exit(1)
@@ -113,9 +105,6 @@ func newServiceListCmd() *cobra.Command {
 
 func newServiceGetCmd() *cobra.Command {
 	flags := serviceGetCmd.Flags()
-	//SAS SAS flags.StringVarP(&serviceId, "service-id", "s", "", "Id of the service to retrieve")
-	//SAS SAS serviceGetCmd.MarkFlagRequired("service-id")
-  
 	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium to retrieve the service from")
 	flags.StringVarP(&environmentId, "environment", "e", "", "Id of the environment to retrieve the service from")
 	flags.StringVarP(&serviceId, "id", "i", "", "Id of the service to retrieve")
@@ -125,17 +114,6 @@ func newServiceGetCmd() *cobra.Command {
 
 func newServiceCreateCmd() *cobra.Command {
 	flags := serviceCreateCmd.Flags()
-	//SAS SAS flags.StringVarP(&service, "service", "s", "", "service to deploy (eg: idregistry, hdwallet, ipfs etc.")
-	//SAS SAS flags.StringVarP(&name, "name", "n", "", "name of the service")
-	flags.StringVarP(&membershipId, "membership", "m", "", "Id of the membership this node belongs to")
-	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium this node is created under")
-	flags.StringVarP(&environmentId, "environment", "e", "", "Id of the environment this node is created for")
-
-	//SAS SAS serviceCreateCmd.MarkFlagRequired("consortium")
-	//SAS SAS serviceCreateCmd.MarkFlagRequired("environment")
-	//SAS SAS serviceCreateCmd.MarkFlagRequired("membership")
-	//SAS SAS serviceCreateCmd.MarkFlagRequired("name")
-	//SAS SAS serviceCreateCmd.MarkFlagRequired("service")
 	flags.StringVarP(&name, "name", "n", "", "Name of the service")
 	flags.StringVarP(&serviceType, "service", "s", "", "Type of the service")
 	flags.StringVarP(&membershipId, "membership", "m", "", "Id of the membership this service belongs to")

@@ -145,6 +145,42 @@ func validateDeleteId(resourceName string) {
 	return
 }
 
+func validateGetResponse(res *resty.Response, err error, resourceName string) {
+	if res.StatusCode() != 200 {
+		fmt.Printf("Could not retrieve %s. Status code: %d.", resourceName, res.StatusCode())
+	}
+
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Printf("\n%+v\n", res)
+	}
+}
+
+func validateCreationResponse(res *resty.Response, err error, resourceName string) {
+	if res.StatusCode() != 201 {
+		fmt.Printf("Could not create %s. Status code: %d.", resourceName, res.StatusCode())
+	}
+
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Printf("\n%+v\n", res)
+	}
+}
+
+func validateDeletionResponse(res *resty.Response, err error, resourceName string) {
+	if res.StatusCode() != 202 && res.StatusCode() != 204 {
+		fmt.Printf("%s deletion failed. Status code: %d\n", resourceName, res.StatusCode())
+	}
+
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Printf("\n%+v\n", res)
+	}
+}
+
 func printGetResponse(res *resty.Response, err error, resourceName string) error {
 	if err != nil {
 		return err
