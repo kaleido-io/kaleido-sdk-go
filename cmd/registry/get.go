@@ -11,29 +11,17 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package cmd
+package registry
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 )
 
-var deleteCmd = &cobra.Command{
-	Use:   "delete",
-	Short: "Delete various resources: consortium, membership, environment, node, appcreds",
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Delete command")
-	},
+var getCmd = &cobra.Command{
+	Use:   "get",
+	Short: "get org(s), group(s), and user(s)",
 }
 
-func newDeleteCmd() *cobra.Command {
-	deleteCmd.AddCommand(newConsortiumDeleteCmd())
-	deleteCmd.AddCommand(newMembershipDeleteCmd())
-	deleteCmd.AddCommand(newEnvironmentDeleteCmd())
-	deleteCmd.AddCommand(newAppCredsDeleteCmd())
-	deleteCmd.AddCommand(newNodeDeleteCmd())
-	deleteCmd.AddCommand(newInvitationDeleteCmd())
-
-	return deleteCmd
+func init() {
+	registryCmd.AddCommand(getCmd)
 }

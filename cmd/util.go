@@ -18,11 +18,16 @@ import (
 	"os"
 
 	kld "github.com/kaleido-io/kaleido-sdk-go/kaleido"
+	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 	"gopkg.in/resty.v1"
 )
 
 func getNewClient() kld.KaleidoClient {
+	if viper.GetString("api.url") == "" || viper.GetString("api.key") == "" {
+		fmt.Println("Missing api-url or api-key. Have you setup your config (~/.kld.yaml), or env variables, or specified url and key via a flag?")
+		os.Exit(1)
+	}
 	return kld.NewClient(viper.GetString("api.url"), viper.GetString("api.key"))
 }
 
@@ -174,4 +179,41 @@ func validateDeletionResponse(res *resty.Response, err error, resourceName strin
 	} else {
 		fmt.Printf("\n%+v\n", res)
 	}
+}
+
+func printGetResponse(res *resty.Response, err error, resourceName string) error {
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("%+v\n", res)
+	if res.StatusCode() != 200 {
+		return errors.Errorf("Could not retrieve %s. Status code: %d\n", resourceName, res.StatusCode())
+	}
+
+	return nil
+}
+
+func printCreationResponse(res *resty.Response, err error, resourceName string) error {
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("%+v\n", res)
+	if res.StatusCode() != 201 {
+		return errors.Errorf("Could not create %s. Status code: %d\n", resourceName, res.StatusCode())
+	}
+	return nil
+}
+
+func printDeletionResponse(res *resty.Response, err error, resourceName string) error {
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("%+v\n", res)
+	if res.StatusCode() != 202 && res.StatusCode() != 204 {
+		return errors.Errorf("%s deletion failed. Status code: %d\n", resourceName, res.StatusCode())
+	}
+	return nil
 }

@@ -21,7 +21,7 @@ import (
 
 var getCmd = &cobra.Command{
 	Use:   "get",
-	Short: "Get details of a resource: consortium, membership, environment, node, appcreds",
+	Short: "Get details of a resource: consortium, membership, environment, node, appcreds, directory",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("get command")
 	},

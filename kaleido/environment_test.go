@@ -14,115 +14,94 @@
 package kaleido
 
 import (
-	"os"
 	"testing"
+
+	"github.com/nbio/st"
+	"gopkg.in/h2non/gock.v1"
 )
 
-func TestEnvironmentCreationDeletion(t *testing.T) {
-	client := NewClient(os.Getenv("KALEIDO_API"), os.Getenv("KALEIDO_API_KEY"))
-	consortium := NewConsortium("envCreateTest", "creating an environment", "single-org")
-	_, err := client.CreateConsortium(&consortium)
-	defer client.DeleteConsortium(consortium.Id)
-	if err != nil {
-		t.Error(err)
-	}
-	var envs []Environment
-	client.ListEnvironments(consortium.Id, &envs)
-	t.Logf("Envs: %v", envs)
-	if len(envs) != 0 {
-		t.Fatalf("New consortium should be empty.")
-	}
+var mockEnvCreatePayload = map[string]string{
+	"name":           "testingEnvironment",
+	"description":    "just test",
+	"provider":       "quorum",
+	"consensus_type": "raft",
+}
+
+var mockEnv = map[string]string{
+	"_id":          "envid",
+	"name":         "testingEnvironment",
+	"description":  "just test",
+	"provider":     "quorum",
+	"consensus":    "raft",
+	"consortia_id": "cid",
+}
+
+var mockEnvs = []map[string]string{mockEnv}
+
+func TestEnvironmentCreation(t *testing.T) {
+	defer gock.Off()
+
+	gock.New("http://example.com").
+		Post("/api/v1/consortia/cid/environments").
+		MatchType("json").
+		JSON(mockEnvCreatePayload).
+		Reply(201).
+		JSON(mockEnv)
+
+	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
 
 	env := NewEnvironment("testingEnvironment", "just test", "quorum", "raft")
-	res, err := client.CreateEnvironment(consortium.Id, &env)
+	_, err := client.CreateEnvironment("cid", &env)
 
-	if err != nil {
-		t.Fatal(err)
-	}
+	st.Expect(t, err, nil)
+	st.Expect(t, gock.IsDone(), true)
+}
 
-	if res.StatusCode() != 201 {
-		t.Fatalf("Could not create environment status code: %d", res.StatusCode())
-	}
-	t.Logf("Env: %v", env)
+func TestEnvironmentDelete(t *testing.T) {
+	defer gock.Off()
 
-	var env2 Environment
-	res, err = client.GetEnvironment(consortium.Id, env.Id, &env2)
+	gock.New("http://example.com").
+		Delete("/api/v1/consortia/cid/environments/envid").
+		Reply(202)
 
-	if err != nil {
-		t.Fatal(err)
-	}
+	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
 
-	if res.StatusCode() != 200 {
-		t.Fatalf("Could not get environment %s. Status was %d", env.Id, res.StatusCode())
-	}
+	_, err := client.DeleteEnvironment("cid", "envid")
 
-	if env.Id != env2.Id {
-		t.Fatalf("Id mismatch on GetEnvironment %s and %s", env.Id, env2.Id)
-	}
+	st.Expect(t, err, nil)
+	st.Expect(t, gock.IsDone(), true)
+}
 
-	if env2.State == "" {
-		t.Fatal("Fetched environment should have a state was empty.")
-	}
+func TestEnvironmentGet(t *testing.T) {
+	defer gock.Off()
 
-	//Delete all testing environments
-	res, err = client.ListEnvironments(consortium.Id, &envs)
-	if err != nil {
-		t.Error(err)
-	}
+	gock.New("http://example.com").
+		Get("/api/v1/consortia/cid/environments/envid").
+		Reply(200).
+		JSON(mockEnv)
 
-	if res.StatusCode() != 200 {
-		t.Fatalf("Could not list environments status code: %d", res.StatusCode())
-	}
+	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
 
-	var releases []Release
-	res, err = client.ListReleases(&releases)
+	var env Environment
+	_, err := client.GetEnvironment("cid", "envid", &env)
 
-	if err != nil {
-		t.Error(err)
-	}
+	st.Expect(t, err, nil)
+	st.Expect(t, gock.IsDone(), true)
+}
 
-	if res.StatusCode() != 200 {
-		t.Fatalf("Could not fetch releases, status was: %d", res.StatusCode())
-	}
+func TestEnvironmentList(t *testing.T) {
+	defer gock.Off()
 
-	if len(releases) < 4 {
-		t.Fatalf("Environment needs 2 releases, but only has %d", len(releases))
-	}
+	gock.New("http://example.com").
+		Get("/api/v1/consortia/cid/environments").
+		Reply(200).
+		JSON(mockEnvs)
 
-	lastRelease := releases[len(releases)-1]
-	var consensus string
-	if lastRelease.Provider == "geth" {
-		consensus = "poa"
-	} else {
-		consensus = "raft"
-	}
-	environment := NewEnvironment("Old Version", "oldie", lastRelease.Provider, consensus)
-	environment.ReleaseId = lastRelease.Id
-	t.Logf("Old Env Release: %s", lastRelease.Id)
+	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
 
-	t.Logf("Older Env: %v", environment)
-	res, err = client.CreateEnvironment(consortium.Id, &environment)
-	t.Logf(res.String())
+	var envs []Environment
+	_, err := client.ListEnvironments("cid", &envs)
 
-	if err != nil {
-		t.Error(err)
-	}
-
-	if res.StatusCode() != 201 {
-		t.Fatalf("Could not create environment with release %s %s: status %d", lastRelease.Provider, lastRelease.Version, res.StatusCode())
-	}
-
-	if environment.ReleaseId != lastRelease.Id {
-		t.Fatalf("Environment was not created with (%s) the oldest release. Was: %s", environment.ReleaseId, lastRelease.Id)
-	}
-
-	for _, v := range envs {
-		res, err := client.DeleteEnvironment(consortium.Id, v.Id)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if (res.StatusCode() != 202) && (res.StatusCode() != 204) {
-			t.Fatalf("Could not delete environment %s status: %d", v.Id, res.StatusCode())
-		}
-	}
+	st.Expect(t, err, nil)
+	st.Expect(t, gock.IsDone(), true)
 }

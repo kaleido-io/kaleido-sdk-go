@@ -14,44 +14,36 @@
 package kaleido
 
 import (
-	"fmt"
-	"os"
 	"testing"
+
+	"github.com/nbio/st"
+	"gopkg.in/h2non/gock.v1"
 )
 
+func TestGetRelease(t *testing.T) {
+	defer gock.Off()
+
+	gock.New("http://example.com").
+		Get("/api/v1/releases").
+		MatchParam("version", "version").
+		MatchParam("provider", "provider").
+		Reply(200)
+
+	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
+	_, err := client.GetRelease("provider", "version", &[]Release{})
+	st.Expect(t, err, nil)
+	st.Expect(t, gock.IsDone(), true)
+}
+
 func TestListReleases(t *testing.T) {
-	client := NewClient(os.Getenv("KALEIDO_API"), os.Getenv("KALEIDO_API_KEY"))
-	var releases []Release
-	res, err := client.ListReleases(&releases)
-	if err != nil {
-		t.Fatal(err)
-	}
+	defer gock.Off()
 
-	if res.StatusCode() != 200 {
-		t.Fatal(fmt.Errorf("Fetching releases returned %d code.", res.StatusCode()))
-	}
+	gock.New("http://example.com").
+		Get("/api/v1/releases").
+		Reply(200)
 
-	if len(releases) <= 0 {
-		t.Fatalf("No releases were returned")
-	}
-
-	expectedRelease := releases[0]
-	var release []Release
-	res, err = client.GetRelease(expectedRelease.Provider, expectedRelease.Version, &release)
-
-	if err != nil {
-		t.Fatal(err)
-	}
-	if res.StatusCode() != 200 {
-		t.Fatal(fmt.Errorf("Could not fetch the individual release: status code %d.", res.StatusCode()))
-	}
-
-	actualRelease := release[0]
-	if expectedRelease.Provider != actualRelease.Provider {
-		t.Fatal(fmt.Errorf("Expected retrieved release provider to be %s, but got %s", expectedRelease.Provider, actualRelease.Provider))
-	}
-
-	if expectedRelease.Version != actualRelease.Version {
-		t.Fatal(fmt.Errorf("Expected retrieved provider version to be %s, but got %s.", expectedRelease.Version, actualRelease.Version))
-	}
+	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
+	_, err := client.ListReleases(&[]Release{})
+	st.Expect(t, err, nil)
+	st.Expect(t, gock.IsDone(), true)
 }

@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package cmd
 
 import (
@@ -18,6 +19,9 @@ import (
 	"os"
 	"strings"
 
+	"github.com/kaleido-io/kaleido-sdk-go/cmd/profile"
+
+	"github.com/kaleido-io/kaleido-sdk-go/cmd/registry"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -39,6 +43,7 @@ var environmentId string
 var nodeId string
 var serviceId string
 var appCredsId string
+var service string
 var invitationId string
 
 // for delete command
@@ -63,7 +68,6 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-
 	// all environment variables for the "kld" command will have the "KLD" prefix
 	// e.g "KLD_API_URL"
 	viper.SetEnvPrefix("kld")
@@ -73,6 +77,14 @@ func init() {
 	// e.g viper.Get('api.url') for value of "KLD_API_URL"
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 
+	rootCmd.PersistentFlags().Int64("verbose", 0, "Verbosity level of output (0 or 1)")
+
+	rootCmd.PersistentFlags().String("api-url", "", "Kaleido API URL (optional)")
+	viper.BindPFlag("api.url", rootCmd.PersistentFlags().Lookup("api-url"))
+
+	rootCmd.PersistentFlags().String("api-key", "", "Kaleido API KEY (optional)")
+	viper.BindPFlag("api.key", rootCmd.PersistentFlags().Lookup("api-key"))
+
 	// config files capture defaults that can be overwritten by env variables and flags
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "Config file that captures re-usable settings such as API URl, API Key, etc. (default is $HOME/.kld.yaml)")
 	viper.BindPFlag("config", rootCmd.PersistentFlags().Lookup("config"))
@@ -81,9 +93,17 @@ func init() {
 	rootCmd.AddCommand(newDeleteCmd())
 	rootCmd.AddCommand(newListCmd())
 	rootCmd.AddCommand(newGetCmd())
+
+	// add registry command
+	rootCmd.AddCommand(registry.NewRegistryCmd())
+	rootCmd.AddCommand(profile.NewProfileCmd())
 }
 
 func initConfig() {
+	verbose := 0
+	if verbose > 1 {
+		fmt.Println("initializing config")
+	}
 	// Don't forget to read config either from cfgFile or from home directory!
 	if cfgFile != "" {
 		// Use config file from the flag.
@@ -104,4 +124,6 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err != nil {
 		fmt.Printf("\nCan't read config: %v, will rely on environment variables for required configurations\n", err)
 	}
+
+	viper.SetDefault("api.debug", false)
 }

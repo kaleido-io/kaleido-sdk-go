@@ -14,57 +14,107 @@
 package kaleido
 
 import (
-	"os"
+	"encoding/json"
 	"testing"
+
+	"github.com/nbio/st"
+	"gopkg.in/h2non/gock.v1"
 )
 
 func TestConsortiumCreationListDeletion(t *testing.T) {
-	client := NewClient(os.Getenv("KALEIDO_API"), os.Getenv("KALEIDO_API_KEY"))
+
+	consortiaPostBody := map[string]string{
+		"name":        "testConsortium",
+		"description": "test description",
+		"mode":        "single-org",
+	}
+
+	consortiaReplyBody := map[string]string{
+		"_id":         "zzam3flatl",
+		"description": "test description",
+		"mode":        "single-org",
+		"name":        "testConsortium",
+		"owner":       "zzgl55vock",
+		"state":       "setup",
+	}
+
+	mockConsortia := []map[string]string{consortiaReplyBody}
+
+	// setup mock
+	defer gock.Off()
+
+	gock.New("http://example.com").
+		Post("/api/v1/consortia").
+		MatchType("json").
+		JSON(consortiaPostBody).
+		Reply(201).
+		JSON(consortiaReplyBody)
+
+	gock.New("http://example.com").
+		Get("/api/v1/consortia/zzam3flatl").
+		Reply(200).
+		JSON(consortiaReplyBody)
+
+	gock.New("http://example.com").
+		Get("/api/v1/consortia").
+		Reply(200).
+		JSON(mockConsortia)
+
+	gock.New("http://example.com").
+		Delete("/api/v1/consortia/zzam3flatl").
+		Reply(202)
+
+	// TODO make the testing more useful by moving away from printing json the way we do today
+	// for now, it is simply asserting that the request was called (and returned what we expected
+	// but it is mocked so it will always return what we mocked, once the other commands are reworked
+	// these tests can be used to validate what the function invocation returned (i.e. how we processed
+	// a response as opposed to the response itself which is pretty much useless but left in place here
+	// for now)
+	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
 	consortium := NewConsortium("testConsortium", "test description", "single-org")
 	res, err := client.CreateConsortium(&consortium)
-	if res.StatusCode() != 201 {
-		t.Fatalf("Could not create consortium status code: %d.", res.StatusCode())
+	st.Expect(t, err, nil)
+	st.Expect(t, res.StatusCode(), 201) // this will always be true,
+
+	var respBody map[string]string
+	if err := json.Unmarshal(res.Body(), &respBody); err != nil {
+		panic(err)
 	}
-	if err != nil {
-		t.Fatal(err)
-	}
+	st.Expect(t, respBody, consortiaReplyBody)
 
 	var consortium2 Consortium
 	res, err = client.GetConsortium(consortium.Id, &consortium2)
+	st.Expect(t, err, nil)
+	st.Expect(t, res.StatusCode(), 200)
 
-	if err != nil {
-		t.Fatal(err)
+	if err := json.Unmarshal(res.Body(), &respBody); err != nil {
+		panic(err)
 	}
-	if res.StatusCode() != 200 {
-		t.Fatalf("Unable to fetch consortium %s response was: %d.", consortium.Id, res.StatusCode())
-	}
-
-	if consortium.Id != consortium2.Id {
-		t.Fatalf("Fetched consortium id mismatch: expected %s found %s", consortium.Id, consortium2.Id)
-	}
+	st.Expect(t, respBody, consortiaReplyBody)
 
 	var consortia []Consortium
-	_, err = client.ListConsortium(&consortia)
-	if err != nil {
-		t.Fatal(err)
+	res, err = client.ListConsortium(&consortia)
+	st.Expect(t, err, nil)
+	st.Expect(t, res.StatusCode(), 200)
+
+	var respArray []map[string]string
+	if err := json.Unmarshal(res.Body(), &respArray); err != nil {
+		panic(err)
 	}
-	if err != nil {
-		t.Fatal(err)
-	}
+	st.Expect(t, respArray, mockConsortia)
+
 	//Check for a newly created consortia and delete it.
 	countNew := 0
 	for _, x := range consortia {
 		t.Logf("\n%v", x)
 		if x.Name == "testConsortium" && (x.State != DELETED && x.State != DELETE_PENDING) {
 			res, err = client.DeleteConsortium(x.Id)
-			if err != nil {
-				t.Fatal(err)
-			}
-			if res.StatusCode() != 202 {
-				t.Errorf("Consortium Deletion Failed Status %d.", res.StatusCode())
-			}
-			countNew += 1
+			st.Expect(t, err, nil)
+			st.Expect(t, res.StatusCode(), 202)
+			countNew++
 			t.Logf("\nNew Consortium: %v", x)
 		}
 	}
+
+	st.Expect(t, gock.IsDone(), true)
 }

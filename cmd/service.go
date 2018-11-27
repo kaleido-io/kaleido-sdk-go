@@ -24,7 +24,7 @@ import (
 
 var serviceListCmd = &cobra.Command{
 	Use:   "service",
-	Short: "List services under an environment",
+	Short: "List deployed services in an environment",
 	Run: func(cmd *cobra.Command, args []string) {
 		if consortiumId == "" {
 			fmt.Println("Missing required parameter: --consortiumId for the consortium to list services of")
@@ -52,7 +52,7 @@ var serviceListCmd = &cobra.Command{
 
 var serviceGetCmd = &cobra.Command{
 	Use:   "service",
-	Short: "Retrieves a service details",
+	Short: "Retrieves service details",
 	Run: func(cmd *cobra.Command, args []string) {
 		if consortiumId == "" {
 			fmt.Println("Missing required parameter: --consortiumId for the consortium that the service belongs to")
@@ -79,7 +79,7 @@ var serviceGetCmd = &cobra.Command{
 
 var serviceCreateCmd = &cobra.Command{
 	Use:   "service",
-	Short: "Create a service",
+	Short: "Deploy a service",
 	Run: func(cmd *cobra.Command, args []string) {
 		validateName()
 		validateServiceType()

@@ -14,129 +14,120 @@
 package kaleido
 
 import (
-	"os"
+	"encoding/json"
 	"testing"
-	"time"
+
+	"github.com/nbio/st"
+	gock "gopkg.in/h2non/gock.v1"
 )
 
+var mockNodeCreatePayload = map[string]string{
+	"name":          "blah",
+	"membership_id": "member1",
+}
+
+var mockNode = map[string]string{
+	"name":           "blah",
+	"membership_id":  "member1",
+	"role":           "validator",
+	"provider":       "quorum",
+	"consensus_type": "raft",
+	"_id":            "zzy7ww2963",
+	"environment_id": "env1",
+}
+
+var mockNodes = []map[string]string{mockNode}
+
 func TestNodeCreation(t *testing.T) {
-	consensusType := "ibft"
-	client := NewClient(os.Getenv("KALEIDO_API"), os.Getenv("KALEIDO_API_KEY"))
-	consortium := NewConsortium("nodeTestConsortium", "node creation", "single-org")
-	res, err := client.CreateConsortium(&consortium)
-	t.Logf("%v", consortium)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if res.StatusCode() != 201 {
-		t.Fatalf("Could not create consortium status code: %d.", res.StatusCode())
-	}
-	defer client.DeleteConsortium(consortium.Id)
-	env := NewEnvironment("nodeCreate", "just create some nodes", "quorum", consensusType)
+	defer gock.Off()
 
-	res, err = client.CreateEnvironment(consortium.Id, &env)
+	gock.New("http://example.com").
+		Post("/api/v1/consortia/cid/environments/env1/nodes").
+		MatchType("json").
+		JSON(mockNodeCreatePayload).
+		Reply(201).
+		JSON(mockNode)
 
-	if err != nil {
-		t.Fatal(err)
-	}
-	if res.StatusCode() != 201 {
-		t.Fatalf("Could not create environment status code: %d, %s", res.StatusCode(), string(res.Body()))
-	}
+	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
 
-	var members []Membership
-	res, err = client.ListMemberships(consortium.Id, &members)
+	node := NewNode("blah", "member1")
+	res, err := client.CreateNode("cid", "env1", &node)
 
-	if err != nil {
-		t.Fatal(err)
-	}
+	st.Expect(t, err, nil)
+	st.Expect(t, res.StatusCode(), 201)
 
-	if res.StatusCode() != 200 {
-		t.Fatalf("Could not list memberships: %d", res.StatusCode())
+	var respBody map[string]string
+	if err := json.Unmarshal(res.Body(), &respBody); err != nil {
+		panic(err)
 	}
+	st.Expect(t, respBody, mockNode)
 
-	if len(members) != 1 {
-		t.Fatalf("Environment unexpected had %d members.", len(members))
+	st.Expect(t, gock.IsDone(), true)
+}
+
+func TestNodeGet(t *testing.T) {
+	defer gock.Off()
+
+	gock.New("http://example.com").
+		Get("/api/v1/consortia/cid/environments/env1/nodes/zzy7ww2963").
+		Reply(200).
+		JSON(mockNode)
+
+	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
+
+	var node Node
+	res, err := client.GetNode("cid", "env1", "zzy7ww2963", &node)
+
+	st.Expect(t, err, nil)
+	st.Expect(t, res.StatusCode(), 200)
+
+	var respBody map[string]string
+	if err := json.Unmarshal(res.Body(), &respBody); err != nil {
+		panic(err)
 	}
-	t.Logf("%v", members)
+	st.Expect(t, respBody, mockNode)
+
+	st.Expect(t, gock.IsDone(), true)
+
+}
+
+func TestNodeList(t *testing.T) {
+	defer gock.Off()
+
+	gock.New("http://example.com").
+		Get("/api/v1/consortia/cid/environments/env1/nodes").
+		Reply(200).
+		JSON(mockNodes)
+
+	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
 
 	var nodes []Node
-	res, err = client.ListNodes(consortium.Id, env.Id, &nodes)
+	res, err := client.ListNodes("cid", "env1", &nodes)
 
-	if err != nil {
-		t.Fatal(err)
+	st.Expect(t, err, nil)
+	st.Expect(t, res.StatusCode(), 200)
+
+	var respBody []map[string]string
+	if err := json.Unmarshal(res.Body(), &respBody); err != nil {
+		panic(err)
 	}
+	st.Expect(t, respBody, mockNodes)
 
-	if res.StatusCode() != 200 {
-		t.Fatalf("Could not list nodes: %d", res.StatusCode())
-	}
+	st.Expect(t, gock.IsDone(), true)
+}
 
-	t.Logf("Nodes: %v", nodes)
+func TestNodeDelete(t *testing.T) {
+	defer gock.Off()
 
-	node := NewNode("testNode", members[0].Id)
+	gock.New("http://example.com").
+		Delete("/api/v1/consortia/cid/environments/env1/nodes/zzy7ww2963").
+		Reply(202)
 
-	res, err = client.CreateNode(consortium.Id, env.Id, &node)
+	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
 
-	if err != nil {
-		t.Fatal(err)
-	}
-	if res.StatusCode() != 201 {
-		t.Fatalf("Creating node failed status code: %d", res.StatusCode())
-	}
+	res, err := client.DeleteNode("cid", "env1", "zzy7ww2963")
 
-	var fetchedNode Node
-	res, err = client.GetNode(consortium.Id, env.Id, node.Id, &fetchedNode)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if res.StatusCode() != 200 {
-		t.Fatalf("Failed node fetch status code: %d", res.StatusCode())
-	}
-
-	if node.Id != fetchedNode.Id {
-		t.Fatalf("Fetched node id %s does not match %s.", fetchedNode.Id, node.Id)
-	}
-
-	for fetchedNode.State != "started" {
-		time.Sleep(time.Second)
-		res, err = client.GetNode(consortium.Id, env.Id, node.Id, &fetchedNode)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if res.StatusCode() != 200 {
-			t.Fatalf("Failed node fetch status code: %d", res.StatusCode())
-		}
-		t.Logf("Node state is not started: %v", fetchedNode)
-	}
-
-	if fetchedNode.Urls.RPC == "" {
-		t.Fatalf("Fetched node id %s missing RPC was '%s'.", fetchedNode.Id, fetchedNode.Urls.RPC)
-	}
-
-	if fetchedNode.Urls.WSS == "" {
-		t.Fatalf("Fetched node id %s missing WSS, was '%s'.", fetchedNode.Id, fetchedNode.Urls.WSS)
-	}
-
-	if node.ConsensusType != consensusType {
-		t.Fatalf("Fetched node %s has wrong consensusType %s", node.Id, node.ConsensusType)
-	}
-
-	if node.State == "" {
-		t.Fatalf("Fetched node %s should have a state.", node.Id)
-	}
-
-	nodes = nil
-	res, err = client.ListNodes(consortium.Id, env.Id, &nodes)
-
-	if err != nil {
-		t.Fatal(err)
-	}
-	if res.StatusCode() != 200 {
-		t.Fatalf("Could not read nodes status code: %d", res.StatusCode())
-	}
-
-	nodeCount := 2 //Monitor node and your own node.
-	if len(nodes) != nodeCount {
-		t.Fatalf("Found unexpected number of nodes: %d should be %d.", len(nodes), nodeCount)
-	}
-
+	st.Expect(t, err, nil)
+	st.Expect(t, res.StatusCode(), 202)
+	st.Expect(t, gock.IsDone(), true)
 }

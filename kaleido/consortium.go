@@ -16,6 +16,7 @@ package kaleido
 import (
 	"fmt"
 
+	"github.com/spf13/viper"
 	"gopkg.in/resty.v1"
 )
 
@@ -52,6 +53,7 @@ func NewConsortium(name, description, mode string) Consortium {
 
 func NewClient(api string, apiKey string) KaleidoClient {
 	r := resty.New().SetHostURL(api).SetAuthToken(apiKey)
+	r.SetDebug(viper.GetBool("api.debug"))
 	return KaleidoClient{r}
 }
 
