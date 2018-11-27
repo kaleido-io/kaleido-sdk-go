@@ -42,21 +42,18 @@ var consortiumListCmd = &cobra.Command{
 var consortiumGetCmd = &cobra.Command{
 	Use:   "consortium",
 	Short: "Get the consortium details",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Run: func(cmd *cobra.Command, args []string) {
 		client := getNewClient()
 		var consortium kld.Consortium
 		res, err := client.GetConsortium(consortiumId, &consortium)
-
-		cmd.SilenceErrors = true
-		cmd.SilenceUsage = true
-		return printGetResponse(res, err, "consortium")
+		validateGetResponse(res, err, "consortium")
 	},
 }
 
 var consortiumCreateCmd = &cobra.Command{
 	Use:   "consortium",
 	Short: "Create a consortium",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Run: func(cmd *cobra.Command, args []string) {
 		validateName()
 
 		if mode != "single-org" && mode != "multi-org" {
@@ -67,25 +64,19 @@ var consortiumCreateCmd = &cobra.Command{
 		client := getNewClient()
 		consortium := kld.NewConsortium(name, desc, mode)
 		res, err := client.CreateConsortium(&consortium)
-
-		cmd.SilenceErrors = true
-		cmd.SilenceUsage = true
-		return printCreationResponse(res, err, "consortium")
+		validateCreationResponse(res, err, "consortium")
 	},
 }
 
 var consortiumDeleteCmd = &cobra.Command{
 	Use:   "consortium",
 	Short: "Delete a consortium",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Run: func(cmd *cobra.Command, args []string) {
 		validateDeleteId("consortium")
 
 		client := getNewClient()
 		res, err := client.DeleteConsortium(deleteId)
-
-		cmd.SilenceErrors = true
-		cmd.SilenceUsage = true
-		return printDeletionResponse(res, err, "consortium")
+		validateDeletionResponse(res, err, "consortium")
 	},
 }
 

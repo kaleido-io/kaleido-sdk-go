@@ -53,7 +53,7 @@ var nodeListCmd = &cobra.Command{
 var nodeGetCmd = &cobra.Command{
 	Use:   "node",
 	Short: "Retrieves a node details",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Run: func(cmd *cobra.Command, args []string) {
 		if consortiumId == "" {
 			fmt.Println("Missing required parameter: --consortiumId for the consortium that the node belongs to")
 			os.Exit(1)
@@ -73,16 +73,14 @@ var nodeGetCmd = &cobra.Command{
 		var node kld.Node
 		res, err := client.GetNode(consortiumId, environmentId, nodeId, &node)
 
-		cmd.SilenceErrors = true
-		cmd.SilenceUsage = true
-		return printGetResponse(res, err, "node")
+		validateGetResponse(res, err, "node")
 	},
 }
 
 var nodeCreateCmd = &cobra.Command{
 	Use:   "node",
 	Short: "Create a node",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Run: func(cmd *cobra.Command, args []string) {
 		validateName()
 		validateConsortiumId("node")
 		validateEnvironmentId("node")
@@ -92,16 +90,14 @@ var nodeCreateCmd = &cobra.Command{
 		node := kld.NewNode(name, membershipId)
 		res, err := client.CreateNode(consortiumId, environmentId, &node)
 
-		cmd.SilenceErrors = true
-		cmd.SilenceUsage = true
-		return printCreationResponse(res, err, "node")
+		validateCreationResponse(res, err, "node")
 	},
 }
 
 var nodeDeleteCmd = &cobra.Command{
 	Use:   "node",
 	Short: "Delete a node",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Run: func(cmd *cobra.Command, args []string) {
 		if consortiumId == "" {
 			fmt.Println("Missing required parameter: --consortiumId for the consortium that the node belongs to")
 			os.Exit(1)
@@ -120,9 +116,7 @@ var nodeDeleteCmd = &cobra.Command{
 		client := getNewClient()
 		res, err := client.DeleteNode(consortiumId, environmentId, nodeId)
 
-		cmd.SilenceErrors = true
-		cmd.SilenceUsage = true
-		return printDeletionResponse(res, err, "node")
+		validateDeletionResponse(res, err, "node")
 	},
 }
 

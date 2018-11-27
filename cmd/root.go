@@ -52,6 +52,9 @@ var deleteId string
 var rootCmd = &cobra.Command{
 	Use:   "kld",
 	Short: "Command Line Tool for Kaleido resources management",
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Printf("API URL: %s\n", viper.Get("api.url"))
+	},
 }
 
 var cfgFile string
@@ -118,10 +121,9 @@ func initConfig() {
 		viper.SetConfigName(".kld")
 	}
 
-	// config is optional so ignore any errors when reading the config
-	err := viper.ReadInConfig()
-	if verbose >= 1 {
-		fmt.Println(err.Error())
+	if err := viper.ReadInConfig(); err != nil {
+		fmt.Printf("\nCan't read config: %v, will rely on environment variables for required configurations\n", err)
 	}
+
 	viper.SetDefault("api.debug", false)
 }

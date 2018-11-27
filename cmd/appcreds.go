@@ -25,50 +25,41 @@ import (
 var appCredsCreateCmd = &cobra.Command{
 	Use:   "appcreds",
 	Short: "Create application credentials",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Run: func(cmd *cobra.Command, args []string) {
 		validateConsortiumId("appcreds")
 		validateEnvironmentId("appcreds")
 		validateMembershipId("appcreds")
 		client := getNewClient()
 		appcreds := kld.NewAppCreds(membershipId)
 		res, err := client.CreateAppCreds(consortiumId, environmentId, &appcreds)
-
-		cmd.SilenceErrors = true
-		cmd.SilenceUsage = true
-		return printCreationResponse(res, err, "appcreds")
+		validateCreationResponse(res, err, "appcreds")
 	},
 }
 
 var appCredsGetCmd = &cobra.Command{
 	Use:   "appcreds",
 	Short: "Get application credentials",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Run: func(cmd *cobra.Command, args []string) {
 		validateConsortiumId("appcreds")
 		validateEnvironmentId("appcreds")
 		validateAppCredsId("appcreds")
 		client := getNewClient()
 		var appcreds kld.AppCreds
 		res, err := client.GetAppCreds(consortiumId, environmentId, appCredsId, &appcreds)
-
-		cmd.SilenceErrors = true
-		cmd.SilenceUsage = true
-		return printGetResponse(res, err, "appcreds")
+		validateGetResponse(res, err, "appcreds")
 	},
 }
 
 var appCredsDeleteCmd = &cobra.Command{
 	Use:   "appcreds",
 	Short: "Delete application credentials",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Run: func(cmd *cobra.Command, args []string) {
 		validateConsortiumId("appcreds")
 		validateEnvironmentId("appcreds")
 		validateAppCredsId("appcreds", false)
 		client := getNewClient()
 		res, err := client.DeleteAppCreds(consortiumId, environmentId, appCredsId)
-
-		cmd.SilenceErrors = true
-		cmd.SilenceUsage = true
-		return printDeletionResponse(res, err, "appcreds")
+		validateDeletionResponse(res, err, "appcreds")
 	},
 }
 

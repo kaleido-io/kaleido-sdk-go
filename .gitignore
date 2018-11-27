@@ -2,5 +2,3 @@ vendor
 Gopkg.lock
 photic-sdk-go
 kld*
-kaleido/services.go
-kaleido/services_test.go

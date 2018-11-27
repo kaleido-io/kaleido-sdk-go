@@ -49,7 +49,7 @@ var environmentListCmd = &cobra.Command{
 var environmentGetCmd = &cobra.Command{
 	Use:   "environment",
 	Short: "Retrieves an environment details",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Run: func(cmd *cobra.Command, args []string) {
 		if consortiumId == "" {
 			fmt.Println("Missing required parameter: --consortiumId for the consortium that the environment belongs to")
 			os.Exit(1)
@@ -64,16 +64,14 @@ var environmentGetCmd = &cobra.Command{
 		var environment kld.Environment
 		res, err := client.GetEnvironment(consortiumId, environmentId, &environment)
 
-		cmd.SilenceErrors = true
-		cmd.SilenceUsage = true
-		return printGetResponse(res, err, "environment")
+		validateGetResponse(res, err, "environment")
 	},
 }
 
 var environmentCreateCmd = &cobra.Command{
 	Use:   "environment",
 	Short: "Create an environment",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Run: func(cmd *cobra.Command, args []string) {
 		validateName()
 		validateConsortiumId("environment")
 
@@ -81,25 +79,21 @@ var environmentCreateCmd = &cobra.Command{
 		environment := kld.NewEnvironment(name, desc, provider, consensus)
 		res, err := client.CreateEnvironment(consortiumId, &environment)
 
-		cmd.SilenceErrors = true
-		cmd.SilenceUsage = true
-		return printCreationResponse(res, err, "environment")
+		validateCreationResponse(res, err, "environment")
 	},
 }
 
 var environmentDeleteCmd = &cobra.Command{
 	Use:   "environment",
 	Short: "Delete an environment",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Run: func(cmd *cobra.Command, args []string) {
 		validateDeleteId("environment")
 		validateConsortiumId("environment", false)
 
 		client := getNewClient()
 		res, err := client.DeleteEnvironment(consortiumId, deleteId)
 
-		cmd.SilenceErrors = true
-		cmd.SilenceUsage = true
-		return printDeletionResponse(res, err, "environment")
+		validateDeletionResponse(res, err, "environment")
 	},
 }
 

@@ -48,7 +48,7 @@ var membershipListCmd = &cobra.Command{
 var membershipGetCmd = &cobra.Command{
 	Use:   "membership",
 	Short: "Get membership details",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Run: func(cmd *cobra.Command, args []string) {
 		validateConsortiumId("membership")
 
 		if membershipId == "" {
@@ -61,16 +61,14 @@ var membershipGetCmd = &cobra.Command{
 		var membership kld.Membership
 		res, err := client.GetMembership(consortiumId, membershipId, &membership)
 
-		cmd.SilenceErrors = true
-		cmd.SilenceUsage = true
-		return printGetResponse(res, err, "membership")
+		validateGetResponse(res, err, "membership")
 	},
 }
 
 var membershipCreateCmd = &cobra.Command{
 	Use:   "membership",
 	Short: "Create a membership for a consortium",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Run: func(cmd *cobra.Command, args []string) {
 		validateName()
 		validateConsortiumId("membership")
 
@@ -78,25 +76,21 @@ var membershipCreateCmd = &cobra.Command{
 		membership := kld.NewMembership(name)
 		res, err := client.CreateMembership(consortiumId, &membership)
 
-		cmd.SilenceErrors = true
-		cmd.SilenceUsage = true
-		return printCreationResponse(res, err, "membership")
+		validateCreationResponse(res, err, "membership")
 	},
 }
 
 var membershipDeleteCmd = &cobra.Command{
 	Use:   "membership",
 	Short: "Delete a membership from a consortium",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Run: func(cmd *cobra.Command, args []string) {
 		validateConsortiumId("membership", false)
 		validateDeleteId("membership")
 
 		client := getNewClient()
 		res, err := client.DeleteMembership(consortiumId, deleteId)
 
-		cmd.SilenceErrors = true
-		cmd.SilenceUsage = true
-		return printDeletionResponse(res, err, "membership")
+		validateDeletionResponse(res, err, "membership")
 	},
 }
 
