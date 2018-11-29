@@ -15,6 +15,7 @@ package registry
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/kaleido-io/kaleido-sdk-go/common"
 	"github.com/kaleido-io/kaleido-sdk-go/kaleido/registry"
@@ -93,7 +94,11 @@ var usersReverseLookupCmd = &cobra.Command{
 			cmd.SilenceErrors = true // no need to display Error:, this still displays the error that is returned from RunE
 			return err
 		}
-		common.PrintJSON(user)
+		if user.Email == "" {
+			fmt.Println("No user found in ID Registry for given Ethereum account.")
+		} else {
+			common.PrintJSON(user)
+		}
 		return nil
 	},
 }
