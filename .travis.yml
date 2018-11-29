@@ -1,8 +1,9 @@
 language: go
 env:
   - BUILD_VERSION=travis-CI
-services: 
-  - docker 
+  - PATH=$GOPATH/src/github.com/kaleido-io/kaleido-sdk-go:$PATH
+services:
+  - docker
 before_install:
   - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
   - make deps

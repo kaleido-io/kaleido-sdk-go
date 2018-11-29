@@ -17,11 +17,11 @@ TARGETS="windows-10.0/*,darwin-10.10/*"
 all: deps build test package
 build:
 	$(GOBUILD) -o kld
-package: 
+package:
 		$(XGOCMD) -ldflags=$(LDFLAGS) -tags=prod --deps=$(DEPS) --out=$(BINARY_NAME)-$(BUILD_VERSION) --targets=$(TARGETS) -v -x .
 test:
 		$(GOTEST)  ./... -cover -coverprofile=coverage.txt -covermode=atomic
-clean: 
+clean:
 		$(GOCLEAN)
 		rm -f $(BINARY_NAME)-$(BUILD_VERSION)*
 deps:
@@ -32,4 +32,3 @@ build-linux:
 build-mac:
 		GOOS=darwin GOARCH=amd64 $(GOBUILD) -o $(BINARY_MAC) -v
 build-win:
-		
