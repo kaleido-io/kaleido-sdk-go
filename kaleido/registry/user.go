@@ -21,6 +21,33 @@ type User struct {
 	Owner  string `json:"owner,omitempty"`
 }
 
+// InvokeReverseLookup get a username from Ethereum account ID
+func (u *User) InvokeReverseLookup(userAcct string) (*User, error) {
+	client := utils().getNodeClient()
+
+	var myCallOpts bind.CallOpts
+	myCallOpts.Pending = true
+	myCallOpts.From = common.HexToAddress(u.Owner)
+	myCallOpts.Context = nil
+
+	var user User
+
+	instance, err := directory.NewDirectory(common.HexToAddress(utils().getDirectoryAddress()), client)
+	if err != nil {
+		return &user, err
+	}
+	_, _, owner, email, err := instance.UserLookup(&myCallOpts, common.HexToAddress(userAcct))
+	//user.UserID = string(userID[:32])
+	//user.Parent = string(org[:32])
+	user.Email = email
+	user.Owner = owner.Hex()
+	if err != nil {
+		return &user, err
+	}
+
+	return &user, nil
+}
+
 // InvokeGet get a user
 func (u *User) InvokeGet() (*User, error) {
 	client := utils().getDirectoryClient()
@@ -108,13 +135,13 @@ func (u *User) InvokeCreate(keystorePath string, signer string) error {
 		}
 
 		fmt.Println("tx sent:", tx.Hash().Hex())
-		fmt.Println("waiting for tx to be minded (may take a few seconds)...")
+		fmt.Println("waiting for tx to be mined (may take a few seconds)...")
 
 		receipt, err := bind.WaitMined(context.Background(), client, tx)
 		if err != nil {
 			return err
 		}
-		fmt.Println("tx receipt, stats", receipt.Status, "gas used = ", receipt.CumulativeGasUsed)
+		fmt.Printf("tx receipt: status=%v, gas used=%v\n", receipt.Status, receipt.CumulativeGasUsed)
 	} else {
 		return err
 	}
