@@ -11,7 +11,7 @@ import (
 )
 
 func createMembership(t *testing.T, consortiumID string) *kaleido.Membership {
-	stdout, _ := InvokeCLISuccess(t, exec.Command("kld", "create", "membership", "--name", "test-member", "--consortium", consortiumID))
+	stdout, _ := InvokeCLISuccess(t, exec.Command("../kld", "create", "membership", "--name", "test-member", "--consortium", consortiumID))
 
 	var membership kaleido.Membership
 	if err := json.Unmarshal(stdout.Bytes(), &membership); err != nil {
@@ -22,7 +22,7 @@ func createMembership(t *testing.T, consortiumID string) *kaleido.Membership {
 }
 
 func getMembership(t *testing.T, consortiumID string, id string) *kaleido.Membership {
-	stdout, _ := InvokeCLISuccess(t, exec.Command("kld", "get", "membership", "--id", id, "--consortium", consortiumID))
+	stdout, _ := InvokeCLISuccess(t, exec.Command("../kld", "get", "membership", "--id", id, "--consortium", consortiumID))
 
 	var membership kaleido.Membership
 	if err := json.Unmarshal(stdout.Bytes(), &membership); err != nil {
@@ -33,7 +33,7 @@ func getMembership(t *testing.T, consortiumID string, id string) *kaleido.Member
 }
 
 func listMembership(t *testing.T, consortiumID string) *[]kaleido.Membership {
-	stdout, _ := InvokeCLISuccess(t, exec.Command("kld", "list", "membership", "--consortium", consortiumID))
+	stdout, _ := InvokeCLISuccess(t, exec.Command("../kld", "list", "membership", "--consortium", consortiumID))
 
 	var memberships []kaleido.Membership
 	if err := json.Unmarshal(stdout.Bytes(), &memberships); err != nil {
@@ -44,7 +44,7 @@ func listMembership(t *testing.T, consortiumID string) *[]kaleido.Membership {
 }
 
 func deleteMembership(t *testing.T, consortiumID string, id string) {
-	InvokeCLISuccess(t, exec.Command("kld", "delete", "membership", "--id", id, "--consortium", consortiumID))
+	InvokeCLISuccess(t, exec.Command("../kld", "delete", "membership", "--id", id, "--consortium", consortiumID))
 }
 
 func TestMembership_Create(t *testing.T) {

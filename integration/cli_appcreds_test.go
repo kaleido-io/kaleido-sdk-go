@@ -12,7 +12,7 @@ import (
 )
 
 func createAppCreds(t *testing.T, consortiumID string, environmentID string, membershipID string) *kaleido.AppCreds {
-	stdout, _ := InvokeCLISuccess(t, exec.Command("kld", "create", "appcreds", "-c", consortiumID, "-e", environmentID, "-m", membershipID))
+	stdout, _ := InvokeCLISuccess(t, exec.Command("../kld", "create", "appcreds", "-c", consortiumID, "-e", environmentID, "-m", membershipID))
 
 	var appcreds kaleido.AppCreds
 	if err := json.Unmarshal(stdout.Bytes(), &appcreds); err != nil {
@@ -23,7 +23,7 @@ func createAppCreds(t *testing.T, consortiumID string, environmentID string, mem
 }
 
 func getAppCreds(t *testing.T, consortiumID string, environmentID string, id string) *kaleido.AppCreds {
-	stdout, _ := InvokeCLISuccess(t, exec.Command("kld", "get", "appcreds", "-c", consortiumID, "-e", environmentID, "-a", id))
+	stdout, _ := InvokeCLISuccess(t, exec.Command("../kld", "get", "appcreds", "-c", consortiumID, "-e", environmentID, "-a", id))
 
 	var appcreds kaleido.AppCreds
 	if err := json.Unmarshal(stdout.Bytes(), &appcreds); err != nil {
@@ -34,7 +34,7 @@ func getAppCreds(t *testing.T, consortiumID string, environmentID string, id str
 }
 
 func listAppCreds(t *testing.T, consortiumID string, environmentID string) *[]kaleido.AppCreds {
-	stdout, _ := InvokeCLISuccess(t, exec.Command("kld", "list", "appcreds", "-c", consortiumID, "-e", environmentID))
+	stdout, _ := InvokeCLISuccess(t, exec.Command("../kld", "list", "appcreds", "-c", consortiumID, "-e", environmentID))
 
 	var appcreds []kaleido.AppCreds
 	if err := json.Unmarshal(stdout.Bytes(), &appcreds); err != nil {
@@ -45,7 +45,7 @@ func listAppCreds(t *testing.T, consortiumID string, environmentID string) *[]ka
 }
 
 func deleteAppCreds(t *testing.T, consortiumID string, environmentID string, id string) {
-	InvokeCLISuccess(t, exec.Command("kld", "delete", "appcreds", "-c", consortiumID, "-e", environmentID, "-a", id))
+	InvokeCLISuccess(t, exec.Command("../kld", "delete", "appcreds", "-c", consortiumID, "-e", environmentID, "-a", id))
 }
 
 func TestAppCredsCreate(t *testing.T) {

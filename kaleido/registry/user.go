@@ -105,6 +105,9 @@ func (u *User) InvokeCreate(keystorePath string, signer string) error {
 
 		nonce, err := client.PendingNonceAt(context.Background(), account.Address)
 		if err != nil {
+			fmt.Printf("Error finding nonce.\n")
+			fmt.Printf("account = %v\n", account.Address.String())
+			fmt.Printf("err = %v\n", err)
 			return err
 		}
 

@@ -11,7 +11,7 @@ import (
 )
 
 func createEnvironment(t *testing.T, consortiumID string) *kaleido.Environment {
-	stdout, _ := InvokeCLISuccess(t, exec.Command("kld", "create", "environment", "--name", "test-environment", "--consortium", consortiumID))
+	stdout, _ := InvokeCLISuccess(t, exec.Command("../kld", "create", "environment", "--name", "test-environment", "--consortium", consortiumID))
 
 	var environment kaleido.Environment
 	if err := json.Unmarshal(stdout.Bytes(), &environment); err != nil {
@@ -22,11 +22,11 @@ func createEnvironment(t *testing.T, consortiumID string) *kaleido.Environment {
 }
 
 func deleteEnvironment(t *testing.T, consortiumID string, id string) {
-	InvokeCLISuccess(t, exec.Command("kld", "delete", "environment", "--consortium", consortiumID, "--id", id))
+	InvokeCLISuccess(t, exec.Command("../kld", "delete", "environment", "--consortium", consortiumID, "--id", id))
 }
 
 func getEnvironment(t *testing.T, consortiumID string, id string) *kaleido.Environment {
-	stdout, _ := InvokeCLISuccess(t, exec.Command("kld", "get", "environment", "--consortium", consortiumID, "--id", id))
+	stdout, _ := InvokeCLISuccess(t, exec.Command("../kld", "get", "environment", "--consortium", consortiumID, "--id", id))
 
 	var environment kaleido.Environment
 	if err := json.Unmarshal(stdout.Bytes(), &environment); err != nil {
@@ -37,7 +37,7 @@ func getEnvironment(t *testing.T, consortiumID string, id string) *kaleido.Envir
 }
 
 func listEnvironments(t *testing.T, consortiumID string) *[]kaleido.Environment {
-	stdout, _ := InvokeCLISuccess(t, exec.Command("kld", "list", "environment", "--consortium", consortiumID))
+	stdout, _ := InvokeCLISuccess(t, exec.Command("../kld", "list", "environment", "--consortium", consortiumID))
 
 	var environments []kaleido.Environment
 	if err := json.Unmarshal(stdout.Bytes(), &environments); err != nil {
