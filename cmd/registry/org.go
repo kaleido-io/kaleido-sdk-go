@@ -23,7 +23,7 @@ import (
 
 var orgsListCmd = &cobra.Command{
 	Use:   "orgs",
-	Short: "List the orgs",
+	Short: "List all orgs",
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		org := registry.Organization{}
@@ -41,7 +41,7 @@ var orgsListCmd = &cobra.Command{
 
 var orgGetCmd = &cobra.Command{
 	Use:   "org",
-	Short: "Get the org details",
+	Short: "Get an organization's details",
 	Args: func(cmd *cobra.Command, args []string) error {
 		if err := cobra.ExactArgs(1)(cmd, args); err != nil {
 			return err

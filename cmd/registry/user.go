@@ -23,8 +23,8 @@ import (
 )
 
 var usersListCmd = &cobra.Command{
-	Use:   "users",
-	Short: "List the users within an org",
+	Use:   "usersByOrg",
+	Short: "List all users within an org",
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var err error
@@ -44,7 +44,7 @@ var usersListCmd = &cobra.Command{
 }
 
 var userGetCmd = &cobra.Command{
-	Use:   "user",
+	Use:   "userByPath",
 	Short: "Get the user details identified by a path",
 	Args: func(cmd *cobra.Command, args []string) error {
 		if err := cobra.ExactArgs(1)(cmd, args); err != nil {
@@ -75,7 +75,7 @@ var userGetCmd = &cobra.Command{
 }
 
 var usersReverseLookupCmd = &cobra.Command{
-	Use:   "reverse",
+	Use:   "userByAccount",
 	Short: "Get the username linked to a given Ethereum account",
 	Args: func(cmd *cobra.Command, args []string) error {
 		if err := cobra.ExactArgs(1)(cmd, args); err != nil {

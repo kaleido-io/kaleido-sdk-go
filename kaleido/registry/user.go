@@ -106,8 +106,7 @@ func (u *User) InvokeCreate(keystorePath string, signer string) error {
 		nonce, err := client.PendingNonceAt(context.Background(), account.Address)
 		if err != nil {
 			fmt.Printf("Error finding nonce.\n")
-			fmt.Printf("account = %v\n", account.Address.String())
-			fmt.Printf("err = %v\n", err)
+			fmt.Printf("Check your .kld.yaml file for correct node endpoint.\n")
 			return err
 		}
 
