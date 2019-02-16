@@ -30,16 +30,20 @@ import (
 // for create command
 var name string
 var desc string
-var mode string
 var provider string
 var consensus string
 var serviceType string
 var email string
+var region string
+var cloud string
+var multiRegion bool
 
 // use for both create, list, get and delete commands
 var consortiumId string
+var czoneId string
 var membershipId string
 var environmentId string
+var ezoneId string
 var nodeId string
 var serviceId string
 var appCredsId string

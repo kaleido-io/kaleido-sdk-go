@@ -35,17 +35,15 @@ type Consortium struct {
 	Id          string `json:"_id,omitempty"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
-	Mode        string `json:"mode"`
 	DeletedAt   string `json:"deleted_at,omitempty"`
 	State       string `json:"state,omitempty"`
 }
 
-func NewConsortium(name, description, mode string) Consortium {
+func NewConsortium(name, description string) Consortium {
 	return Consortium{
 		Id:          "",
 		Name:        name,
 		Description: description,
-		Mode:        mode,
 		DeletedAt:   "",
 		State:       "",
 	}

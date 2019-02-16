@@ -87,7 +87,7 @@ var nodeCreateCmd = &cobra.Command{
 		validateMembershipId("node")
 
 		client := getNewClient()
-		node := kld.NewNode(name, membershipId)
+		node := kld.NewNode(name, membershipId, ezoneId)
 		res, err := client.CreateNode(consortiumId, environmentId, &node)
 
 		validateCreationResponse(res, err, "node")
@@ -143,6 +143,7 @@ func newNodeCreateCmd() *cobra.Command {
 	flags.StringVarP(&membershipId, "membership", "m", "", "Id of the membership this node belongs to")
 	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium this node is created under")
 	flags.StringVarP(&environmentId, "environment", "e", "", "Id of the environment this node is created for")
+	flags.StringVarP(&ezoneId, "zone", "z", "", "Id of the environment deployment zone where this node should be created")
 
 	return nodeCreateCmd
 }

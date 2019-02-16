@@ -35,6 +35,8 @@ func newCreateCmd() *cobra.Command {
 	createCmd.AddCommand(newServiceCreateCmd())
 	createCmd.AddCommand(newAppCredsCreateCmd())
 	createCmd.AddCommand(newInvitationCreateCmd())
+	createCmd.AddCommand(newCZoneCreateCmd())
+	createCmd.AddCommand(newEZoneCreateCmd())
 
 	return createCmd
 }

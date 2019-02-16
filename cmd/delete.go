@@ -34,6 +34,8 @@ func newDeleteCmd() *cobra.Command {
 	deleteCmd.AddCommand(newAppCredsDeleteCmd())
 	deleteCmd.AddCommand(newNodeDeleteCmd())
 	deleteCmd.AddCommand(newInvitationDeleteCmd())
+	deleteCmd.AddCommand(newCZoneDeleteCmd())
+	deleteCmd.AddCommand(newEZoneDeleteCmd())
 
 	return deleteCmd
 }
