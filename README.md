@@ -58,7 +58,7 @@ api:
   url: https://console.kaleido.io/api/v1
   key: <your API Key>
 ```
-To establish your organizational identity in the registry service, you can run the following command to easily configure your yaml file.
+To establish your organizational identity in the registry service, you can run the following command to easily configure your yaml file. You may have to run ```chmod +x configureYaml``` before you run the following command:
 ```
 ./configureYaml "https://console.kaleido.io/api/v1" "<your API key>" "<your on-chain registry service ID(last portion of the dashboard url)>" "<a fully-qualified node endpoint>"
 ```
