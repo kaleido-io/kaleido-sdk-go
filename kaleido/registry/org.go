@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"encoding/pem"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"strings"
 
@@ -130,17 +129,27 @@ func (org *Organization) createSignedRequestForRegistration() (*SignedRequest, e
 
 	CNTokens := strings.Split(cert.Subject.CommonName, "-")
 	if len(CNTokens) != 4 {
-		return nil, errors.New("common name does not follow the format of <orgid>-<nonce>--<name>")
+		return nil, errors.New("Certificate common name does not follow the format of <orgid>-<nonce>--<name>")
 	}
 
-	preferedName := CNTokens[3] + "--" + CNTokens[0]
-	if org.Name == "" {
-		org.Name = preferedName
+	type responseBody struct {
+		OrgName string `json:"org_name,omitempty"`
 	}
 
-	if !strings.Contains(org.Name, CNTokens[3]) || !strings.Contains(org.Name, CNTokens[0]) {
-		return nil, fmt.Errorf("specified name does not match proof: must contain '%s' and '%s'. suggested name: %s", CNTokens[3], CNTokens[0], preferedName)
+	clientNetMgr := utils().getNetworkManagerClient()
+	targetURL := "/consortia/" + org.Consortium + "/memberships/" + org.MemberID
+	var memberPayload responseBody
+	memberResponse, err := clientNetMgr.R().
+		SetHeader("Content-Type", "application/json").
+		SetResult(&memberPayload).
+		Get(targetURL)
+
+	err = utils().validateGetResponse(memberResponse, err, "membership")
+	if err != nil {
+		return nil, err
 	}
+
+	registryName := memberPayload.OrgName + "-" + org.MemberID
 
 	// create a new signer using ECDSA (ES256) algorithm with the given private key
 	var alg jose.SignatureAlgorithm
@@ -165,8 +174,9 @@ func (org *Organization) createSignedRequestForRegistration() (*SignedRequest, e
 
 	jsonBytes, err := json.Marshal(map[string]interface{}{
 		"envId":   org.Environment,
+		"memId":   org.MemberID,
 		"nonce":   nonce,
-		"name":    org.Name,
+		"name":    registryName,
 		"proof":   string(proofPEM),
 		"address": org.Owner})
 
@@ -196,7 +206,6 @@ func (org *Organization) populateServiceTargets() error {
 	}
 	org.Consortium = service.Consortium
 	org.Environment = service.Environment
-	org.MemberID = service.MemberID
 
 	return nil
 }
@@ -205,7 +214,7 @@ func (org *Organization) populateServiceTargets() error {
 // and stores the proof on-chain
 func (org *Organization) InvokeCreate() (*VerifiedOrganization, error) {
 	// if consortium, environment, or member is not set, retrieve it from the service definition
-	if org.Consortium == "" || org.Environment == "" || org.MemberID == "" {
+	if org.Consortium == "" || org.Environment == "" {
 		if err := org.populateServiceTargets(); err != nil {
 			return nil, err
 		}

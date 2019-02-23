@@ -24,7 +24,7 @@ import (
 
 var profileCmd = &cobra.Command{
 	Use:   "profile",
-	Short: "Manage on-chain indentity profile",
+	Short: "Manage on-chain identity profile",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		serviceID := viper.GetString("services.idregistry.id")
 		if serviceID == "" {

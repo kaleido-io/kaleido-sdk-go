@@ -24,7 +24,7 @@ import (
 
 var registryCmd = &cobra.Command{
 	Use:   "registry",
-	Short: "Manage on-chain indentity registry",
+	Short: "Manage on-chain identity registry",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		serviceID := viper.GetString("services.idregistry.id")
 		if serviceID == "" {

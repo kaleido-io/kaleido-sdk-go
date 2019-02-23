@@ -27,6 +27,7 @@ type utilsInterface interface {
 
 	getRegistryURL() string
 	getAPIClient() *resty.Client
+	getNetworkManagerClient() *resty.Client
 
 	getDirectoryAddress() string
 	getDirectoryClient() *resty.Client
@@ -60,8 +61,9 @@ func utils() utilsInterface {
 }
 
 type utilsImpl struct {
-	registryURL string
-	apiClient   *resty.Client
+	registryURL          string
+	apiClient            *resty.Client
+	networkManagerClient *resty.Client
 
 	directoryAddress string
 	directoryClient  *resty.Client
@@ -83,6 +85,11 @@ func (u *utilsImpl) newClient(url, authToken string) *resty.Client {
 func (u *utilsImpl) initAPIClient() error {
 	u.registryURL = viper.GetString("api.url") + "/idregistry/" + u.serviceID
 	u.apiClient = u.newClient(u.registryURL, viper.GetString("api.key"))
+	return nil
+}
+
+func (u *utilsImpl) initNetworkManagerClient() error {
+	u.networkManagerClient = u.newClient(viper.GetString("api.url"), viper.GetString("api.key"))
 	return nil
 }
 
@@ -125,6 +132,10 @@ func (u *utilsImpl) initialize() error {
 		return err
 	}
 
+	if err := u.initNetworkManagerClient(); err != nil {
+		return err
+	}
+
 	if err := u.initDirectoryClient(); err != nil {
 		return err
 	}
@@ -144,6 +155,10 @@ var client *resty.Client
 
 func (u *utilsImpl) getAPIClient() *resty.Client {
 	return u.apiClient
+}
+
+func (u *utilsImpl) getNetworkManagerClient() *resty.Client {
+	return u.networkManagerClient
 }
 
 func (u *utilsImpl) getDirectoryAddress() string {
