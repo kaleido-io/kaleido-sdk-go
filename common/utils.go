@@ -10,7 +10,7 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	eth "github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/crypto/sha3"
+	"golang.org/x/crypto/sha3"
 )
 
 // PrintJSONObject print a single json object
@@ -43,7 +43,7 @@ func PrintJSON(v interface{}) error {
 const RootNodeHash = "0x0000000000000000000000000000000000000000000000000000000000000000"
 
 func encodePacked(tokens ...string) []byte {
-	stringTy, _ := abi.NewType("string")
+	stringTy, _ := abi.NewType("string", []abi.ArgumentMarshaling{})
 
 	arguments := abi.Arguments{}
 	argument := abi.Argument{
@@ -59,7 +59,7 @@ func encodePacked(tokens ...string) []byte {
 }
 
 func keccak256(bytes []byte) string {
-	hash := sha3.NewKeccak256()
+	hash := sha3.NewLegacyKeccak256()
 	hash.Write(bytes)
 
 	var buf []byte
