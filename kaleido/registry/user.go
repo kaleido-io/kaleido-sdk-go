@@ -23,7 +23,7 @@ type User struct {
 
 // InvokeReverseLookup get a username from Ethereum account ID
 func (u *User) InvokeReverseLookup(userAcct string) (*User, error) {
-	client := utils().getNodeClient()
+	client := Utils().getNodeClient()
 
 	var myCallOpts bind.CallOpts
 	myCallOpts.Pending = true
@@ -32,7 +32,7 @@ func (u *User) InvokeReverseLookup(userAcct string) (*User, error) {
 
 	var user User
 
-	instance, err := directory.NewDirectory(common.HexToAddress(utils().getDirectoryAddress()), client)
+	instance, err := directory.NewDirectory(common.HexToAddress(Utils().getDirectoryAddress()), client)
 	if err != nil {
 		return &user, err
 	}
@@ -50,14 +50,14 @@ func (u *User) InvokeReverseLookup(userAcct string) (*User, error) {
 
 // InvokeGet get a user
 func (u *User) InvokeGet() (*User, error) {
-	client := utils().getDirectoryClient()
+	client := Utils().getDirectoryClient()
 
-	url := "/users/" + utils().generateUserID(u.Parent, u.Email)
+	url := "/users/" + Utils().generateUserID(u.Parent, u.Email)
 
 	var user User
 	response, err := client.R().SetResult(&user).Get(url)
 
-	utils().validateGetResponse(response, err, "user")
+	Utils().ValidateGetResponse(response, err, "user")
 	return &user, nil
 }
 
@@ -74,13 +74,13 @@ func (u *User) InvokeList() (*[]User, error) {
 		Count int           `json:"count,omitempty"`
 		Users []userSummary `json:"users,omitempty"`
 	}
-	client := utils().getDirectoryClient()
+	client := Utils().getDirectoryClient()
 
-	url := "/orgs/" + utils().generateNodeID(u.Parent) + "/users"
+	url := "/orgs/" + Utils().generateNodeID(u.Parent) + "/users"
 
 	var responseBody responseBodyType
 	response, err := client.R().SetResult(&responseBody).Get(url)
-	utils().validateGetResponse(response, err, "users")
+	Utils().ValidateGetResponse(response, err, "users")
 
 	var users []User
 
@@ -100,8 +100,8 @@ func (u *User) InvokeList() (*[]User, error) {
 func (u *User) InvokeCreate(keystorePath string, signer string) error {
 	ks := keystore.NewKeyStore(keystorePath, keystore.StandardScryptN, keystore.StandardScryptP)
 
-	if account, err := utils().getAccountForAddress(ks, signer); err == nil {
-		client := utils().getNodeClient()
+	if account, err := Utils().getAccountForAddress(ks, signer); err == nil {
+		client := Utils().getNodeClient()
 
 		nonce, err := client.PendingNonceAt(context.Background(), account.Address)
 		if err != nil {
@@ -115,18 +115,18 @@ func (u *User) InvokeCreate(keystorePath string, signer string) error {
 			return err
 		}
 
-		auth := utils().newKeyStoreTransactor(account, ks, nil) // TODO add chain id
+		auth := Utils().newKeyStoreTransactor(account, ks, nil) // TODO add chain id
 		auth.Nonce = big.NewInt(int64(nonce))
 		auth.GasPrice = gasPrice
 		auth.GasLimit = uint64(300000)
 		auth.Value = big.NewInt(0)
 
-		instance, err := directory.NewDirectory(common.HexToAddress(utils().getDirectoryAddress()), client)
+		instance, err := directory.NewDirectory(common.HexToAddress(Utils().getDirectoryAddress()), client)
 		if err != nil {
 			return err
 		}
 
-		parentNodeID := utils().generateNodeID(u.Parent)
+		parentNodeID := Utils().generateNodeID(u.Parent)
 
 		var parent [32]byte
 		parentBytes, _ := hexutil.Decode(parentNodeID)

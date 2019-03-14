@@ -53,7 +53,7 @@ func (org *Organization) generateNonce() (string, error) {
 		Nonce string `json:"nonce,omitempty"`
 	}
 
-	client := utils().getAPIClient()
+	client := Utils().getAPIClient()
 	var noncePayload responseBody
 	response, err := client.R().
 		SetHeader("Content-Type", "application/json").
@@ -65,7 +65,7 @@ func (org *Organization) generateNonce() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return noncePayload.Nonce, utils().validateCreateResponse(response, err, "nonce")
+	return noncePayload.Nonce, Utils().validateCreateResponse(response, err, "nonce")
 }
 
 // sourced from go-ethereum
@@ -94,7 +94,7 @@ func (org *Organization) createSignedRequestForRegistration() (*SignedRequest, e
 
 	var ecdsaKey *ecdsa.PrivateKey
 	if strings.Contains(string(pemEncodedBytes), "-----BEGIN ENCRYPTED PRIVATE KEY-----") {
-		passphrase, err := utils().readPassword("KLD_PKCS8_SIGNING_KEY_PASSPHRASE", "Encrypted signing PKCS8 key requires a password:")
+		passphrase, err := Utils().readPassword("KLD_PKCS8_SIGNING_KEY_PASSPHRASE", "Encrypted signing PKCS8 key requires a password:")
 		if err != nil {
 			return nil, err
 		}
@@ -136,7 +136,7 @@ func (org *Organization) createSignedRequestForRegistration() (*SignedRequest, e
 		OrgName string `json:"org_name,omitempty"`
 	}
 
-	clientNetMgr := utils().getNetworkManagerClient()
+	clientNetMgr := Utils().GetNetworkManagerClient()
 	targetURL := "/consortia/" + org.Consortium + "/memberships/" + org.MemberID
 	var memberPayload responseBody
 	memberResponse, err := clientNetMgr.R().
@@ -144,7 +144,7 @@ func (org *Organization) createSignedRequestForRegistration() (*SignedRequest, e
 		SetResult(&memberPayload).
 		Get(targetURL)
 
-	err = utils().validateGetResponse(memberResponse, err, "membership")
+	err = Utils().ValidateGetResponse(memberResponse, err, "membership")
 	if err != nil {
 		return nil, err
 	}
@@ -199,9 +199,9 @@ func (org *Organization) createSignedRequestForRegistration() (*SignedRequest, e
 }
 
 func (org *Organization) populateServiceTargets() error {
-	var service *serviceDefinitionType
+	var service *ServiceDefinitionType
 	var err error
-	if service, err = utils().getServiceDefinition(); err != nil {
+	if service, err = Utils().GetServiceDefinition(); err != nil {
 		return err
 	}
 	org.Consortium = service.Consortium
@@ -213,7 +213,7 @@ func (org *Organization) populateServiceTargets() error {
 // InvokeCreate registers a verified organization with the on-chain registry
 // and stores the proof on-chain
 func (org *Organization) InvokeCreate() (*VerifiedOrganization, error) {
-	// if consortium, environment, or member is not set, retrieve it from the service definition
+	// if consortium or environment is not set, retrieve it from the service definition
 	if org.Consortium == "" || org.Environment == "" {
 		if err := org.populateServiceTargets(); err != nil {
 			return nil, err
@@ -226,25 +226,25 @@ func (org *Organization) InvokeCreate() (*VerifiedOrganization, error) {
 		return nil, err
 	}
 
-	client := utils().getAPIClient()
+	client := Utils().getAPIClient()
 
 	var verifiedOrg VerifiedOrganization
 	response, err := client.R().SetBody(signedPayload).SetResult(&verifiedOrg).Post("/identity")
 
-	err = utils().validateCreateResponse(response, err, "identity")
+	err = Utils().validateCreateResponse(response, err, "identity")
 	return &verifiedOrg, err
 }
 
 // InvokeGet retrieve an organization
 func (org *Organization) InvokeGet() (*VerifiedOrganization, error) {
-	client := utils().getDirectoryClient()
+	client := Utils().getDirectoryClient()
 
-	nodeID := utils().generateNodeID(org.Name)
+	nodeID := Utils().generateNodeID(org.Name)
 
 	var verifiedOrg VerifiedOrganization
 	response, err := client.R().SetResult(&verifiedOrg).Get("/orgs/" + nodeID)
 
-	err = utils().validateGetResponse(response, err, "org")
+	err = Utils().ValidateGetResponse(response, err, "org")
 	return &verifiedOrg, err
 }
 
@@ -255,9 +255,9 @@ func (org *Organization) InvokeList() (*[]VerifiedOrganization, error) {
 		Orgs  []VerifiedOrganization `json:"orgs,omitempty"`
 	}
 	var responseBody responseBodyType
-	client := utils().getDirectoryClient()
+	client := Utils().getDirectoryClient()
 	response, err := client.R().SetResult(&responseBody).Get("/orgs")
 
-	err = utils().validateGetResponse(response, err, "orgs")
+	err = Utils().ValidateGetResponse(response, err, "orgs")
 	return &responseBody.Orgs, err
 }
