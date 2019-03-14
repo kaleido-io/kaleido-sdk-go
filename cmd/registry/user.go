@@ -23,7 +23,7 @@ import (
 )
 
 var usersListCmd = &cobra.Command{
-	Use:   "usersByOrg",
+	Use:   "users",
 	Short: "List all users within an org",
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -44,7 +44,7 @@ var usersListCmd = &cobra.Command{
 }
 
 var userGetCmd = &cobra.Command{
-	Use:   "userByPath",
+	Use:   "user",
 	Short: "Get the user details identified by a path",
 	Args: func(cmd *cobra.Command, args []string) error {
 		if err := cobra.ExactArgs(1)(cmd, args); err != nil {
