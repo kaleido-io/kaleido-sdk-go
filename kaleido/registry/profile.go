@@ -35,13 +35,13 @@ type Profile struct {
 func (p *Profile) SetProperty(key string, value string, revision string) error {
 	ks := keystore.NewKeyStore(p.KeyStorePath, keystore.StandardScryptN, keystore.StandardScryptP)
 
-	if account, err := utils().getAccountForAddress(ks, p.Signer); err == nil {
-		client := utils().getNodeClient()
+	if account, err := Utils().getAccountForAddress(ks, p.Signer); err == nil {
+		client := Utils().getNodeClient()
 
-		auth := utils().newKeyStoreTransactor(account, ks, nil) // TODO add chain id
+		auth := Utils().newKeyStoreTransactor(account, ks, nil) // TODO add chain id
 		auth.Value = big.NewInt(0)
 
-		instance, err := profiles.NewProperties(common.HexToAddress(utils().getProfilesAddress()), client)
+		instance, err := profiles.NewProperties(common.HexToAddress(Utils().getProfilesAddress()), client)
 		if err != nil {
 			return err
 		}
@@ -86,11 +86,11 @@ func (p *Profile) SetProperty(key string, value string, revision string) error {
 
 // GetProperty get a property's latest revision
 func (p *Profile) GetProperty(owner string, key string) (*Property, error) {
-	client := utils().getProfilesClient()
+	client := Utils().getProfilesClient()
 
 	var property Property
 	response, err := client.R().SetResult(&property).Get("/profiles/" + owner + "/" + key)
-	if err := utils().validateGetResponse(response, err, "profile key"); err != nil {
+	if err := Utils().ValidateGetResponse(response, err, "profile key"); err != nil {
 		return nil, err
 	}
 	return &property, nil
@@ -98,11 +98,11 @@ func (p *Profile) GetProperty(owner string, key string) (*Property, error) {
 
 // GetPropertyByRevision as the name says
 func (p *Profile) GetPropertyByRevision(owner string, key string, revisionIndex int64) (*Property, error) {
-	client := utils().getProfilesClient()
+	client := Utils().getProfilesClient()
 
 	var property Property
 	response, err := client.R().SetResult(&property).Get("/profiles/" + owner + "/" + key + "/versions/" + strconv.FormatInt(revisionIndex, 10))
-	if err := utils().validateGetResponse(response, err, "key"); err != nil {
+	if err := Utils().ValidateGetResponse(response, err, "key"); err != nil {
 		return nil, err
 	}
 	return &property, nil
@@ -110,7 +110,7 @@ func (p *Profile) GetPropertyByRevision(owner string, key string, revisionIndex 
 
 // GetPropertyAllVersions all version for the given property
 func (p *Profile) GetPropertyAllVersions(owner string, key string) (*[]Property, error) {
-	client := utils().getProfilesClient()
+	client := Utils().getProfilesClient()
 
 	type responseBodyType struct {
 		Count    string     `json:"count,omitempty"`
@@ -119,7 +119,7 @@ func (p *Profile) GetPropertyAllVersions(owner string, key string) (*[]Property,
 
 	var responseBody responseBodyType
 	response, err := client.R().SetResult(&responseBody).Get("/profiles/" + owner + "/" + key + "/versions")
-	if err := utils().validateGetResponse(response, err, "key"); err != nil {
+	if err := Utils().ValidateGetResponse(response, err, "key"); err != nil {
 		return nil, err
 	}
 	return &responseBody.Versions, nil
@@ -128,7 +128,7 @@ func (p *Profile) GetPropertyAllVersions(owner string, key string) (*[]Property,
 
 // GetProperties get the latest revision of all properties associated with this owner
 func (p *Profile) GetProperties(owner string) (*[]Property, error) {
-	client := utils().getProfilesClient()
+	client := Utils().getProfilesClient()
 
 	type keys struct {
 		Count  string     `json:"count,omitempty"`
@@ -141,7 +141,7 @@ func (p *Profile) GetProperties(owner string) (*[]Property, error) {
 
 	var responseBody responseBodyType
 	response, err := client.R().SetResult(&responseBody).Get("/profiles/" + owner)
-	if err := utils().validateGetResponse(response, err, "profile"); err != nil {
+	if err := Utils().ValidateGetResponse(response, err, "profile"); err != nil {
 		return nil, err
 	}
 	return &responseBody.Keys.Values, nil

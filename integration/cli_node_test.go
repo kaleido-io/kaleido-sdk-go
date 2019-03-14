@@ -13,7 +13,7 @@ import (
 )
 
 func createNode(t *testing.T, consortiumID string, environmentID string, membershipID string) *kaleido.Node {
-	stdout, _ := InvokeCLISuccess(t, exec.Command("kld", "create", "node", "--name", "test-node", "-c", consortiumID, "-e", environmentID, "-m", membershipID))
+	stdout, _ := InvokeCLISuccess(t, exec.Command("../kld", "create", "node", "--name", "test-node", "-c", consortiumID, "-e", environmentID, "-m", membershipID))
 
 	var node kaleido.Node
 	if err := json.Unmarshal(stdout.Bytes(), &node); err != nil {
@@ -38,7 +38,7 @@ func createNode(t *testing.T, consortiumID string, environmentID string, members
 }
 
 func getNode(t *testing.T, consortiumID string, environmentID string, id string) *kaleido.Node {
-	stdout, _ := InvokeCLISuccess(t, exec.Command("kld", "get", "node", "-c", consortiumID, "-e", environmentID, "--node", id))
+	stdout, _ := InvokeCLISuccess(t, exec.Command("../kld", "get", "node", "-c", consortiumID, "-e", environmentID, "--node", id))
 
 	var node kaleido.Node
 	if err := json.Unmarshal(stdout.Bytes(), &node); err != nil {
@@ -49,7 +49,7 @@ func getNode(t *testing.T, consortiumID string, environmentID string, id string)
 }
 
 func listNode(t *testing.T, consortiumID string, environmentID string) *[]kaleido.Node {
-	stdout, _ := InvokeCLISuccess(t, exec.Command("kld", "list", "node", "-c", consortiumID, "-e", environmentID))
+	stdout, _ := InvokeCLISuccess(t, exec.Command("../kld", "list", "node", "-c", consortiumID, "-e", environmentID))
 
 	var nodes []kaleido.Node
 	if err := json.Unmarshal(stdout.Bytes(), &nodes); err != nil {
@@ -60,7 +60,7 @@ func listNode(t *testing.T, consortiumID string, environmentID string) *[]kaleid
 }
 
 func deleteNode(t *testing.T, consortiumID string, environmentID string, id string) {
-	InvokeCLISuccess(t, exec.Command("kld", "delete", "node", "-c", consortiumID, "-e", environmentID, "-n", id))
+	InvokeCLISuccess(t, exec.Command("../kld", "delete", "node", "-c", consortiumID, "-e", environmentID, "-n", id))
 }
 
 func TestNode_Create(t *testing.T) {

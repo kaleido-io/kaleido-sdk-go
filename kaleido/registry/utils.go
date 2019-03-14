@@ -23,10 +23,11 @@ import (
 )
 
 type utilsInterface interface {
-	getServiceDefinition() (*serviceDefinitionType, error)
+	GetServiceDefinition() (*ServiceDefinitionType, error)
 
 	getRegistryURL() string
 	getAPIClient() *resty.Client
+	GetNetworkManagerClient() *resty.Client
 
 	getDirectoryAddress() string
 	getDirectoryClient() *resty.Client
@@ -35,7 +36,7 @@ type utilsInterface interface {
 	getProfilesClient() *resty.Client
 
 	getNodeClient() *ethclient.Client
-	validateGetResponse(res *resty.Response, err error, resourceName string) error
+	ValidateGetResponse(res *resty.Response, err error, resourceName string) error
 	validateCreateResponse(res *resty.Response, err error, resourceName string) error
 
 	generateNodeID(path string) string
@@ -47,7 +48,7 @@ type utilsInterface interface {
 
 var instance *utilsImpl
 
-func utils() utilsInterface {
+func Utils() utilsInterface {
 	if instance == nil {
 		instance = &utilsImpl{}
 		err := instance.initialize()
@@ -60,8 +61,9 @@ func utils() utilsInterface {
 }
 
 type utilsImpl struct {
-	registryURL string
-	apiClient   *resty.Client
+	registryURL          string
+	apiClient            *resty.Client
+	networkManagerClient *resty.Client
 
 	directoryAddress string
 	directoryClient  *resty.Client
@@ -86,6 +88,11 @@ func (u *utilsImpl) initAPIClient() error {
 	return nil
 }
 
+func (u *utilsImpl) initNetworkManagerClient() error {
+	u.networkManagerClient = u.newClient(viper.GetString("api.url"), viper.GetString("api.key"))
+	return nil
+}
+
 func (u *utilsImpl) initDirectoryClient() error {
 	directory, profiles, err := u.fetchOnChainAddresses()
 	if err != nil {
@@ -94,8 +101,8 @@ func (u *utilsImpl) initDirectoryClient() error {
 	u.directoryAddress = directory
 	u.profilesAddress = profiles
 
-	directoryURL := utils().getRegistryURL() + "/directories/" + u.directoryAddress
-	profilesURL := utils().getRegistryURL() + "/properties/" + u.profilesAddress
+	directoryURL := Utils().getRegistryURL() + "/directories/" + u.directoryAddress
+	profilesURL := Utils().getRegistryURL() + "/properties/" + u.profilesAddress
 
 	u.directoryClient = u.newClient(directoryURL, viper.GetString("api.key"))
 	u.profilesClient = u.newClient(profilesURL, viper.GetString("api.key"))
@@ -125,6 +132,10 @@ func (u *utilsImpl) initialize() error {
 		return err
 	}
 
+	if err := u.initNetworkManagerClient(); err != nil {
+		return err
+	}
+
 	if err := u.initDirectoryClient(); err != nil {
 		return err
 	}
@@ -144,6 +155,10 @@ var client *resty.Client
 
 func (u *utilsImpl) getAPIClient() *resty.Client {
 	return u.apiClient
+}
+
+func (u *utilsImpl) GetNetworkManagerClient() *resty.Client {
+	return u.networkManagerClient
 }
 
 func (u *utilsImpl) getDirectoryAddress() string {
@@ -166,7 +181,7 @@ func (u *utilsImpl) getNodeClient() *ethclient.Client {
 	return u.nodeClient
 }
 
-func (u *utilsImpl) validateGetResponse(res *resty.Response, err error, resourceName string) error {
+func (u *utilsImpl) ValidateGetResponse(res *resty.Response, err error, resourceName string) error {
 	if res.StatusCode() != 200 {
 		if res.StatusCode() >= 400 && res.StatusCode() < 500 {
 			type photicError struct {
@@ -217,9 +232,9 @@ func (u *utilsImpl) fetchOnChainAddresses() (string, string, error) {
 		Claims      string `json:"claims,omitempty"`
 	}
 	var directories []responseBody
-	client := utils().getAPIClient()
+	client := Utils().getAPIClient()
 	response, err := client.R().SetResult(&directories).Get("/directories")
-	err = u.validateGetResponse(response, err, "directories")
+	err = u.ValidateGetResponse(response, err, "directories")
 	if err != nil {
 		return "", "", err
 	}
@@ -231,18 +246,18 @@ func (u *utilsImpl) fetchOnChainAddresses() (string, string, error) {
 	return directories[0].Directory, directories[0].Profiles, nil
 }
 
-type serviceDefinitionType struct {
+type ServiceDefinitionType struct {
 	Consortium  string `json:"consortia_id,omitempty"`
 	Environment string `json:"environment_id,omitempty"`
 	MemberID    string `json:"membership_id,omitempty"`
 }
 
-func (u *utilsImpl) getServiceDefinition() (*serviceDefinitionType, error) {
+func (u *utilsImpl) GetServiceDefinition() (*ServiceDefinitionType, error) {
 	client := u.newClient(viper.GetString("api.url"), viper.GetString("api.key"))
 	url := fmt.Sprintf("/services?_id=%s", u.serviceID)
-	var services []serviceDefinitionType
+	var services []ServiceDefinitionType
 	response, err := client.R().SetResult(&services).Get(url)
-	if err = u.validateGetResponse(response, err, "services"); err != nil {
+	if err = u.ValidateGetResponse(response, err, "services"); err != nil {
 		return nil, err
 	}
 	return &services[0], nil
