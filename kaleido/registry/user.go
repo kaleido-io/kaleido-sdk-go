@@ -118,7 +118,7 @@ func (u *User) InvokeCreate(keystorePath string, signer string) error {
 		auth := Utils().newKeyStoreTransactor(account, ks, nil) // TODO add chain id
 		auth.Nonce = big.NewInt(int64(nonce))
 		auth.GasPrice = gasPrice
-		auth.GasLimit = uint64(300000)
+		auth.GasLimit = uint64(5000000)
 		auth.Value = big.NewInt(0)
 
 		instance, err := directory.NewDirectory(common.HexToAddress(Utils().getDirectoryAddress()), client)

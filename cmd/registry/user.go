@@ -159,7 +159,7 @@ func initGetUserCmd() {
 
 	flags.StringP("parent", "p", "", "Path to the parent org or group")
 
-	userCreateCmd.MarkFlagRequired("parent")
+	userGetCmd.MarkFlagRequired("parent")
 }
 
 func initListUserCmd() {
@@ -167,7 +167,7 @@ func initListUserCmd() {
 
 	flags.StringP("parent", "p", "", "Path to the parent org or group")
 
-	userCreateCmd.MarkFlagRequired("parent")
+	usersListCmd.MarkFlagRequired("parent")
 }
 
 func initReverseLookupUserCmd() {

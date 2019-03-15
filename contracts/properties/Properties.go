@@ -438,6 +438,32 @@ func (_Properties *PropertiesCallerSession) GetByOwnerAndName(owner common.Addre
 	return _Properties.Contract.GetByOwnerAndName(&_Properties.CallOpts, owner, name)
 }
 
+// GetContractVersion is a free data retrieval call binding the contract method 0x8aa10435.
+//
+// Solidity: function getContractVersion() constant returns(string)
+func (_Properties *PropertiesCaller) GetContractVersion(opts *bind.CallOpts) (string, error) {
+	var (
+		ret0 = new(string)
+	)
+	out := ret0
+	err := _Properties.contract.Call(opts, out, "getContractVersion")
+	return *ret0, err
+}
+
+// GetContractVersion is a free data retrieval call binding the contract method 0x8aa10435.
+//
+// Solidity: function getContractVersion() constant returns(string)
+func (_Properties *PropertiesSession) GetContractVersion() (string, error) {
+	return _Properties.Contract.GetContractVersion(&_Properties.CallOpts)
+}
+
+// GetContractVersion is a free data retrieval call binding the contract method 0x8aa10435.
+//
+// Solidity: function getContractVersion() constant returns(string)
+func (_Properties *PropertiesCallerSession) GetContractVersion() (string, error) {
+	return _Properties.Contract.GetContractVersion(&_Properties.CallOpts)
+}
+
 // GetKeyCount is a free data retrieval call binding the contract method 0xee1ce841.
 //
 // Solidity: function getKeyCount() constant returns(uint256)
