@@ -15,7 +15,6 @@ package registry
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/kaleido-io/kaleido-sdk-go/common"
 	"github.com/kaleido-io/kaleido-sdk-go/kaleido/registry"
@@ -74,34 +73,34 @@ var userGetCmd = &cobra.Command{
 	},
 }
 
-var usersReverseLookupCmd = &cobra.Command{
-	Use:   "userByAccount",
-	Short: "Get the username linked to a given Ethereum account",
-	Args: func(cmd *cobra.Command, args []string) error {
-		if err := cobra.ExactArgs(1)(cmd, args); err != nil {
-			return err
-		}
-		return nil
-	},
-	RunE: func(cmd *cobra.Command, args []string) error {
-		user := &registry.User{
-			Email: args[0],
-		}
-
-		var err error
-		if user, err = user.InvokeReverseLookup(args[0]); err != nil {
-			cmd.SilenceUsage = true  // not a usage error at this point
-			cmd.SilenceErrors = true // no need to display Error:, this still displays the error that is returned from RunE
-			return err
-		}
-		if user.Email == "" {
-			fmt.Println("No user found in ID Registry for given Ethereum account.")
-		} else {
-			common.PrintJSON(user)
-		}
-		return nil
-	},
-}
+//var usersReverseLookupCmd = &cobra.Command{
+//Use:   "userByAccount",
+//Short: "Get the username linked to a given Ethereum account",
+//Args: func(cmd *cobra.Command, args []string) error {
+//if err := cobra.ExactArgs(1)(cmd, args); err != nil {
+//return err
+//}
+//return nil
+//},
+//RunE: func(cmd *cobra.Command, args []string) error {
+//user := &registry.User{
+//Email: args[0],
+//}
+//
+//var err error
+//if user, err = user.InvokeReverseLookup(args[0]); err != nil {
+//cmd.SilenceUsage = true  // not a usage error at this point
+//cmd.SilenceErrors = true // no need to display Error:, this still displays the error that is returned from RunE
+//return err
+//}
+//if user.Email == "" {
+//fmt.Println("No user found in ID Registry for given Ethereum account.")
+//} else {
+//common.PrintJSON(user)
+//}
+//return nil
+//},
+//}
 
 var userCreateCmd = &cobra.Command{
 	Use:   "user",
@@ -170,22 +169,22 @@ func initListUserCmd() {
 	usersListCmd.MarkFlagRequired("parent")
 }
 
-func initReverseLookupUserCmd() {
-	flags := usersReverseLookupCmd.Flags()
-
-	flags.StringP("parent", "p", "", "Path to the parent org or group")
-
-	userCreateCmd.MarkFlagRequired("parent")
-}
+//func initReverseLookupUserCmd() {
+//flags := usersReverseLookupCmd.Flags()
+//
+//flags.StringP("parent", "p", "", "Path to the parent org or group")
+//
+//userCreateCmd.MarkFlagRequired("parent")
+//}
 
 func init() {
 	initCreateUserCmd()
 	initGetUserCmd()
 	initListUserCmd()
-	initReverseLookupUserCmd()
+	//initReverseLookupUserCmd()
 
 	createCmd.AddCommand(userCreateCmd)
 	getCmd.AddCommand(userGetCmd)
 	getCmd.AddCommand(usersListCmd)
-	getCmd.AddCommand(usersReverseLookupCmd)
+	//getCmd.AddCommand(usersReverseLookupCmd)
 }

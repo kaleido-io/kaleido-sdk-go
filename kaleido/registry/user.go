@@ -21,32 +21,32 @@ type User struct {
 	Owner  string `json:"owner,omitempty"`
 }
 
-// InvokeReverseLookup get a username from Ethereum account ID
-func (u *User) InvokeReverseLookup(userAcct string) (*User, error) {
-	client := Utils().getNodeClient()
-
-	var myCallOpts bind.CallOpts
-	myCallOpts.Pending = true
-	myCallOpts.From = common.HexToAddress(u.Owner)
-	myCallOpts.Context = nil
-
-	var user User
-
-	instance, err := directory.NewDirectory(common.HexToAddress(Utils().getDirectoryAddress()), client)
-	if err != nil {
-		return &user, err
-	}
-	_, _, owner, email, err := instance.UserLookup(&myCallOpts, common.HexToAddress(userAcct))
-	//user.UserID = string(userID[:32])
-	//user.Parent = string(org[:32])
-	user.Email = email
-	user.Owner = owner.Hex()
-	if err != nil {
-		return &user, err
-	}
-
-	return &user, nil
-}
+//// InvokeReverseLookup get a username from Ethereum account ID
+//func (u *User) InvokeReverseLookup(userAcct string) (*User, error) {
+//client := Utils().getNodeClient()
+//
+//var myCallOpts bind.CallOpts
+//myCallOpts.Pending = true
+//myCallOpts.From = common.HexToAddress(u.Owner)
+//myCallOpts.Context = nil
+//
+//var user User
+//
+//instance, err := directory.NewDirectory(common.HexToAddress(Utils().getDirectoryAddress()), client)
+//if err != nil {
+//return &user, err
+//}
+//_, _, owner, email, err := instance.UserLookup(&myCallOpts, common.HexToAddress(userAcct))
+////user.UserID = string(userID[:32])
+////user.Parent = string(org[:32])
+//user.Email = email
+//user.Owner = owner.Hex()
+//if err != nil {
+//return &user, err
+//}
+//
+//return &user, nil
+//}
 
 // InvokeGet get a user
 func (u *User) InvokeGet() (*User, error) {
@@ -76,7 +76,7 @@ func (u *User) InvokeList() (*[]User, error) {
 	}
 	client := Utils().getDirectoryClient()
 
-	url := "/orgs/" + Utils().generateNodeID(u.Parent) + "/users"
+	url := "/orgs/" + Utils().GenerateNodeID(u.Parent) + "/users"
 
 	var responseBody responseBodyType
 	response, err := client.R().SetResult(&responseBody).Get(url)
@@ -126,7 +126,7 @@ func (u *User) InvokeCreate(keystorePath string, signer string) error {
 			return err
 		}
 
-		parentNodeID := Utils().generateNodeID(u.Parent)
+		parentNodeID := Utils().GenerateNodeID(u.Parent)
 
 		var parent [32]byte
 		parentBytes, _ := hexutil.Decode(parentNodeID)

@@ -39,7 +39,7 @@ type utilsInterface interface {
 	ValidateGetResponse(res *resty.Response, err error, resourceName string) error
 	validateCreateResponse(res *resty.Response, err error, resourceName string) error
 
-	generateNodeID(path string) string
+	GenerateNodeID(path string) string
 	generateUserID(path string, email string) string
 	newKeyStoreTransactor(from *accounts.Account, keystore *keystore.KeyStore, chainID *big.Int) *bind.TransactOpts
 	getAccountForAddress(ks *keystore.KeyStore, hexAddress string) (*accounts.Account, error)
@@ -263,7 +263,7 @@ func (u *utilsImpl) GetServiceDefinition() (*ServiceDefinitionType, error) {
 	return &services[0], nil
 }
 
-func (u *utilsImpl) generateNodeID(path string) string {
+func (u *utilsImpl) GenerateNodeID(path string) string {
 	nodeID := path
 	if path[:2] != "0x" {
 		nodeID, _ = kaleido.PathHash(path)
@@ -274,7 +274,7 @@ func (u *utilsImpl) generateNodeID(path string) string {
 func (u *utilsImpl) generateUserID(path string, email string) string {
 	userID := email
 	if userID[:2] != "0x" {
-		nodeID := u.generateNodeID(path)
+		nodeID := u.GenerateNodeID(path)
 		userID = kaleido.ChildHash(nodeID, email)
 	}
 	return userID
