@@ -20,7 +20,7 @@ import (
 
 var createCmd = &cobra.Command{
 	Use:   "create",
-	Short: "Create orgs, groups, and users",
+	Short: "Create orgs, groups, accounts, and users",
 }
 
 func init() {
