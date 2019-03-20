@@ -114,7 +114,41 @@ func (acct *Account) InvokeGet() error {
 	fmt.Printf("parent node     = 0x%x\n", parentID)
 	fmt.Println("parent name     =", parentName)
 	fmt.Println("account name    =", name)
-	fmt.Printf("account value   = 0x%x\n", address)
+	fmt.Printf("account address = 0x%x\n", address)
+	fmt.Println("version descr.  =", versionDescr)
+	return nil
+}
+
+// InvokeReverseLookup retrieve an account's details using Ethereum address
+func (acct *Account) InvokeReverseLookup() error {
+	client := Utils().getNodeClient()
+	instance, err := directory.NewDirectory(common.HexToAddress(Utils().getDirectoryAddress()), client)
+	if err != nil {
+		return err
+	}
+
+	var parentID [32]byte
+	var parentName string
+	var name string
+	var address common.Address
+	var versionDescr string
+
+	parentID, parentName, name, address, versionDescr, err = instance.AccountLookup(&bind.CallOpts{}, common.HexToAddress(acct.Value))
+
+	if err != nil {
+		fmt.Println("Failed to find account in registry. Smart contract kicked back the function call.")
+		return nil
+	}
+	if parentName == "" {
+		fmt.Println("Failed to find account in registry.")
+		return nil
+	}
+	fmt.Println("Successfully found account.")
+	fmt.Println("**********************************************************")
+	fmt.Printf("parent node     = 0x%x\n", parentID)
+	fmt.Println("parent name     =", parentName)
+	fmt.Println("account name    =", name)
+	fmt.Printf("account address = 0x%x\n", address)
 	fmt.Println("version descr.  =", versionDescr)
 	return nil
 }

@@ -28,7 +28,7 @@ var usersListCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var err error
 		user := &registry.User{
-			Parent: cmd.Flags().Lookup("parent").Value.String(),
+			ParentID: cmd.Flags().Lookup("parent").Value.String(),
 		}
 
 		var users *[]registry.User
@@ -58,17 +58,18 @@ var userGetCmd = &cobra.Command{
 		}
 
 		user := &registry.User{
-			Parent: cmd.Flags().Lookup("parent").Value.String(),
-			Email:  args[0],
+			ParentID: cmd.Flags().Lookup("parent").Value.String(),
+			Name:     args[0],
 		}
 
 		var err error
-		if user, err = user.InvokeGet(); err != nil {
+		var usr *registry.User
+		if usr, err = user.InvokeGet(); err != nil {
 			cmd.SilenceUsage = true  // not a usage error at this point
 			cmd.SilenceErrors = true // no need to display Error:, this still displays the error that is returned from RunE
 			return err
 		}
-		common.PrintJSON(user)
+		common.PrintJSON(usr)
 		return nil
 	},
 }
@@ -119,9 +120,9 @@ var userCreateCmd = &cobra.Command{
 
 		var user *registry.User
 		user = &registry.User{
-			Email:  args[0],
-			Parent: parent,
-			Owner:  cmd.Flags().Lookup("owner").Value.String(),
+			Name:     args[0],
+			ParentID: parent,
+			Owner:    cmd.Flags().Lookup("owner").Value.String(),
 		}
 
 		var keystorePath string

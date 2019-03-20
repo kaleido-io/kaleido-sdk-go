@@ -23,7 +23,7 @@ import (
 
 var accountGetCmd = &cobra.Command{
 	Use:   "account",
-	Short: "Get an account's details",
+	Short: "Get an account's details by providing the account name",
 	Args: func(cmd *cobra.Command, args []string) error {
 		if err := cobra.ExactArgs(1)(cmd, args); err != nil {
 			return err
@@ -41,6 +41,61 @@ var accountGetCmd = &cobra.Command{
 		}
 		var err error
 		if err = acct.InvokeGet(); err != nil {
+			cmd.SilenceUsage = true  // not a usage error at this point
+			cmd.SilenceErrors = true // no need to display Error:, this still displays the error that is returned from RunE
+			return err
+		}
+		return nil
+	},
+}
+
+// accountListCmd not available for Directory contract version < 3.0.0
+//var accountListCmd = &cobra.Command{
+//Use:   "accounts",
+//Short: "Get all accounts for a parent org or group",
+//Args: func(cmd *cobra.Command, args []string) error {
+//if err := cobra.ExactArgs(1)(cmd, args); err != nil {
+//return err
+//}
+//return nil
+//},
+//RunE: func(cmd *cobra.Command, args []string) error {
+//parent := args[0]
+//if parent[:2] != "0x" && parent[:1] != "/" {
+//return errors.New("parent org or group must start with either a '0x' or a '/'")
+//}
+//acct := &registry.Account{
+//Parent: parent,
+//}
+//var err error
+//if err = acct.InvokeList(); err != nil {
+//cmd.SilenceUsage = true  // not a usage error at this point
+//cmd.SilenceErrors = true // no need to display Error:, this still displays the error that is returned from RunE
+//return err
+//}
+//return nil
+//},
+//}
+
+var accountLookupCmd = &cobra.Command{
+	Use:   "accountByAddress",
+	Short: "Get an account's details by providing the Ethereum public address",
+	Args: func(cmd *cobra.Command, args []string) error {
+		if err := cobra.ExactArgs(1)(cmd, args); err != nil {
+			return err
+		}
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		address := args[0]
+		if address[:2] != "0x" {
+			return errors.New("address must start with '0x'")
+		}
+		acct := &registry.Account{
+			Value: address,
+		}
+		var err error
+		if err = acct.InvokeReverseLookup(); err != nil {
 			cmd.SilenceUsage = true  // not a usage error at this point
 			cmd.SilenceErrors = true // no need to display Error:, this still displays the error that is returned from RunE
 			return err
@@ -118,4 +173,6 @@ func init() {
 
 	createCmd.AddCommand(accountCreateCmd)
 	getCmd.AddCommand(accountGetCmd)
+	getCmd.AddCommand(accountLookupCmd)
+	//getCmd.AddCommand(accountListCmd)
 }

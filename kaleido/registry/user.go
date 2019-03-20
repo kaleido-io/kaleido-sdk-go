@@ -15,10 +15,10 @@ import (
 
 // User represents a user
 type User struct {
-	Email  string `json:"email,omitempty"`
-	Parent string `json:"parent,omitempty"`
-	UserID string `json:"id,omitempty"`
-	Owner  string `json:"owner,omitempty"`
+	Name     string `json:"name,omitempty"`
+	ParentID string `json:"orgId,omitempty"`
+	UserID   string `json:"userId,omitempty"`
+	Owner    string `json:"owner,omitempty"`
 }
 
 //// InvokeReverseLookup get a username from Ethereum account ID
@@ -52,7 +52,7 @@ type User struct {
 func (u *User) InvokeGet() (*User, error) {
 	client := Utils().getDirectoryClient()
 
-	url := "/users/" + Utils().generateUserID(u.Parent, u.Email)
+	url := "/users/" + Utils().generateUserID(u.ParentID, u.Name)
 
 	var user User
 	response, err := client.R().SetResult(&user).Get(url)
@@ -64,10 +64,10 @@ func (u *User) InvokeGet() (*User, error) {
 // InvokeList get a list of users
 func (u *User) InvokeList() (*[]User, error) {
 	type userSummary struct {
-		UserID string `json:"userId,omitempty"`
-		OrgID  string `json:"orgId,omitempty"`
-		Owner  string `json:"owner,omitempty"`
-		Email  string `json:"email,omitempty"`
+		UserID   string `json:"userId,omitempty"`
+		ParentID string `json:"orgId,omitempty"`
+		Owner    string `json:"owner,omitempty"`
+		Name     string `json:"name,omitempty"`
 	}
 
 	type responseBodyType struct {
@@ -76,7 +76,7 @@ func (u *User) InvokeList() (*[]User, error) {
 	}
 	client := Utils().getDirectoryClient()
 
-	url := "/orgs/" + Utils().GenerateNodeID(u.Parent) + "/users"
+	url := "/orgs/" + Utils().GenerateNodeID(u.ParentID) + "/users"
 
 	var responseBody responseBodyType
 	response, err := client.R().SetResult(&responseBody).Get(url)
@@ -86,8 +86,8 @@ func (u *User) InvokeList() (*[]User, error) {
 
 	for _, u := range responseBody.Users {
 		var user User
-		user.Email = u.Email
-		user.Parent = u.OrgID
+		user.Name = u.Name
+		user.ParentID = u.ParentID
 		user.UserID = u.UserID
 		user.Owner = u.Owner
 		users = append(users, user)
@@ -126,12 +126,12 @@ func (u *User) InvokeCreate(keystorePath string, signer string) error {
 			return err
 		}
 
-		parentNodeID := Utils().GenerateNodeID(u.Parent)
+		parentNodeID := Utils().GenerateNodeID(u.ParentID)
 
 		var parent [32]byte
 		parentBytes, _ := hexutil.Decode(parentNodeID)
 		copy(parent[:], parentBytes)
-		tx, err := instance.SetUserDetails(auth, parent, u.Email, common.HexToAddress(u.Owner))
+		tx, err := instance.SetUserDetails(auth, parent, u.Name, common.HexToAddress(u.Owner))
 		if err != nil {
 			return err
 		}
