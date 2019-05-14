@@ -114,7 +114,7 @@ go test ./kaleido
 Optionally use `go test -v ./kaleido` to view
 all test logs.
 
-## Updating On-chain Registry smart contracts
+## Updating On-chain Registry smart contracts (for Kaleido admin)
 First, create the .abi and .bin files for each contract from the .sol source code.
 ```
 solc —abi <contract_name>.sol -o .`
@@ -122,6 +122,6 @@ solc —bin <contract_name>.sol -o .`
 ```
 Then, run these commands to automatically create the .go contract binding methods using go-ethereum's template.go.
 ```
-contracts/directory/abigen --abi Directory.abi --bin Directory.bin pkg directory --out Directory.go
+contracts/directory/abigen --abi Directory.abi --bin Directory.bin --pkg directory --out Directory.go
 contracts/properties/abigen --abi Properties.abi --bin Properties.bin --pkg properties --out Properties.go
 ```
