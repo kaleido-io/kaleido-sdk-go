@@ -3,12 +3,19 @@ package registry
 import (
 	"crypto/ecdsa"
 	"crypto/x509"
+	"encoding/hex"
 	"encoding/json"
 	"encoding/pem"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"strings"
 
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/hexutil"
+	kaleido "github.com/kaleido-io/kaleido-sdk-go/common"
+	"github.com/kaleido-io/kaleido-sdk-go/contracts/directory"
 	"github.com/youmark/pkcs8"
 	jose "gopkg.in/square/go-jose.v2"
 )
@@ -31,6 +38,13 @@ type VerifiedOrganization struct {
 	Owner    string            `json:"owner,omitempty"`
 	Proof    *JSONWebSignature `json:"proof,omitempty"`
 	ParentID string            `json:"parent,omitempty"`
+}
+
+type ContractOrganization struct {
+	ID       string `json:"id,omitempty"`
+	Name     string `json:"name,omitempty"`
+	Owner    string `json:"owner,omitempty"`
+	ParentID string `json:"parent,omitempty"`
 }
 
 // JSONWebSignature json representation of JWS
@@ -239,7 +253,7 @@ func (org *Organization) InvokeCreate() (*VerifiedOrganization, error) {
 func (org *Organization) InvokeGet() (*VerifiedOrganization, error) {
 	client := Utils().getDirectoryClient()
 
-	nodeID := Utils().generateNodeID(org.Name)
+	nodeID := Utils().GenerateNodeID(org.Name)
 
 	var verifiedOrg VerifiedOrganization
 	response, err := client.R().SetResult(&verifiedOrg).Get("/orgs/" + nodeID)
@@ -249,15 +263,41 @@ func (org *Organization) InvokeGet() (*VerifiedOrganization, error) {
 }
 
 // InvokeList retrieve a list of registered top-level organizations
-func (org *Organization) InvokeList() (*[]VerifiedOrganization, error) {
-	type responseBodyType struct {
-		Count string                 `json:"count,omitempty"`
-		Orgs  []VerifiedOrganization `json:"orgs,omitempty"`
+func (org *Organization) InvokeList() (*[]ContractOrganization, error) {
+	var orgs []ContractOrganization
+	client := Utils().getNodeClient()
+	instance, err := directory.NewDirectory(common.HexToAddress(Utils().getDirectoryAddress()), client)
+	if err != nil {
+		return &orgs, err
 	}
-	var responseBody responseBodyType
-	client := Utils().getDirectoryClient()
-	response, err := client.R().SetResult(&responseBody).Get("/orgs")
 
-	err = Utils().ValidateGetResponse(response, err, "orgs")
-	return &responseBody.Orgs, err
+	var rootNode [32]byte
+	rootBytes, _ := hexutil.Decode(kaleido.RootNodeHash)
+	copy(rootNode[:], rootBytes)
+
+	count, err := instance.NodeChildrenCount(&bind.CallOpts{}, rootNode)
+	if err != nil {
+		return &orgs, err
+	}
+	countInt := count.Int64()
+	var index int64
+	fmt.Println("**********************************************************")
+	fmt.Println("Number of orgs  =", count)
+	for index = 0; index < countInt; index++ {
+		var org ContractOrganization
+		nodeID, _, err := instance.NodeChild(&bind.CallOpts{}, rootNode, uint8(index))
+		if err != nil {
+			return &orgs, err
+		}
+		owner, label, parent, _, _, _, _, err := instance.NodeDetails(&bind.CallOpts{}, nodeID)
+		if err != nil {
+			return &orgs, err
+		}
+		org.ID = "0x" + hex.EncodeToString(nodeID[:32])
+		org.Name = label
+		org.Owner = owner.String()
+		org.ParentID = "0x" + hex.EncodeToString(parent[:32])
+		orgs = append(orgs, org)
+	}
+	return &orgs, nil
 }

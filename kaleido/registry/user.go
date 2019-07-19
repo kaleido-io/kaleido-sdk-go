@@ -15,44 +15,44 @@ import (
 
 // User represents a user
 type User struct {
-	Email  string `json:"email,omitempty"`
-	Parent string `json:"parent,omitempty"`
-	UserID string `json:"id,omitempty"`
-	Owner  string `json:"owner,omitempty"`
+	Name     string `json:"name,omitempty"`
+	ParentID string `json:"orgId,omitempty"`
+	UserID   string `json:"userId,omitempty"`
+	Owner    string `json:"owner,omitempty"`
 }
 
-// InvokeReverseLookup get a username from Ethereum account ID
-func (u *User) InvokeReverseLookup(userAcct string) (*User, error) {
-	client := Utils().getNodeClient()
-
-	var myCallOpts bind.CallOpts
-	myCallOpts.Pending = true
-	myCallOpts.From = common.HexToAddress(u.Owner)
-	myCallOpts.Context = nil
-
-	var user User
-
-	instance, err := directory.NewDirectory(common.HexToAddress(Utils().getDirectoryAddress()), client)
-	if err != nil {
-		return &user, err
-	}
-	_, _, owner, email, err := instance.UserLookup(&myCallOpts, common.HexToAddress(userAcct))
-	//user.UserID = string(userID[:32])
-	//user.Parent = string(org[:32])
-	user.Email = email
-	user.Owner = owner.Hex()
-	if err != nil {
-		return &user, err
-	}
-
-	return &user, nil
-}
+//// InvokeReverseLookup get a username from Ethereum account ID
+//func (u *User) InvokeReverseLookup(userAcct string) (*User, error) {
+//client := Utils().getNodeClient()
+//
+//var myCallOpts bind.CallOpts
+//myCallOpts.Pending = true
+//myCallOpts.From = common.HexToAddress(u.Owner)
+//myCallOpts.Context = nil
+//
+//var user User
+//
+//instance, err := directory.NewDirectory(common.HexToAddress(Utils().getDirectoryAddress()), client)
+//if err != nil {
+//return &user, err
+//}
+//_, _, owner, email, err := instance.UserLookup(&myCallOpts, common.HexToAddress(userAcct))
+////user.UserID = string(userID[:32])
+////user.Parent = string(org[:32])
+//user.Email = email
+//user.Owner = owner.Hex()
+//if err != nil {
+//return &user, err
+//}
+//
+//return &user, nil
+//}
 
 // InvokeGet get a user
 func (u *User) InvokeGet() (*User, error) {
 	client := Utils().getDirectoryClient()
 
-	url := "/users/" + Utils().generateUserID(u.Parent, u.Email)
+	url := "/users/" + Utils().generateUserID(u.ParentID, u.Name)
 
 	var user User
 	response, err := client.R().SetResult(&user).Get(url)
@@ -64,10 +64,10 @@ func (u *User) InvokeGet() (*User, error) {
 // InvokeList get a list of users
 func (u *User) InvokeList() (*[]User, error) {
 	type userSummary struct {
-		UserID string `json:"userId,omitempty"`
-		OrgID  string `json:"orgId,omitempty"`
-		Owner  string `json:"owner,omitempty"`
-		Email  string `json:"email,omitempty"`
+		UserID   string `json:"userId,omitempty"`
+		ParentID string `json:"orgId,omitempty"`
+		Owner    string `json:"owner,omitempty"`
+		Name     string `json:"name,omitempty"`
 	}
 
 	type responseBodyType struct {
@@ -76,7 +76,7 @@ func (u *User) InvokeList() (*[]User, error) {
 	}
 	client := Utils().getDirectoryClient()
 
-	url := "/orgs/" + Utils().generateNodeID(u.Parent) + "/users"
+	url := "/orgs/" + Utils().GenerateNodeID(u.ParentID) + "/users"
 
 	var responseBody responseBodyType
 	response, err := client.R().SetResult(&responseBody).Get(url)
@@ -86,8 +86,8 @@ func (u *User) InvokeList() (*[]User, error) {
 
 	for _, u := range responseBody.Users {
 		var user User
-		user.Email = u.Email
-		user.Parent = u.OrgID
+		user.Name = u.Name
+		user.ParentID = u.ParentID
 		user.UserID = u.UserID
 		user.Owner = u.Owner
 		users = append(users, user)
@@ -118,7 +118,7 @@ func (u *User) InvokeCreate(keystorePath string, signer string) error {
 		auth := Utils().newKeyStoreTransactor(account, ks, nil) // TODO add chain id
 		auth.Nonce = big.NewInt(int64(nonce))
 		auth.GasPrice = gasPrice
-		auth.GasLimit = uint64(300000)
+		auth.GasLimit = uint64(5000000)
 		auth.Value = big.NewInt(0)
 
 		instance, err := directory.NewDirectory(common.HexToAddress(Utils().getDirectoryAddress()), client)
@@ -126,12 +126,12 @@ func (u *User) InvokeCreate(keystorePath string, signer string) error {
 			return err
 		}
 
-		parentNodeID := Utils().generateNodeID(u.Parent)
+		parentNodeID := Utils().GenerateNodeID(u.ParentID)
 
 		var parent [32]byte
 		parentBytes, _ := hexutil.Decode(parentNodeID)
 		copy(parent[:], parentBytes)
-		tx, err := instance.SetUserDetails(auth, parent, u.Email, common.HexToAddress(u.Owner))
+		tx, err := instance.SetUserDetails(auth, parent, u.Name, common.HexToAddress(u.Owner))
 		if err != nil {
 			return err
 		}

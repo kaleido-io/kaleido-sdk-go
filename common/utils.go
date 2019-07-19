@@ -58,7 +58,7 @@ func encodePacked(tokens ...string) []byte {
 	return bytes
 }
 
-func keccak256(bytes []byte) string {
+func Keccak256(bytes []byte) string {
 	hash := sha3.NewLegacyKeccak256()
 	hash.Write(bytes)
 
@@ -70,10 +70,10 @@ func keccak256(bytes []byte) string {
 
 // ChildHash calculates the hash of a child node given a parent node
 func ChildHash(parentHex string, child string) string {
-	intermediateHash := keccak256([]byte(child))
+	intermediateHash := Keccak256([]byte(child))
 	toHash := parentHex + intermediateHash[2:]
 	hexBytes, _ := hexutil.Decode(toHash)
-	hash := keccak256(hexBytes)
+	hash := Keccak256(hexBytes)
 
 	return hash
 }

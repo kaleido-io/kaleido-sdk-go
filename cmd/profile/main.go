@@ -78,7 +78,7 @@ var profileCmd = &cobra.Command{
 		}
 		tokens := strings.Split(contractVersion, ".")
 		majorVersion, _ := strconv.Atoi(tokens[0])
-		if majorVersion >= 2 {
+		if majorVersion != 2 {
 			return errors.New("This version of kaleido-sdk-go CLI is not supported for your deployed smart contract versions. Please upgrade to a CLI compatible with " + contractVersion)
 		}
 

@@ -27,7 +27,7 @@ var orgsListCmd = &cobra.Command{
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		org := registry.Organization{}
-		var verifiedOrgs *[]registry.VerifiedOrganization
+		var verifiedOrgs *[]registry.ContractOrganization
 		var err error
 		if verifiedOrgs, err = org.InvokeList(); err != nil {
 			cmd.SilenceUsage = true  // not a usage error at this point
