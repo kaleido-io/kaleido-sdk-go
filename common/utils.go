@@ -43,7 +43,9 @@ func PrintJSON(v interface{}) error {
 const RootNodeHash = "0x0000000000000000000000000000000000000000000000000000000000000000"
 
 func encodePacked(tokens ...string) []byte {
-	stringTy, _ := abi.NewType("string", []abi.ArgumentMarshaling{})
+
+	components := []abi.ArgumentMarshaling{}
+	stringTy, _ := abi.NewType("string", "type", components)
 
 	arguments := abi.Arguments{}
 	argument := abi.Argument{
