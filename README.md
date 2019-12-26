@@ -6,32 +6,25 @@ This tool allows Kaleido users to provision and manager the resources such as co
 
 Install Go: [https://golang.org/doc/install](https://golang.org/doc/install)
 
-The project uses a GO dependency management tool called "dep".
-
-To install:
-```
-brew install dep
-```
 
 ## Dev Environment Setup
 
 The follow are regular steps to set up a typical golang dev environment. If you are already familiar with this language you can skip to the next section.
 
-1. decide a folder as your container for all golang projects, and set `GOPATH` environment variable to point to it
-2. create a folder `$GOPATH/src/github.com/kaleido-io` and `cd` to it
-3. clone the repository in this folder, or if you have already cloned it somewhere else, move the project to this folder
-
-You should have the following directory holding the project source:
-```
-$GOPATH/src/github.com/kaleido-io/kaleido-sdk-go
-```
+1. Decide a folder as your container for all golang projects, and set `GOPATH` environment variable to point to it more information in [SettingGOPATH](https://github.com/golang/go/wiki/SettingGOPATH)
+2. Because We are using [Go Modules](https://blog.golang.org/using-go-modules) you must work *outside* `GOPATH`
+3. If working with Go 1.11 and 1.12 make sure to enable Go modules with `export GO111MODULE=on`
 
 ## Install Dependencies
 
-Use `dep` to install the dependent golang packages, from the root of the project:
 ```
-cd $GOPATH/src/github.com/kaleido-io/kaleido-sdk-go
-dep ensure
+go mod download
+```
+
+## Tests
+
+```
+go test ./...
 ```
 
 ## Build and Run
