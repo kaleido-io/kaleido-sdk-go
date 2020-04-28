@@ -43,13 +43,9 @@ func PrintJSON(v interface{}) error {
 const RootNodeHash = "0x0000000000000000000000000000000000000000000000000000000000000000"
 
 func encodePacked(tokens ...string) []byte {
-<<<<<<< HEAD
-	stringTy, _ := abi.NewType("string",[]abi.ArgumentMarshaling{})
-=======
 
 	components := []abi.ArgumentMarshaling{}
 	stringTy, _ := abi.NewType("string", "type", components)
->>>>>>> da25172d9121b8c8c21fb5a9df8a2f00238d8346
 
 	arguments := abi.Arguments{}
 	argument := abi.Argument{
@@ -64,11 +60,7 @@ func encodePacked(tokens ...string) []byte {
 	return bytes
 }
 
-<<<<<<< HEAD
-func keccak256(bytes []byte) string {
-=======
 func Keccak256(bytes []byte) string {
->>>>>>> da25172d9121b8c8c21fb5a9df8a2f00238d8346
 	hash := sha3.NewLegacyKeccak256()
 	hash.Write(bytes)
 
