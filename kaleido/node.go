@@ -32,6 +32,7 @@ type Node struct {
 	Role          string `json:"role,omitempty"`
 	Provider      string `json:"provider,omitempty"`
 	ConsensusType string `json:"consensus_type,omitempty"`
+	Size          string `json:"size,omitempty"`
 	Urls          *struct {
 		RPC string `json:"rpc,omitempty"`
 		WSS string `json:"wss, omitempty"`
@@ -46,6 +47,7 @@ func NewNode(name, membershipId, ezoneId string) Node {
 		State:         "",
 		Provider:      "",
 		ConsensusType: "",
+		Size:          "",
 		ZoneId:        ezoneId,
 	}
 }
