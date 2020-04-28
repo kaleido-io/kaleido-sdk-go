@@ -10,7 +10,7 @@ import (
 )
 
 func deployService(t *testing.T, consortium, environment, membership, serviceUniqueName string) *kaleido.Service {
-	stdout, _ := InvokeCLISuccess(t, exec.Command("kld", "create", "service", "--name", "test-service", "-c", consortium, "-e", environment, "-m", membership, "-s", serviceUniqueName))
+	stdout, _ := InvokeCLISuccess(t, exec.Command("../kld", "create", "service", "--name", "test-service", "-c", consortium, "-e", environment, "-m", membership, "-s", serviceUniqueName))
 
 	var service kaleido.Service
 	if err := json.Unmarshal(stdout.Bytes(), &service); err != nil {
@@ -21,7 +21,7 @@ func deployService(t *testing.T, consortium, environment, membership, serviceUni
 }
 
 func listServices(t *testing.T, consortium, environment string) *[]kaleido.Service {
-	stdout, _ := InvokeCLISuccess(t, exec.Command("kld", "list", "services", "-c", consortium, "-e", environment))
+	stdout, _ := InvokeCLISuccess(t, exec.Command("../kld", "list", "services", "-c", consortium, "-e", environment))
 
 	var services []kaleido.Service
 	if err := json.Unmarshal(stdout.Bytes(), &services); err != nil {

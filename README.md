@@ -6,32 +6,25 @@ This tool allows Kaleido users to provision and manager the resources such as co
 
 Install Go: [https://golang.org/doc/install](https://golang.org/doc/install)
 
-The project uses a GO dependency management tool called "dep".
-
-To install:
-```
-brew install dep
-```
 
 ## Dev Environment Setup
 
 The follow are regular steps to set up a typical golang dev environment. If you are already familiar with this language you can skip to the next section.
 
-1. decide a folder as your container for all golang projects, and set `GOPATH` environment variable to point to it
-2. create a folder `$GOPATH/src/github.com/kaleido-io` and `cd` to it
-3. clone the repository in this folder, or if you have already cloned it somewhere else, move the project to this folder
-
-You should have the following directory holding the project source:
-```
-$GOPATH/src/github.com/kaleido-io/kaleido-sdk-go
-```
+1. Decide a folder as your container for all golang projects, and set `GOPATH` environment variable to point to it more information in [SettingGOPATH](https://github.com/golang/go/wiki/SettingGOPATH)
+2. Because We are using [Go Modules](https://blog.golang.org/using-go-modules) you must work *outside* `GOPATH`
+3. If working with Go 1.11 and 1.12 make sure to enable Go modules with `export GO111MODULE=on`
 
 ## Install Dependencies
 
-Use `dep` to install the dependent golang packages, from the root of the project:
 ```
-cd $GOPATH/src/github.com/kaleido-io/kaleido-sdk-go
-dep ensure
+go mod download
+```
+
+## Tests
+
+```
+go test ./...
 ```
 
 ## Build and Run
@@ -76,7 +69,7 @@ If the same configurations are specified in multiple places, this is the precede
 ### Create a consortium
 
 ```
-jimzhang$ ./kld create consortium -m single-org -n testConsortium234 -d "this is a test consortium" |jq
+jimzhang$ ./kld create consortium -m single-org -n testConsortium234 -d "this is a test consortium" | jq
 {
   "name": "testConsortium234",
   "description": "this is a test consortium",
@@ -113,3 +106,15 @@ go test ./kaleido
 
 Optionally use `go test -v ./kaleido` to view
 all test logs.
+
+## Updating On-chain Registry smart contracts (for Kaleido admin)
+First, create the .abi and .bin files for each contract from the .sol source code.
+```
+solc —abi <contract_name>.sol -o .`
+solc —bin <contract_name>.sol -o .`
+```
+Then, run these commands to automatically create the .go contract binding methods using go-ethereum's template.go.
+```
+contracts/directory/abigen --abi Directory.abi --bin Directory.bin --pkg directory --out Directory.go
+contracts/properties/abigen --abi Properties.abi --bin Properties.bin --pkg properties --out Properties.go
+```

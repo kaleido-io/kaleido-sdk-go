@@ -23,11 +23,11 @@ import (
 
 var orgsListCmd = &cobra.Command{
 	Use:   "orgs",
-	Short: "List the orgs",
+	Short: "List all orgs",
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		org := registry.Organization{}
-		var verifiedOrgs *[]registry.VerifiedOrganization
+		var verifiedOrgs *[]registry.ContractOrganization
 		var err error
 		if verifiedOrgs, err = org.InvokeList(); err != nil {
 			cmd.SilenceUsage = true  // not a usage error at this point
@@ -41,7 +41,7 @@ var orgsListCmd = &cobra.Command{
 
 var orgGetCmd = &cobra.Command{
 	Use:   "org",
-	Short: "Get the org details",
+	Short: "Get an organization's details",
 	Args: func(cmd *cobra.Command, args []string) error {
 		if err := cobra.ExactArgs(1)(cmd, args); err != nil {
 			return err
@@ -50,7 +50,7 @@ var orgGetCmd = &cobra.Command{
 		// arg[0] is the name and must start with a 0x or a /
 		name := args[0]
 		if name[:2] != "0x" && name[:1] != "/" {
-			return errors.New("name of an org must being with a 0x or must be specified as a path beginning with /")
+			return errors.New("name of an org must begin with a 0x or must be specified as a path beginning with /")
 		}
 
 		return nil
@@ -74,18 +74,12 @@ var orgGetCmd = &cobra.Command{
 var orgCreateCmd = &cobra.Command{
 	Use:   "org",
 	Short: "Create an on-chain organization",
-	Args: func(cmd *cobra.Command, args []string) error {
-		if err := cobra.ExactArgs(1)(cmd, args); err != nil {
-			return err
-		}
-		return nil
-	},
+	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		org := &registry.Organization{
 			Consortium:     cmd.Flags().Lookup("consortium").Value.String(),
 			Environment:    cmd.Flags().Lookup("environment").Value.String(),
 			MemberID:       cmd.Flags().Lookup("memberid").Value.String(),
-			Name:           args[0],
 			Owner:          cmd.Flags().Lookup("owner").Value.String(),
 			SigningKeyFile: cmd.Flags().Lookup("pkcs8-key").Value.String(),
 			CertPEMFile:    cmd.Flags().Lookup("proof").Value.String(),
@@ -108,11 +102,12 @@ func initCreateOrgCmd() {
 
 	flags.StringP("consortium", "c", "", "Override consortium ID (optional)")
 	flags.StringP("environment", "e", "", "Override environment ID (optional)")
-	flags.StringP("memberid", "m", "", "Override membership ID of the org (optional)")
+	flags.StringP("memberid", "m", "", "Membership ID of the org")
 	flags.StringP("proof", "p", "", "Path to identity certificate used when identifying organization on Kaleido")
 	flags.StringP("pkcs8-key", "k", "", "Path to a key that should be used for signing the payload for registration")
 	flags.VarP(&common.EthereumAddress{}, "owner", "o", "Ethereum address for the owner of the organization")
 
+	orgCreateCmd.MarkFlagRequired("memberid")
 	orgCreateCmd.MarkFlagRequired("proof")
 	orgCreateCmd.MarkFlagRequired("pkcs8-key")
 	orgCreateCmd.MarkFlagRequired("owner")

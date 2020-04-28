@@ -19,7 +19,7 @@ import (
 
 var getCmd = &cobra.Command{
 	Use:   "get",
-	Short: "get org(s), group(s), and user(s)",
+	Short: "get org(s), group(s), account(s), and user(s)",
 }
 
 func init() {

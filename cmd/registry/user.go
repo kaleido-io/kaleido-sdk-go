@@ -23,12 +23,12 @@ import (
 
 var usersListCmd = &cobra.Command{
 	Use:   "users",
-	Short: "List the users within an org",
+	Short: "List all users within an org",
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var err error
 		user := &registry.User{
-			Parent: cmd.Flags().Lookup("parent").Value.String(),
+			ParentID: cmd.Flags().Lookup("parent").Value.String(),
 		}
 
 		var users *[]registry.User
@@ -58,20 +58,50 @@ var userGetCmd = &cobra.Command{
 		}
 
 		user := &registry.User{
-			Parent: cmd.Flags().Lookup("parent").Value.String(),
-			Email:  args[0],
+			ParentID: cmd.Flags().Lookup("parent").Value.String(),
+			Name:     args[0],
 		}
 
 		var err error
-		if user, err = user.InvokeGet(); err != nil {
+		var usr *registry.User
+		if usr, err = user.InvokeGet(); err != nil {
 			cmd.SilenceUsage = true  // not a usage error at this point
 			cmd.SilenceErrors = true // no need to display Error:, this still displays the error that is returned from RunE
 			return err
 		}
-		common.PrintJSON(user)
+		common.PrintJSON(usr)
 		return nil
 	},
 }
+
+//var usersReverseLookupCmd = &cobra.Command{
+//Use:   "userByAccount",
+//Short: "Get the username linked to a given Ethereum account",
+//Args: func(cmd *cobra.Command, args []string) error {
+//if err := cobra.ExactArgs(1)(cmd, args); err != nil {
+//return err
+//}
+//return nil
+//},
+//RunE: func(cmd *cobra.Command, args []string) error {
+//user := &registry.User{
+//Email: args[0],
+//}
+//
+//var err error
+//if user, err = user.InvokeReverseLookup(args[0]); err != nil {
+//cmd.SilenceUsage = true  // not a usage error at this point
+//cmd.SilenceErrors = true // no need to display Error:, this still displays the error that is returned from RunE
+//return err
+//}
+//if user.Email == "" {
+//fmt.Println("No user found in ID Registry for given Ethereum account.")
+//} else {
+//common.PrintJSON(user)
+//}
+//return nil
+//},
+//}
 
 var userCreateCmd = &cobra.Command{
 	Use:   "user",
@@ -90,9 +120,9 @@ var userCreateCmd = &cobra.Command{
 
 		var user *registry.User
 		user = &registry.User{
-			Email:  args[0],
-			Parent: parent,
-			Owner:  cmd.Flags().Lookup("owner").Value.String(),
+			Name:     args[0],
+			ParentID: parent,
+			Owner:    cmd.Flags().Lookup("owner").Value.String(),
 		}
 
 		var keystorePath string
@@ -129,7 +159,7 @@ func initGetUserCmd() {
 
 	flags.StringP("parent", "p", "", "Path to the parent org or group")
 
-	userCreateCmd.MarkFlagRequired("parent")
+	userGetCmd.MarkFlagRequired("parent")
 }
 
 func initListUserCmd() {
@@ -137,15 +167,25 @@ func initListUserCmd() {
 
 	flags.StringP("parent", "p", "", "Path to the parent org or group")
 
-	userCreateCmd.MarkFlagRequired("parent")
+	usersListCmd.MarkFlagRequired("parent")
 }
+
+//func initReverseLookupUserCmd() {
+//flags := usersReverseLookupCmd.Flags()
+//
+//flags.StringP("parent", "p", "", "Path to the parent org or group")
+//
+//userCreateCmd.MarkFlagRequired("parent")
+//}
 
 func init() {
 	initCreateUserCmd()
 	initGetUserCmd()
 	initListUserCmd()
+	//initReverseLookupUserCmd()
 
 	createCmd.AddCommand(userCreateCmd)
 	getCmd.AddCommand(userGetCmd)
 	getCmd.AddCommand(usersListCmd)
+	//getCmd.AddCommand(usersReverseLookupCmd)
 }
