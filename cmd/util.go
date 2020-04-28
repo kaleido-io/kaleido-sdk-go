@@ -158,7 +158,7 @@ func validateGetResponse(res *resty.Response, err error, resourceName string) {
 }
 
 func validateCreationResponse(res *resty.Response, err error, resourceName string) {
-	if res.StatusCode() != 201 {
+	if res != nil && res.StatusCode() != 201 {
 		fmt.Printf("Could not create %s. Status code: %d.", resourceName, res.StatusCode())
 	}
 

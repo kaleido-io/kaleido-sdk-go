@@ -26,18 +26,20 @@ const (
 type Node struct {
 	Name          string `json:"name"`
 	MembershipId  string `json:"membership_id"`
+	ZoneId        string `json:"zone_id,omitempty"`
 	Id            string `json:"_id,omitempty"`
 	State         string `json:"state,omitempty"`
 	Role          string `json:"role,omitempty"`
 	Provider      string `json:"provider,omitempty"`
 	ConsensusType string `json:"consensus_type,omitempty"`
+	Size          string `json:"size,omitempty"`
 	Urls          *struct {
 		RPC string `json:"rpc,omitempty"`
 		WSS string `json:"wss, omitempty"`
 	} `json:"urls,omitempty"`
 }
 
-func NewNode(name, membershipId string) Node {
+func NewNode(name, membershipId, ezoneId string) Node {
 	return Node{
 		Name:          name,
 		MembershipId:  membershipId,
@@ -45,6 +47,8 @@ func NewNode(name, membershipId string) Node {
 		State:         "",
 		Provider:      "",
 		ConsensusType: "",
+		Size:          "",
+		ZoneId:        ezoneId,
 	}
 }
 

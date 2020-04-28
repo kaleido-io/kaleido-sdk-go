@@ -20,25 +20,33 @@ import (
 )
 
 type Environment struct {
-	Name          string `json:"name"`
-	Description   string `json:"description"`
-	Provider      string `json:"provider"`
-	ConsensusType string `json:"consensus_type"`
-	Id            string `json:"_id,omitempty"`
-	State         string `json:"state,omitempty"`
-	ReleaseId     string `json:"release_id,omitempty"`
+	Name          string       `json:"name"`
+	Description   string       `json:"description"`
+	Provider      string       `json:"provider"`
+	ConsensusType string       `json:"consensus_type"`
+	Id            string       `json:"_id,omitempty"`
+	State         string       `json:"state,omitempty"`
+	ReleaseId     string       `json:"release_id,omitempty"`
+	TestFeatures  TestFeatures `json:"test_features,omitempty"`
+}
+
+type TestFeatures struct {
+	MultiRegion bool `json:"multi_region,omitempty"`
 }
 
 const (
 	envBasePath = "/consortia/%s/environments"
 )
 
-func NewEnvironment(name, description, provider, consensus string) Environment {
+func NewEnvironment(name, description, provider, consensus string, multiRegion bool) Environment {
 	return Environment{
 		Name:          name,
 		Description:   description,
 		Provider:      provider,
 		ConsensusType: consensus,
+		TestFeatures: TestFeatures{
+			MultiRegion: multiRegion,
+		},
 	}
 }
 

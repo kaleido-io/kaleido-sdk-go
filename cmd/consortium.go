@@ -56,13 +56,8 @@ var consortiumCreateCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		validateName()
 
-		if mode != "single-org" && mode != "multi-org" {
-			fmt.Printf("Invalid consortium mode: %s\n", mode)
-			os.Exit(1)
-		}
-
 		client := getNewClient()
-		consortium := kld.NewConsortium(name, desc, mode)
+		consortium := kld.NewConsortium(name, desc)
 		res, err := client.CreateConsortium(&consortium)
 		validateCreationResponse(res, err, "consortium")
 	},
@@ -95,7 +90,6 @@ func newConsortiumCreateCmd() *cobra.Command {
 	flags := consortiumCreateCmd.Flags()
 	flags.StringVarP(&name, "name", "n", "", "Name of the consortium")
 	flags.StringVarP(&desc, "desc", "d", "", "Short description of the purpose of the consortium")
-	flags.StringVarP(&mode, "mode", "m", "single-org", "single-org or multi-org consortium")
 
 	return consortiumCreateCmd
 }
