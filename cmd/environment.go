@@ -76,7 +76,7 @@ var environmentCreateCmd = &cobra.Command{
 		validateConsortiumId("environment")
 
 		client := getNewClient()
-		environment := kld.NewEnvironment(name, desc, provider, consensus, multiRegion)
+		environment := kld.NewEnvironment(name, desc, provider, consensus, multiRegion, blockPeriod)
 		res, err := client.CreateEnvironment(consortiumId, &environment)
 
 		validateCreationResponse(res, err, "environment")
@@ -120,6 +120,7 @@ func newEnvironmentCreateCmd() *cobra.Command {
 	flags.StringVarP(&provider, "provider", "p", "quorum", "underlying protocol to use for this network, quorum or geth")
 	flags.StringVarP(&consensus, "consensus", "k", "raft", "consensus algorithm to use for the given protocol, raft or ibft for quorum, poa for geth")
 	flags.BoolVarP(&multiRegion, "multi-region", "R", false, "whether to enable multi region")
+	flags.IntVarP(&blockPeriod, "block-period", "P", 0, "block period in seconds")
 
 	return environmentCreateCmd
 }
