@@ -1,4 +1,4 @@
-module github.com/kaleido/kaleido-sdk-go
+module github.com/kaleido-io/kaleido-sdk-go
 
 go 1.13
 
