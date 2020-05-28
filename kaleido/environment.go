@@ -28,6 +28,7 @@ type Environment struct {
 	State         string       `json:"state,omitempty"`
 	ReleaseId     string       `json:"release_id,omitempty"`
 	TestFeatures  TestFeatures `json:"test_features,omitempty"`
+	BlockPeriod   int          `json:"block_period"`
 }
 
 type TestFeatures struct {
@@ -38,7 +39,7 @@ const (
 	envBasePath = "/consortia/%s/environments"
 )
 
-func NewEnvironment(name, description, provider, consensus string, multiRegion bool) Environment {
+func NewEnvironment(name, description, provider, consensus string, multiRegion bool, blockPeriod int) Environment {
 	return Environment{
 		Name:          name,
 		Description:   description,
@@ -47,6 +48,7 @@ func NewEnvironment(name, description, provider, consensus string, multiRegion b
 		TestFeatures: TestFeatures{
 			MultiRegion: multiRegion,
 		},
+		BlockPeriod: blockPeriod,
 	}
 }
 

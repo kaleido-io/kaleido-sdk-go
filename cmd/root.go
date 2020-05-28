@@ -37,6 +37,7 @@ var email string
 var region string
 var cloud string
 var multiRegion bool
+var blockPeriod int
 
 // use for both create, list, get and delete commands
 var consortiumId string
