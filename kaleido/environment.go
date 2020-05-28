@@ -59,7 +59,6 @@ func (c *KaleidoClient) ListEnvironments(consortiumId string, resultBox *[]Envir
 
 func (c *KaleidoClient) CreateEnvironment(consortiumId string, environment *Environment) (*resty.Response, error) {
 	path := fmt.Sprintf(envBasePath, consortiumId)
-	fmt.Printf("%v", environment)
 	return c.Client.R().SetResult(environment).SetBody(environment).Post(path)
 }
 
