@@ -88,7 +88,7 @@ var serviceCreateCmd = &cobra.Command{
 		validateMembershipID("service")
 
 		client := getNewClient()
-		service := kld.NewService(name, serviceType, membershipID)
+		service := kld.NewService(name, serviceType, membershipID, ezoneID)
 		res, err := client.CreateService(consortiumID, environmentID, &service)
 
 		validateCreationResponse(res, err, "service")
