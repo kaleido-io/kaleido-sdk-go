@@ -236,7 +236,7 @@ func TestServiceCreation(t *testing.T) {
 
 	t.Logf("Services: %v", services)
 
-	service := NewService("testService", serviceType, members[0].ID, zone.ID)
+	service := NewService("testService", serviceType, members[0].ID, zone.ID, nil)
 
 	res, err = client.CreateService(consortium.ID, env.ID, &service)
 

@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package cmd
 
 import (
@@ -88,6 +89,14 @@ var nodeCreateCmd = &cobra.Command{
 
 		client := getNewClient()
 		node := kld.NewNode(name, membershipID, ezoneID)
+
+		node.Size = size
+		node.KmsID = kmsID
+		node.OpsmetricID = opsmetricID
+		node.BackupID = backupID
+		node.NetworkingID = networkingID
+		node.NodeConfigID = nodeConfigID
+
 		res, err := client.CreateNode(consortiumID, environmentID, &node)
 
 		validateCreationResponse(res, err, "node")
@@ -144,6 +153,12 @@ func newNodeCreateCmd() *cobra.Command {
 	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium this node is created under")
 	flags.StringVarP(&environmentID, "environment", "e", "", "ID of the environment this node is created for")
 	flags.StringVarP(&ezoneID, "zone", "z", "", "ID of the environment deployment zone where this node should be created")
+	flags.StringVarP(&size, "size", "s", "", "Size for the node")
+	flags.StringVarP(&kmsID, "kms-id", "k", "", "KMS config ID to attach to the node")
+	flags.StringVarP(&opsmetricID, "opsmetric-id", "o", "", "Opsmertic config ID to attach to the node")
+	flags.StringVarP(&backupID, "backup-id", "b", "", "Backup config ID to attach to the node")
+	flags.StringVarP(&networkingID, "networking-id", "N", "", "Networking config ID to attach to the node")
+	flags.StringVarP(&nodeConfigID, "node-config-id", "C", "", "Node config ID to attach to the node")
 
 	return nodeCreateCmd
 }

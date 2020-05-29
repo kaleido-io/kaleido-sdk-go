@@ -33,9 +33,10 @@ type Service struct {
 	State        string                 `json:"state,omitempty"`
 	Role         string                 `json:"role,omitempty"`
 	Urls         map[string]interface{} `json:"urls,omitempty"`
+	Details      map[string]interface{} `json:"details,omitempty"`
 }
 
-func NewService(name, service, membershipID string, zoneID string) Service {
+func NewService(name, service, membershipID string, zoneID string, details map[string]interface{}) Service {
 	return Service{
 		Name:         name,
 		Service:      service,
@@ -43,6 +44,7 @@ func NewService(name, service, membershipID string, zoneID string) Service {
 		ZoneID:       zoneID,
 		ID:           "",
 		State:        "",
+		Details:      details,
 	}
 }
 

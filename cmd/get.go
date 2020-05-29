@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package cmd
 
 import (
@@ -21,7 +22,7 @@ import (
 
 var getCmd = &cobra.Command{
 	Use:   "get",
-	Short: "Get details of a resource: consortium, membership, environment, node, appcreds, directory",
+	Short: "Get details of a resource: consortium, membership, environment, node, appcreds, directory, configuration",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("get command")
 	},
@@ -37,6 +38,7 @@ func newGetCmd() *cobra.Command {
 	getCmd.AddCommand(newInvitationGetCmd())
 	getCmd.AddCommand(newCZoneGetCmd())
 	getCmd.AddCommand(newEZoneGetCmd())
+	getCmd.AddCommand(newConfigurationGetCmd())
 
 	return getCmd
 }

@@ -38,6 +38,14 @@ var region string
 var cloud string
 var multiRegion bool
 var blockPeriod int
+var configType string
+var detailsFile string
+var size string
+var kmsID string
+var opsmetricID string
+var backupID string
+var networkingID string
+var nodeConfigID string
 
 // use for both create, list, get and delete commands
 var consortiumID string
@@ -50,6 +58,7 @@ var serviceID string
 var appCredsID string
 var service string
 var invitationID string
+var configID string
 
 // for delete command
 var deleteID string
