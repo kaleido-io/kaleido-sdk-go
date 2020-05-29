@@ -135,23 +135,23 @@ func newConfigurationCreateCmd() *cobra.Command {
 
 func newConfigurationGetCmd() *cobra.Command {
 	flags := configGetCmd.Flags()
-	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium to to add the configurations")
-	flags.StringVarP(&environmentID, "environment", "e", "", "ID of the environment to add the configurations")
-	flags.StringVarP(&configID, "configurations", "a", "", "ID of the configuration")
+	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium to to get the configuration")
+	flags.StringVarP(&environmentID, "environment", "e", "", "ID of the environment to get the configuration")
+	flags.StringVarP(&configID, "configuration", "i", "", "ID of the configuration")
 	return configGetCmd
 }
 
 func newConfigurationDeleteCmd() *cobra.Command {
 	flags := configDeleteCmd.Flags()
-	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium to to add the configurations")
-	flags.StringVarP(&environmentID, "environment", "e", "", "ID of the environment to add the configurations")
-	flags.StringVarP(&configID, "configurations", "a", "", "ID of the configuration")
+	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium to to delete the configurations")
+	flags.StringVarP(&environmentID, "environment", "e", "", "ID of the environment to delete the configurations")
+	flags.StringVarP(&configID, "configuration", "i", "", "ID of the configuration")
 	return configDeleteCmd
 }
 
 func newConfigurationListCmd() *cobra.Command {
 	flags := configListCmd.Flags()
-	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium to to add the configurations")
-	flags.StringVarP(&environmentID, "environment", "e", "", "ID of the environment to add the configurations")
+	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium to to list the configurations")
+	flags.StringVarP(&environmentID, "environment", "e", "", "ID of the environment to list the configurations")
 	return configListCmd
 }
