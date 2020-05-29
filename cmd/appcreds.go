@@ -26,12 +26,12 @@ var appCredsCreateCmd = &cobra.Command{
 	Use:   "appcreds",
 	Short: "Create application credentials",
 	Run: func(cmd *cobra.Command, args []string) {
-		validateConsortiumId("appcreds")
-		validateEnvironmentId("appcreds")
-		validateMembershipId("appcreds")
+		validateConsortiumID("appcreds")
+		validateEnvironmentID("appcreds")
+		validateMembershipID("appcreds")
 		client := getNewClient()
-		appcreds := kld.NewAppCreds(membershipId)
-		res, err := client.CreateAppCreds(consortiumId, environmentId, &appcreds)
+		appcreds := kld.NewAppCreds(membershipID)
+		res, err := client.CreateAppCreds(consortiumID, environmentID, &appcreds)
 		validateCreationResponse(res, err, "appcreds")
 	},
 }
@@ -40,12 +40,12 @@ var appCredsGetCmd = &cobra.Command{
 	Use:   "appcreds",
 	Short: "Get application credentials",
 	Run: func(cmd *cobra.Command, args []string) {
-		validateConsortiumId("appcreds")
-		validateEnvironmentId("appcreds")
-		validateAppCredsId("appcreds")
+		validateConsortiumID("appcreds")
+		validateEnvironmentID("appcreds")
+		validateAppCredsID("appcreds")
 		client := getNewClient()
 		var appcreds kld.AppCreds
-		res, err := client.GetAppCreds(consortiumId, environmentId, appCredsId, &appcreds)
+		res, err := client.GetAppCreds(consortiumID, environmentID, appCredsID, &appcreds)
 		validateGetResponse(res, err, "appcreds")
 	},
 }
@@ -54,11 +54,11 @@ var appCredsDeleteCmd = &cobra.Command{
 	Use:   "appcreds",
 	Short: "Delete application credentials",
 	Run: func(cmd *cobra.Command, args []string) {
-		validateConsortiumId("appcreds")
-		validateEnvironmentId("appcreds")
-		validateAppCredsId("appcreds", false)
+		validateConsortiumID("appcreds")
+		validateEnvironmentID("appcreds")
+		validateAppCredsID("appcreds", false)
 		client := getNewClient()
-		res, err := client.DeleteAppCreds(consortiumId, environmentId, appCredsId)
+		res, err := client.DeleteAppCreds(consortiumID, environmentID, appCredsID)
 		validateDeletionResponse(res, err, "appcreds")
 	},
 }
@@ -67,11 +67,11 @@ var appCredsListCmd = &cobra.Command{
 	Use:   "appcreds",
 	Short: "List the application credentials",
 	Run: func(cmd *cobra.Command, args []string) {
-		validateConsortiumId("appcreds")
-		validateEnvironmentId("appcreds")
+		validateConsortiumID("appcreds")
+		validateEnvironmentID("appcreds")
 		client := getNewClient()
 		var appcreds []kld.AppCreds
-		_, err := client.ListAppCreds(consortiumId, environmentId, &appcreds)
+		_, err := client.ListAppCreds(consortiumID, environmentID, &appcreds)
 		if err != nil {
 			fmt.Printf("Failed to list app credentials. %v\n", err)
 			os.Exit(1)
@@ -84,31 +84,31 @@ var appCredsListCmd = &cobra.Command{
 
 func newAppCredsCreateCmd() *cobra.Command {
 	flags := appCredsCreateCmd.Flags()
-	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium to to add the application credentials")
-	flags.StringVarP(&environmentId, "environment", "e", "", "Id of the environment to add the application credentials")
-	flags.StringVarP(&membershipId, "membership", "m", "", "Id of the membership to issue the application credentials to")
+	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium to to add the application credentials")
+	flags.StringVarP(&environmentID, "environment", "e", "", "ID of the environment to add the application credentials")
+	flags.StringVarP(&membershipID, "membership", "m", "", "ID of the membership to issue the application credentials to")
 	return appCredsCreateCmd
 }
 
 func newAppCredsGetCmd() *cobra.Command {
 	flags := appCredsGetCmd.Flags()
-	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium to to add the application credentials")
-	flags.StringVarP(&environmentId, "environment", "e", "", "Id of the environment to add the application credentials")
-	flags.StringVarP(&appCredsId, "appcreds", "a", "", "Id of the API key")
+	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium to to add the application credentials")
+	flags.StringVarP(&environmentID, "environment", "e", "", "ID of the environment to add the application credentials")
+	flags.StringVarP(&appCredsID, "appcreds", "a", "", "ID of the API key")
 	return appCredsGetCmd
 }
 
 func newAppCredsDeleteCmd() *cobra.Command {
 	flags := appCredsDeleteCmd.Flags()
-	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium to to add the application credentials")
-	flags.StringVarP(&environmentId, "environment", "e", "", "Id of the environment to add the application credentials")
-	flags.StringVarP(&appCredsId, "appcreds", "a", "", "Id of the API key")
+	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium to to add the application credentials")
+	flags.StringVarP(&environmentID, "environment", "e", "", "ID of the environment to add the application credentials")
+	flags.StringVarP(&appCredsID, "appcreds", "a", "", "ID of the API key")
 	return appCredsDeleteCmd
 }
 
 func newAppCredsListCmd() *cobra.Command {
 	flags := appCredsListCmd.Flags()
-	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium to to add the application credentials")
-	flags.StringVarP(&environmentId, "environment", "e", "", "Id of the environment to add the application credentials")
+	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium to to add the application credentials")
+	flags.StringVarP(&environmentID, "environment", "e", "", "ID of the environment to add the application credentials")
 	return appCredsListCmd
 }

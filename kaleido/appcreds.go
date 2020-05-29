@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package kaleido
 
 import (
@@ -20,39 +21,39 @@ import (
 )
 
 type AppCreds struct {
-	MembershipId string `json:"membership_id"`
+	MembershipID string `json:"membership_id"`
 	AuthType     string `json:"auth_type,omitempty"`
 	Username     string `json:"username,omitempty"`
 	Password     string `json:"password,omitempty"`
-	Id           string `json:"_id,omitempty"`
+	ID           string `json:"_id,omitempty"`
 }
 
 const (
 	appcredsBasePath = "/consortia/%s/environments/%s/appcreds"
 )
 
-func NewAppCreds(membershipId string) AppCreds {
+func NewAppCreds(membershipID string) AppCreds {
 	return AppCreds{
-		MembershipId: membershipId,
+		MembershipID: membershipID,
 	}
 }
 
-func (c *KaleidoClient) CreateAppCreds(consortiumId, envId string, appcreds *AppCreds) (*resty.Response, error) {
-	path := fmt.Sprintf(appcredsBasePath, consortiumId, envId)
+func (c *KaleidoClient) CreateAppCreds(consortiumID, envID string, appcreds *AppCreds) (*resty.Response, error) {
+	path := fmt.Sprintf(appcredsBasePath, consortiumID, envID)
 	return c.Client.R().SetBody(appcreds).SetResult(appcreds).Post(path)
 }
 
-func (c *KaleidoClient) GetAppCreds(consortiumId, envId, appcredsId string, resultBox *AppCreds) (*resty.Response, error) {
-	path := fmt.Sprintf(appcredsBasePath+"/%s", consortiumId, envId, appcredsId)
+func (c *KaleidoClient) GetAppCreds(consortiumID, envID, appcredsID string, resultBox *AppCreds) (*resty.Response, error) {
+	path := fmt.Sprintf(appcredsBasePath+"/%s", consortiumID, envID, appcredsID)
 	return c.Client.R().SetResult(resultBox).Get(path)
 }
 
-func (c *KaleidoClient) DeleteAppCreds(consortiumId, envId, appcredsId string) (*resty.Response, error) {
-	path := fmt.Sprintf(appcredsBasePath+"/%s", consortiumId, envId, appcredsId)
+func (c *KaleidoClient) DeleteAppCreds(consortiumID, envID, appcredsID string) (*resty.Response, error) {
+	path := fmt.Sprintf(appcredsBasePath+"/%s", consortiumID, envID, appcredsID)
 	return c.Client.R().Delete(path)
 }
 
-func (c *KaleidoClient) ListAppCreds(consortiumId, envId string, resultBox *[]AppCreds) (*resty.Response, error) {
-	path := fmt.Sprintf(appcredsBasePath, consortiumId, envId)
+func (c *KaleidoClient) ListAppCreds(consortiumID, envID string, resultBox *[]AppCreds) (*resty.Response, error) {
+	path := fmt.Sprintf(appcredsBasePath, consortiumID, envID)
 	return c.Client.R().SetResult(resultBox).Get(path)
 }

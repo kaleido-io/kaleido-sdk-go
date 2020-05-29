@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package kaleido
 
 import (
@@ -22,7 +23,7 @@ const (
 )
 
 type Release struct {
-	Id            string `json:"_id,omitempty"`
+	ID            string `json:"_id,omitempty"`
 	Provider      string `json:"provider,omitempty"`
 	Version       string `json:"version,omitempty"`
 	VersionPadded string `json:"version_padded,omitempty"`

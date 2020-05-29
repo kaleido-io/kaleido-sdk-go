@@ -76,68 +76,68 @@ func validateEmail() {
 	return
 }
 
-func validateConsortiumId(resourceName string, isCreate ...bool) {
-	if consortiumId == "" {
+func validateConsortiumID(resourceName string, isCreate ...bool) {
+	if consortiumID == "" {
 		if len(isCreate) == 0 || isCreate[0] {
-			fmt.Printf("Missing required parameter: --consortiumId for the consortium to add the new %s to\n", resourceName)
+			fmt.Printf("Missing required parameter: --consortiumID for the consortium to add the new %s to\n", resourceName)
 		} else {
-			fmt.Printf("Missing required parameter: --consortiumId for the consortium to delete the %s from\n", resourceName)
+			fmt.Printf("Missing required parameter: --consortiumID for the consortium to delete the %s from\n", resourceName)
 		}
 
 		os.Exit(1)
 	}
 }
 
-func validateAppCredsId(resourceName string, isGet ...bool) {
-	if appCredsId == "" {
+func validateAppCredsID(resourceName string, isGet ...bool) {
+	if appCredsID == "" {
 		if len(isGet) == 0 || isGet[0] {
-			fmt.Printf("Missing required parameter: --appcredsId to get the appilcation credentials %s to\n", resourceName)
+			fmt.Printf("Missing required parameter: --appcredsID to get the appilcation credentials %s to\n", resourceName)
 		} else {
-			fmt.Printf("Missing required parameter: --appcredsId to delete the appilcation credentials %s from\n", resourceName)
+			fmt.Printf("Missing required parameter: --appcredsID to delete the appilcation credentials %s from\n", resourceName)
 		}
 
 		os.Exit(1)
 	}
 }
 
-func validateEnvironmentId(resourceName string, isCreate ...bool) {
-	if environmentId == "" {
+func validateEnvironmentID(resourceName string, isCreate ...bool) {
+	if environmentID == "" {
 		if len(isCreate) == 0 || isCreate[0] {
-			fmt.Printf("Missing required parameter: --environmentId for the environment to add the new %s to\n", resourceName)
+			fmt.Printf("Missing required parameter: --environmentID for the environment to add the new %s to\n", resourceName)
 		} else {
-			fmt.Printf("Missing required parameter: --environmentId for the environment to delete the %s from\n", resourceName)
+			fmt.Printf("Missing required parameter: --environmentID for the environment to delete the %s from\n", resourceName)
 		}
 
 		os.Exit(1)
 	}
 }
 
-func validateMembershipId(resourceName string, isCreate ...bool) {
-	if membershipId == "" {
+func validateMembershipID(resourceName string, isCreate ...bool) {
+	if membershipID == "" {
 		if len(isCreate) == 0 || isCreate[0] {
-			fmt.Printf("Missing required parameter: --membershipId for the membership to add the new %s to\n", resourceName)
+			fmt.Printf("Missing required parameter: --membershipID for the membership to add the new %s to\n", resourceName)
 		} else {
-			fmt.Printf("Missing required parameter: --membershipId for the membership to delete the %s from\n", resourceName)
+			fmt.Printf("Missing required parameter: --membershipID for the membership to delete the %s from\n", resourceName)
 		}
 
 		os.Exit(1)
 	}
 }
 
-func validateInvitationId(resourceName string, isCreate ...bool) {
-	if invitationId == "" {
+func validateInvitationID(resourceName string, isCreate ...bool) {
+	if invitationID == "" {
 		if len(isCreate) == 0 || isCreate[0] {
-			fmt.Printf("Missing required parameter: --invitationId for the invitation to add the new %s to\n", resourceName)
+			fmt.Printf("Missing required parameter: --invitationID for the invitation to add the new %s to\n", resourceName)
 		} else {
-			fmt.Printf("Missing required parameter: --invitationId for the invitation to delete the %s from\n", resourceName)
+			fmt.Printf("Missing required parameter: --invitationID for the invitation to delete the %s from\n", resourceName)
 		}
 
 		os.Exit(1)
 	}
 }
 
-func validateDeleteId(resourceName string) {
-	if deleteId == "" {
+func validateDeleteID(resourceName string) {
+	if deleteID == "" {
 		fmt.Printf("Missing required parameter: --id for the %s to delete\n", resourceName)
 		os.Exit(1)
 	}

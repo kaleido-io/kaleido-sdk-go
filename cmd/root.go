@@ -40,19 +40,19 @@ var multiRegion bool
 var blockPeriod int
 
 // use for both create, list, get and delete commands
-var consortiumId string
-var czoneId string
-var membershipId string
-var environmentId string
-var ezoneId string
-var nodeId string
-var serviceId string
-var appCredsId string
+var consortiumID string
+var czoneID string
+var membershipID string
+var environmentID string
+var ezoneID string
+var nodeID string
+var serviceID string
+var appCredsID string
 var service string
-var invitationId string
+var invitationID string
 
 // for delete command
-var deleteId string
+var deleteID string
 
 var rootCmd = &cobra.Command{
 	Use:   "kld",

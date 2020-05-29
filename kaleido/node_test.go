@@ -24,6 +24,7 @@ import (
 var mockNodeCreatePayload = map[string]string{
 	"name":          "blah",
 	"membership_id": "member1",
+	"zone_id":       "zone1",
 }
 
 var mockNode = map[string]string{
@@ -50,7 +51,7 @@ func TestNodeCreation(t *testing.T) {
 
 	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
 
-	node := NewNode("blah", "member1")
+	node := NewNode("blah", "member1", "zone1")
 	res, err := client.CreateNode("cid", "env1", &node)
 
 	st.Expect(t, err, nil)

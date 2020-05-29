@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package kaleido
 
 import (
@@ -25,7 +26,7 @@ const (
 
 type CZone struct {
 	Name   string `json:"name"`
-	Id     string `json:"_id,omitempty"`
+	ID     string `json:"_id,omitempty"`
 	Region string `json:"region,omitempty"`
 	Cloud  string `json:"cloud,omitempty"`
 	Type   string `json:"type,omitempty"`
@@ -34,7 +35,7 @@ type CZone struct {
 func NewCZone(name, region, cloud string) CZone {
 	return CZone{
 		Name:   name,
-		Id:     "",
+		ID:     "",
 		Region: region,
 		Cloud:  cloud,
 		Type:   "kaleido",
@@ -46,8 +47,8 @@ func (c *KaleidoClient) CreateCZone(consortium string, ezone *CZone) (*resty.Res
 	return c.Client.R().SetResult(ezone).SetBody(ezone).Post(path)
 }
 
-func (c *KaleidoClient) DeleteCZone(consortium, ezoneId string) (*resty.Response, error) {
-	path := fmt.Sprintf(czoneBasePath+"/%s", consortium, ezoneId)
+func (c *KaleidoClient) DeleteCZone(consortium, ezoneID string) (*resty.Response, error) {
+	path := fmt.Sprintf(czoneBasePath+"/%s", consortium, ezoneID)
 	return c.Client.R().Delete(path)
 }
 
@@ -56,7 +57,7 @@ func (c *KaleidoClient) ListCZones(consortium string, resultBox *[]CZone) (*rest
 	return c.Client.R().SetResult(resultBox).Get(path)
 }
 
-func (c *KaleidoClient) GetCZone(consortiumId, ezoneId string, resultBox *CZone) (*resty.Response, error) {
-	path := fmt.Sprintf(czoneBasePath+"/%s", consortiumId, ezoneId)
+func (c *KaleidoClient) GetCZone(consortiumID, ezoneID string, resultBox *CZone) (*resty.Response, error) {
+	path := fmt.Sprintf(czoneBasePath+"/%s", consortiumID, ezoneID)
 	return c.Client.R().SetResult(resultBox).Get(path)
 }

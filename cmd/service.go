@@ -26,19 +26,19 @@ var serviceListCmd = &cobra.Command{
 	Use:   "service",
 	Short: "List deployed services in an environment",
 	Run: func(cmd *cobra.Command, args []string) {
-		if consortiumId == "" {
-			fmt.Println("Missing required parameter: --consortiumId for the consortium to list services of")
+		if consortiumID == "" {
+			fmt.Println("Missing required parameter: --consortiumID for the consortium to list services of")
 			os.Exit(1)
 		}
 
-		if environmentId == "" {
-			fmt.Println("Missing required parameter: --environmentId for the environment to list services of")
+		if environmentID == "" {
+			fmt.Println("Missing required parameter: --environmentID for the environment to list services of")
 			os.Exit(1)
 		}
 
 		client := getNewClient()
 		var services []kld.Service
-		_, err := client.ListServices(consortiumId, environmentId, &services)
+		_, err := client.ListServices(consortiumID, environmentID, &services)
 
 		if err != nil {
 			fmt.Printf("Failed to list services. %v\n", err)
@@ -54,24 +54,24 @@ var serviceGetCmd = &cobra.Command{
 	Use:   "service",
 	Short: "Retrieves service details",
 	Run: func(cmd *cobra.Command, args []string) {
-		if consortiumId == "" {
-			fmt.Println("Missing required parameter: --consortiumId for the consortium that the service belongs to")
+		if consortiumID == "" {
+			fmt.Println("Missing required parameter: --consortiumID for the consortium that the service belongs to")
 			os.Exit(1)
 		}
 
-		if environmentId == "" {
-			fmt.Println("Missing required parameter: --environmentId for the environment that the service belongs to")
+		if environmentID == "" {
+			fmt.Println("Missing required parameter: --environmentID for the environment that the service belongs to")
 			os.Exit(1)
 		}
 
-		if serviceId == "" {
+		if serviceID == "" {
 			fmt.Println("Missing required parameter: --id for the service to retrieve")
 			os.Exit(1)
 		}
 
 		client := getNewClient()
 		var service kld.Service
-		res, err := client.GetService(consortiumId, environmentId, serviceId, &service)
+		res, err := client.GetService(consortiumID, environmentID, serviceID, &service)
 
 		validateGetResponse(res, err, "service")
 	},
@@ -83,13 +83,13 @@ var serviceCreateCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		validateName()
 		validateServiceType()
-		validateConsortiumId("service")
-		validateEnvironmentId("service")
-		validateMembershipId("service")
+		validateConsortiumID("service")
+		validateEnvironmentID("service")
+		validateMembershipID("service")
 
 		client := getNewClient()
-		service := kld.NewService(name, serviceType, membershipId)
-		res, err := client.CreateService(consortiumId, environmentId, &service)
+		service := kld.NewService(name, serviceType, membershipID, ezoneID)
+		res, err := client.CreateService(consortiumID, environmentID, &service)
 
 		validateCreationResponse(res, err, "service")
 	},
@@ -97,17 +97,17 @@ var serviceCreateCmd = &cobra.Command{
 
 func newServiceListCmd() *cobra.Command {
 	flags := serviceListCmd.Flags()
-	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium to retrieve the services from")
-	flags.StringVarP(&environmentId, "environment", "e", "", "Id of the environment to retrieve the services from")
+	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium to retrieve the services from")
+	flags.StringVarP(&environmentID, "environment", "e", "", "ID of the environment to retrieve the services from")
 
 	return serviceListCmd
 }
 
 func newServiceGetCmd() *cobra.Command {
 	flags := serviceGetCmd.Flags()
-	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium to retrieve the service from")
-	flags.StringVarP(&environmentId, "environment", "e", "", "Id of the environment to retrieve the service from")
-	flags.StringVarP(&serviceId, "id", "i", "", "Id of the service to retrieve")
+	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium to retrieve the service from")
+	flags.StringVarP(&environmentID, "environment", "e", "", "ID of the environment to retrieve the service from")
+	flags.StringVarP(&serviceID, "id", "i", "", "ID of the service to retrieve")
 
 	return serviceGetCmd
 }
@@ -116,9 +116,9 @@ func newServiceCreateCmd() *cobra.Command {
 	flags := serviceCreateCmd.Flags()
 	flags.StringVarP(&name, "name", "n", "", "Name of the service")
 	flags.StringVarP(&serviceType, "service", "s", "", "Type of the service")
-	flags.StringVarP(&membershipId, "membership", "m", "", "Id of the membership this service belongs to")
-	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium this service is created under")
-	flags.StringVarP(&environmentId, "environment", "e", "", "Id of the environment this service is created for")
+	flags.StringVarP(&membershipID, "membership", "m", "", "ID of the membership this service belongs to")
+	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium this service is created under")
+	flags.StringVarP(&environmentID, "environment", "e", "", "ID of the environment this service is created for")
 
 	return serviceCreateCmd
 }

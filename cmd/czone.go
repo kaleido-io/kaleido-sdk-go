@@ -26,14 +26,14 @@ var czoneListCmd = &cobra.Command{
 	Use:   "czone",
 	Short: "List deployment zones under an environment",
 	Run: func(cmd *cobra.Command, args []string) {
-		if consortiumId == "" {
-			fmt.Println("Missing required parameter: --consortiumId for the consortium to list deployment zones of")
+		if consortiumID == "" {
+			fmt.Println("Missing required parameter: --consortiumID for the consortium to list deployment zones of")
 			os.Exit(1)
 		}
 
 		client := getNewClient()
 		var czones []kld.CZone
-		_, err := client.ListCZones(consortiumId, &czones)
+		_, err := client.ListCZones(consortiumID, &czones)
 
 		if err != nil {
 			fmt.Printf("Failed to list czones. %v\n", err)
@@ -49,19 +49,19 @@ var czoneGetCmd = &cobra.Command{
 	Use:   "czone",
 	Short: "Retrieves a czone details",
 	Run: func(cmd *cobra.Command, args []string) {
-		if consortiumId == "" {
-			fmt.Println("Missing required parameter: --consortiumId for the consortium that the deployment zone belongs to")
+		if consortiumID == "" {
+			fmt.Println("Missing required parameter: --consortiumID for the consortium that the deployment zone belongs to")
 			os.Exit(1)
 		}
 
-		if czoneId == "" {
+		if czoneID == "" {
 			fmt.Println("Missing required parameter: --id for the czone to retrieve")
 			os.Exit(1)
 		}
 
 		client := getNewClient()
 		var czone kld.CZone
-		res, err := client.GetCZone(consortiumId, czoneId, &czone)
+		res, err := client.GetCZone(consortiumID, czoneID, &czone)
 
 		validateGetResponse(res, err, "czone")
 	},
@@ -71,11 +71,11 @@ var czoneCreateCmd = &cobra.Command{
 	Use:   "czone",
 	Short: "Create a czone",
 	Run: func(cmd *cobra.Command, args []string) {
-		validateConsortiumId("czone")
+		validateConsortiumID("czone")
 
 		client := getNewClient()
 		czone := kld.NewCZone(name, region, cloud)
-		res, err := client.CreateCZone(consortiumId, &czone)
+		res, err := client.CreateCZone(consortiumID, &czone)
 
 		validateCreationResponse(res, err, "czone")
 	},
@@ -85,18 +85,18 @@ var czoneDeleteCmd = &cobra.Command{
 	Use:   "czone",
 	Short: "Delete a czone",
 	Run: func(cmd *cobra.Command, args []string) {
-		if consortiumId == "" {
-			fmt.Println("Missing required parameter: --consortiumId for the consortium that the deployment zone belongs to")
+		if consortiumID == "" {
+			fmt.Println("Missing required parameter: --consortiumID for the consortium that the deployment zone belongs to")
 			os.Exit(1)
 		}
 
-		if czoneId == "" {
+		if czoneID == "" {
 			fmt.Println("Missing required parameter: --id for the deployment zone to retrieve")
 			os.Exit(1)
 		}
 
 		client := getNewClient()
-		res, err := client.DeleteCZone(consortiumId, czoneId)
+		res, err := client.DeleteCZone(consortiumID, czoneID)
 
 		validateDeletionResponse(res, err, "czone")
 	},
@@ -104,15 +104,15 @@ var czoneDeleteCmd = &cobra.Command{
 
 func newCZoneListCmd() *cobra.Command {
 	flags := czoneListCmd.Flags()
-	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium to retrieve the deployment zones from")
+	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium to retrieve the deployment zones from")
 
 	return czoneListCmd
 }
 
 func newCZoneGetCmd() *cobra.Command {
 	flags := czoneGetCmd.Flags()
-	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium to retrieve the deployment zone from")
-	flags.StringVarP(&czoneId, "czone", "n", "", "Id of the deployment zone to retrieve")
+	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium to retrieve the deployment zone from")
+	flags.StringVarP(&czoneID, "czone", "n", "", "ID of the deployment zone to retrieve")
 
 	return czoneGetCmd
 }
@@ -120,7 +120,7 @@ func newCZoneGetCmd() *cobra.Command {
 func newCZoneCreateCmd() *cobra.Command {
 	flags := czoneCreateCmd.Flags()
 	flags.StringVarP(&name, "name", "n", "", "Name of the czone")
-	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium this deployment zone is created under")
+	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium this deployment zone is created under")
 	flags.StringVarP(&region, "region", "r", "", "Region for the new zone")
 	flags.StringVarP(&cloud, "cloud", "C", "", "Cloud for the new zone")
 
@@ -129,8 +129,8 @@ func newCZoneCreateCmd() *cobra.Command {
 
 func newCZoneDeleteCmd() *cobra.Command {
 	flags := czoneDeleteCmd.Flags()
-	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium this deployment zone is created under")
-	flags.StringVarP(&czoneId, "czone", "n", "", "Id of the deployment zone to retrieve")
+	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium this deployment zone is created under")
+	flags.StringVarP(&czoneID, "czone", "n", "", "ID of the deployment zone to retrieve")
 
 	return czoneDeleteCmd
 }

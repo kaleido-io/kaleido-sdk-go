@@ -26,19 +26,19 @@ var nodeListCmd = &cobra.Command{
 	Use:   "node",
 	Short: "List nodes under an environment",
 	Run: func(cmd *cobra.Command, args []string) {
-		if consortiumId == "" {
-			fmt.Println("Missing required parameter: --consortiumId for the consortium to list nodes of")
+		if consortiumID == "" {
+			fmt.Println("Missing required parameter: --consortiumID for the consortium to list nodes of")
 			os.Exit(1)
 		}
 
-		if environmentId == "" {
-			fmt.Println("Missing required parameter: --environmentId for the environment to list nodes of")
+		if environmentID == "" {
+			fmt.Println("Missing required parameter: --environmentID for the environment to list nodes of")
 			os.Exit(1)
 		}
 
 		client := getNewClient()
 		var nodes []kld.Node
-		_, err := client.ListNodes(consortiumId, environmentId, &nodes)
+		_, err := client.ListNodes(consortiumID, environmentID, &nodes)
 
 		if err != nil {
 			fmt.Printf("Failed to list nodes. %v\n", err)
@@ -54,24 +54,24 @@ var nodeGetCmd = &cobra.Command{
 	Use:   "node",
 	Short: "Retrieves a node details",
 	Run: func(cmd *cobra.Command, args []string) {
-		if consortiumId == "" {
-			fmt.Println("Missing required parameter: --consortiumId for the consortium that the node belongs to")
+		if consortiumID == "" {
+			fmt.Println("Missing required parameter: --consortiumID for the consortium that the node belongs to")
 			os.Exit(1)
 		}
 
-		if environmentId == "" {
-			fmt.Println("Missing required parameter: --environmentId for the environment that the node belongs to")
+		if environmentID == "" {
+			fmt.Println("Missing required parameter: --environmentID for the environment that the node belongs to")
 			os.Exit(1)
 		}
 
-		if nodeId == "" {
+		if nodeID == "" {
 			fmt.Println("Missing required parameter: --id for the node to retrieve")
 			os.Exit(1)
 		}
 
 		client := getNewClient()
 		var node kld.Node
-		res, err := client.GetNode(consortiumId, environmentId, nodeId, &node)
+		res, err := client.GetNode(consortiumID, environmentID, nodeID, &node)
 
 		validateGetResponse(res, err, "node")
 	},
@@ -82,13 +82,13 @@ var nodeCreateCmd = &cobra.Command{
 	Short: "Create a node",
 	Run: func(cmd *cobra.Command, args []string) {
 		validateName()
-		validateConsortiumId("node")
-		validateEnvironmentId("node")
-		validateMembershipId("node")
+		validateConsortiumID("node")
+		validateEnvironmentID("node")
+		validateMembershipID("node")
 
 		client := getNewClient()
-		node := kld.NewNode(name, membershipId, ezoneId)
-		res, err := client.CreateNode(consortiumId, environmentId, &node)
+		node := kld.NewNode(name, membershipID, ezoneID)
+		res, err := client.CreateNode(consortiumID, environmentID, &node)
 
 		validateCreationResponse(res, err, "node")
 	},
@@ -98,23 +98,23 @@ var nodeDeleteCmd = &cobra.Command{
 	Use:   "node",
 	Short: "Delete a node",
 	Run: func(cmd *cobra.Command, args []string) {
-		if consortiumId == "" {
-			fmt.Println("Missing required parameter: --consortiumId for the consortium that the node belongs to")
+		if consortiumID == "" {
+			fmt.Println("Missing required parameter: --consortiumID for the consortium that the node belongs to")
 			os.Exit(1)
 		}
 
-		if environmentId == "" {
-			fmt.Println("Missing required parameter: --environmentId for the environment that the node belongs to")
+		if environmentID == "" {
+			fmt.Println("Missing required parameter: --environmentID for the environment that the node belongs to")
 			os.Exit(1)
 		}
 
-		if nodeId == "" {
+		if nodeID == "" {
 			fmt.Println("Missing required parameter: --id for the node to retrieve")
 			os.Exit(1)
 		}
 
 		client := getNewClient()
-		res, err := client.DeleteNode(consortiumId, environmentId, nodeId)
+		res, err := client.DeleteNode(consortiumID, environmentID, nodeID)
 
 		validateDeletionResponse(res, err, "node")
 	},
@@ -122,17 +122,17 @@ var nodeDeleteCmd = &cobra.Command{
 
 func newNodeListCmd() *cobra.Command {
 	flags := nodeListCmd.Flags()
-	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium to retrieve the nodes from")
-	flags.StringVarP(&environmentId, "environment", "e", "", "Id of the environment to retrieve the nodes from")
+	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium to retrieve the nodes from")
+	flags.StringVarP(&environmentID, "environment", "e", "", "ID of the environment to retrieve the nodes from")
 
 	return nodeListCmd
 }
 
 func newNodeGetCmd() *cobra.Command {
 	flags := nodeGetCmd.Flags()
-	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium to retrieve the node from")
-	flags.StringVarP(&environmentId, "environment", "e", "", "Id of the environment to retrieve the node from")
-	flags.StringVarP(&nodeId, "node", "n", "", "Id of the node to retrieve")
+	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium to retrieve the node from")
+	flags.StringVarP(&environmentID, "environment", "e", "", "ID of the environment to retrieve the node from")
+	flags.StringVarP(&nodeID, "node", "n", "", "ID of the node to retrieve")
 
 	return nodeGetCmd
 }
@@ -140,19 +140,19 @@ func newNodeGetCmd() *cobra.Command {
 func newNodeCreateCmd() *cobra.Command {
 	flags := nodeCreateCmd.Flags()
 	flags.StringVarP(&name, "name", "n", "", "Name of the node")
-	flags.StringVarP(&membershipId, "membership", "m", "", "Id of the membership this node belongs to")
-	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium this node is created under")
-	flags.StringVarP(&environmentId, "environment", "e", "", "Id of the environment this node is created for")
-	flags.StringVarP(&ezoneId, "zone", "z", "", "Id of the environment deployment zone where this node should be created")
+	flags.StringVarP(&membershipID, "membership", "m", "", "ID of the membership this node belongs to")
+	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium this node is created under")
+	flags.StringVarP(&environmentID, "environment", "e", "", "ID of the environment this node is created for")
+	flags.StringVarP(&ezoneID, "zone", "z", "", "ID of the environment deployment zone where this node should be created")
 
 	return nodeCreateCmd
 }
 
 func newNodeDeleteCmd() *cobra.Command {
 	flags := nodeDeleteCmd.Flags()
-	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium this node is created under")
-	flags.StringVarP(&environmentId, "environment", "e", "", "Id of the environment this node is created for")
-	flags.StringVarP(&nodeId, "node", "n", "", "Id of the node to retrieve")
+	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium this node is created under")
+	flags.StringVarP(&environmentID, "environment", "e", "", "ID of the environment this node is created for")
+	flags.StringVarP(&nodeID, "node", "n", "", "ID of the node to retrieve")
 
 	return nodeDeleteCmd
 }
