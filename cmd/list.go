@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package cmd
 
 import (
@@ -21,7 +22,7 @@ import (
 
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "List various resources this user account owns: consortium, membership, environment, node, appcreds",
+	Short: "List various resources this user account owns: consortium, membership, environment, node, appcreds, configuration",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("list command")
 	},
@@ -37,6 +38,7 @@ func newListCmd() *cobra.Command {
 	listCmd.AddCommand(newInvitationListCmd())
 	listCmd.AddCommand(newCZoneListCmd())
 	listCmd.AddCommand(newEZoneListCmd())
+	listCmd.AddCommand(newConfigurationListCmd())
 
 	return listCmd
 }

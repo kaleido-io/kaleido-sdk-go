@@ -11,11 +11,13 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package cmd
 
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"os"
 
 	kld "github.com/kaleido-io/kaleido-sdk-go/kaleido"
@@ -87,8 +89,22 @@ var serviceCreateCmd = &cobra.Command{
 		validateEnvironmentID("service")
 		validateMembershipID("service")
 
+		var details map[string]interface{}
+		if detailsFile != "" {
+			b, err := ioutil.ReadFile(detailsFile)
+			if err != nil {
+				fmt.Printf("Unable to open file '%s': %s", detailsFile, err)
+				os.Exit(1)
+			}
+			err = json.Unmarshal(b, &details)
+			if err != nil {
+				fmt.Printf("Unable to parse JSON in file '%s': %s", detailsFile, err)
+				os.Exit(1)
+			}
+		}
+
 		client := getNewClient()
-		service := kld.NewService(name, serviceType, membershipID, ezoneID)
+		service := kld.NewService(name, serviceType, membershipID, ezoneID, details)
 		res, err := client.CreateService(consortiumID, environmentID, &service)
 
 		validateCreationResponse(res, err, "service")
@@ -119,6 +135,7 @@ func newServiceCreateCmd() *cobra.Command {
 	flags.StringVarP(&membershipID, "membership", "m", "", "ID of the membership this service belongs to")
 	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium this service is created under")
 	flags.StringVarP(&environmentID, "environment", "e", "", "ID of the environment this service is created for")
+	flags.StringVarP(&detailsFile, "file", "f", "", "JSON file containing type specific details of the service to create")
 
 	return serviceCreateCmd
 }

@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package cmd
 
 import (
@@ -21,7 +22,7 @@ import (
 
 var deleteCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "Delete various resources: consortium, membership, environment, node, appcreds",
+	Short: "Delete various resources: consortium, membership, environment, node, appcreds, configuration",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Delete command")
 	},
@@ -36,6 +37,7 @@ func newDeleteCmd() *cobra.Command {
 	deleteCmd.AddCommand(newInvitationDeleteCmd())
 	deleteCmd.AddCommand(newCZoneDeleteCmd())
 	deleteCmd.AddCommand(newEZoneDeleteCmd())
+	deleteCmd.AddCommand(newConfigurationDeleteCmd())
 
 	return deleteCmd
 }
