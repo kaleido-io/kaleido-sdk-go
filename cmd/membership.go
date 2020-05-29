@@ -26,14 +26,14 @@ var membershipListCmd = &cobra.Command{
 	Use:   "membership",
 	Short: "List memberships of a consortium",
 	Run: func(cmd *cobra.Command, args []string) {
-		if consortiumId == "" {
-			fmt.Println("Missing required parameter: --consortiumId for the consortium to list memberships of")
+		if consortiumID == "" {
+			fmt.Println("Missing required parameter: --consortiumID for the consortium to list memberships of")
 			os.Exit(1)
 		}
 
 		client := getNewClient()
 		var memberships []kld.Membership
-		_, err := client.ListMemberships(consortiumId, &memberships)
+		_, err := client.ListMemberships(consortiumID, &memberships)
 
 		if err != nil {
 			fmt.Printf("Failed to list memberships. %v\n", err)
@@ -49,9 +49,9 @@ var membershipGetCmd = &cobra.Command{
 	Use:   "membership",
 	Short: "Get membership details",
 	Run: func(cmd *cobra.Command, args []string) {
-		validateConsortiumId("membership")
+		validateConsortiumID("membership")
 
-		if membershipId == "" {
+		if membershipID == "" {
 			fmt.Println("Missing required parameter: --id for the membership to retrieve")
 
 			os.Exit(1)
@@ -59,7 +59,7 @@ var membershipGetCmd = &cobra.Command{
 
 		client := getNewClient()
 		var membership kld.Membership
-		res, err := client.GetMembership(consortiumId, membershipId, &membership)
+		res, err := client.GetMembership(consortiumID, membershipID, &membership)
 
 		validateGetResponse(res, err, "membership")
 	},
@@ -70,11 +70,11 @@ var membershipCreateCmd = &cobra.Command{
 	Short: "Create a membership for a consortium",
 	Run: func(cmd *cobra.Command, args []string) {
 		validateName()
-		validateConsortiumId("membership")
+		validateConsortiumID("membership")
 
 		client := getNewClient()
 		membership := kld.NewMembership(name)
-		res, err := client.CreateMembership(consortiumId, &membership)
+		res, err := client.CreateMembership(consortiumID, &membership)
 
 		validateCreationResponse(res, err, "membership")
 	},
@@ -84,11 +84,11 @@ var membershipDeleteCmd = &cobra.Command{
 	Use:   "membership",
 	Short: "Delete a membership from a consortium",
 	Run: func(cmd *cobra.Command, args []string) {
-		validateConsortiumId("membership", false)
-		validateDeleteId("membership")
+		validateConsortiumID("membership", false)
+		validateDeleteID("membership")
 
 		client := getNewClient()
-		res, err := client.DeleteMembership(consortiumId, deleteId)
+		res, err := client.DeleteMembership(consortiumID, deleteID)
 
 		validateDeletionResponse(res, err, "membership")
 	},
@@ -96,15 +96,15 @@ var membershipDeleteCmd = &cobra.Command{
 
 func newMembershipListCmd() *cobra.Command {
 	flags := membershipListCmd.Flags()
-	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium to retrieve the memberships from")
+	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium to retrieve the memberships from")
 
 	return membershipListCmd
 }
 
 func newMembershipGetCmd() *cobra.Command {
 	flags := membershipGetCmd.Flags()
-	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium to retrieve the membership from")
-	flags.StringVar(&membershipId, "id", "", "Id of the membership to retrieve")
+	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium to retrieve the membership from")
+	flags.StringVar(&membershipID, "id", "", "ID of the membership to retrieve")
 
 	return membershipGetCmd
 }
@@ -112,15 +112,15 @@ func newMembershipGetCmd() *cobra.Command {
 func newMembershipCreateCmd() *cobra.Command {
 	flags := membershipCreateCmd.Flags()
 	flags.StringVarP(&name, "name", "n", "", "Name of the organization to create the membership for")
-	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium to add the new membership to")
+	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium to add the new membership to")
 
 	return membershipCreateCmd
 }
 
 func newMembershipDeleteCmd() *cobra.Command {
 	flags := membershipDeleteCmd.Flags()
-	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium to delete the membership from")
-	flags.StringVar(&deleteId, "id", "", "Id of the membership to delete")
+	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium to delete the membership from")
+	flags.StringVar(&deleteID, "id", "", "ID of the membership to delete")
 
 	return membershipDeleteCmd
 }

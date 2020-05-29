@@ -26,15 +26,15 @@ var environmentListCmd = &cobra.Command{
 	Use:   "environment",
 	Short: "List environments under a consortium",
 	Run: func(cmd *cobra.Command, args []string) {
-		if consortiumId == "" {
-			fmt.Println("Missing required parameter: --consortiumId for the consortium to list environments of")
+		if consortiumID == "" {
+			fmt.Println("Missing required parameter: --consortiumID for the consortium to list environments of")
 
 			os.Exit(1)
 		}
 
 		client := getNewClient()
 		var environments []kld.Environment
-		_, err := client.ListEnvironments(consortiumId, &environments)
+		_, err := client.ListEnvironments(consortiumID, &environments)
 
 		if err != nil {
 			fmt.Printf("Failed to list environments. %v\n", err)
@@ -50,19 +50,19 @@ var environmentGetCmd = &cobra.Command{
 	Use:   "environment",
 	Short: "Retrieves an environment details",
 	Run: func(cmd *cobra.Command, args []string) {
-		if consortiumId == "" {
-			fmt.Println("Missing required parameter: --consortiumId for the consortium that the environment belongs to")
+		if consortiumID == "" {
+			fmt.Println("Missing required parameter: --consortiumID for the consortium that the environment belongs to")
 			os.Exit(1)
 		}
 
-		if environmentId == "" {
+		if environmentID == "" {
 			fmt.Println("Missing required parameter: --id for the environment to retrieve")
 			os.Exit(1)
 		}
 
 		client := getNewClient()
 		var environment kld.Environment
-		res, err := client.GetEnvironment(consortiumId, environmentId, &environment)
+		res, err := client.GetEnvironment(consortiumID, environmentID, &environment)
 
 		validateGetResponse(res, err, "environment")
 	},
@@ -73,11 +73,11 @@ var environmentCreateCmd = &cobra.Command{
 	Short: "Create an environment",
 	Run: func(cmd *cobra.Command, args []string) {
 		validateName()
-		validateConsortiumId("environment")
+		validateConsortiumID("environment")
 
 		client := getNewClient()
 		environment := kld.NewEnvironment(name, desc, provider, consensus, multiRegion, blockPeriod)
-		res, err := client.CreateEnvironment(consortiumId, &environment)
+		res, err := client.CreateEnvironment(consortiumID, &environment)
 
 		validateCreationResponse(res, err, "environment")
 	},
@@ -87,11 +87,11 @@ var environmentDeleteCmd = &cobra.Command{
 	Use:   "environment",
 	Short: "Delete an environment",
 	Run: func(cmd *cobra.Command, args []string) {
-		validateDeleteId("environment")
-		validateConsortiumId("environment", false)
+		validateDeleteID("environment")
+		validateConsortiumID("environment", false)
 
 		client := getNewClient()
-		res, err := client.DeleteEnvironment(consortiumId, deleteId)
+		res, err := client.DeleteEnvironment(consortiumID, deleteID)
 
 		validateDeletionResponse(res, err, "environment")
 	},
@@ -99,15 +99,15 @@ var environmentDeleteCmd = &cobra.Command{
 
 func newEnvironmentGetCmd() *cobra.Command {
 	flags := environmentGetCmd.Flags()
-	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium to retrieve the environment from")
-	flags.StringVar(&environmentId, "id", "", "Id of the environment to retrieve")
+	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium to retrieve the environment from")
+	flags.StringVar(&environmentID, "id", "", "ID of the environment to retrieve")
 
 	return environmentGetCmd
 }
 
 func newEnvironmentListCmd() *cobra.Command {
 	flags := environmentListCmd.Flags()
-	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium to retrieve the environments from")
+	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium to retrieve the environments from")
 
 	return environmentListCmd
 }
@@ -116,7 +116,7 @@ func newEnvironmentCreateCmd() *cobra.Command {
 	flags := environmentCreateCmd.Flags()
 	flags.StringVarP(&name, "name", "n", "", "Name of the consortium")
 	flags.StringVarP(&desc, "desc", "d", "", "Short description of the purpose of the consortium")
-	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium to create the environment under")
+	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium to create the environment under")
 	flags.StringVarP(&provider, "provider", "p", "quorum", "underlying protocol to use for this network, quorum or geth")
 	flags.StringVarP(&consensus, "consensus", "k", "raft", "consensus algorithm to use for the given protocol, raft or ibft for quorum, poa for geth")
 	flags.BoolVarP(&multiRegion, "multi-region", "R", false, "whether to enable multi region")
@@ -127,8 +127,8 @@ func newEnvironmentCreateCmd() *cobra.Command {
 
 func newEnvironmentDeleteCmd() *cobra.Command {
 	flags := environmentDeleteCmd.Flags()
-	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium to delete the environment from")
-	flags.StringVar(&deleteId, "id", "", "Id of the environment to delete")
+	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium to delete the environment from")
+	flags.StringVar(&deleteID, "id", "", "ID of the environment to delete")
 
 	return environmentDeleteCmd
 }

@@ -16,8 +16,8 @@ import (
 // User represents a user
 type User struct {
 	Name     string `json:"name,omitempty"`
-	ParentID string `json:"orgId,omitempty"`
-	UserID   string `json:"userId,omitempty"`
+	ParentID string `json:"orgID,omitempty"`
+	UserID   string `json:"userID,omitempty"`
 	Owner    string `json:"owner,omitempty"`
 }
 
@@ -64,8 +64,8 @@ func (u *User) InvokeGet() (*User, error) {
 // InvokeList get a list of users
 func (u *User) InvokeList() (*[]User, error) {
 	type userSummary struct {
-		UserID   string `json:"userId,omitempty"`
-		ParentID string `json:"orgId,omitempty"`
+		UserID   string `json:"userID,omitempty"`
+		ParentID string `json:"orgID,omitempty"`
 		Owner    string `json:"owner,omitempty"`
 		Name     string `json:"name,omitempty"`
 	}

@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package kaleido
 
 import (
@@ -25,7 +26,7 @@ const (
 
 type EZone struct {
 	Name   string `json:"name"`
-	Id     string `json:"_id,omitempty"`
+	ID     string `json:"_id,omitempty"`
 	Region string `json:"region,omitempty"`
 	Cloud  string `json:"cloud,omitempty"`
 	Type   string `json:"type,omitempty"`
@@ -34,29 +35,29 @@ type EZone struct {
 func NewEZone(name, region, cloud string) EZone {
 	return EZone{
 		Name:   name,
-		Id:     "",
+		ID:     "",
 		Region: region,
 		Cloud:  cloud,
 		Type:   "kaleido",
 	}
 }
 
-func (c *KaleidoClient) CreateEZone(consortium, envId string, ezone *EZone) (*resty.Response, error) {
-	path := fmt.Sprintf(ezoneBasePath, consortium, envId)
+func (c *KaleidoClient) CreateEZone(consortium, envID string, ezone *EZone) (*resty.Response, error) {
+	path := fmt.Sprintf(ezoneBasePath, consortium, envID)
 	return c.Client.R().SetResult(ezone).SetBody(ezone).Post(path)
 }
 
-func (c *KaleidoClient) DeleteEZone(consortium, envId, ezoneId string) (*resty.Response, error) {
-	path := fmt.Sprintf(ezoneBasePath+"/%s", consortium, envId, ezoneId)
+func (c *KaleidoClient) DeleteEZone(consortium, envID, ezoneID string) (*resty.Response, error) {
+	path := fmt.Sprintf(ezoneBasePath+"/%s", consortium, envID, ezoneID)
 	return c.Client.R().Delete(path)
 }
 
-func (c *KaleidoClient) ListEZones(consortium, envId string, resultBox *[]EZone) (*resty.Response, error) {
-	path := fmt.Sprintf(ezoneBasePath, consortium, envId)
+func (c *KaleidoClient) ListEZones(consortium, envID string, resultBox *[]EZone) (*resty.Response, error) {
+	path := fmt.Sprintf(ezoneBasePath, consortium, envID)
 	return c.Client.R().SetResult(resultBox).Get(path)
 }
 
-func (c *KaleidoClient) GetEZone(consortiumId, envId, ezoneId string, resultBox *EZone) (*resty.Response, error) {
-	path := fmt.Sprintf(ezoneBasePath+"/%s", consortiumId, envId, ezoneId)
+func (c *KaleidoClient) GetEZone(consortiumID, envID, ezoneID string, resultBox *EZone) (*resty.Response, error) {
+	path := fmt.Sprintf(ezoneBasePath+"/%s", consortiumID, envID, ezoneID)
 	return c.Client.R().SetResult(resultBox).Get(path)
 }

@@ -14,13 +14,59 @@
 package kaleido
 
 import (
-	"os"
 	"testing"
+
+	gock "gopkg.in/h2non/gock.v1"
 )
 
 func TestInvitation(t *testing.T) {
-	client := NewClient(os.Getenv("KALEIDO_API"), os.Getenv("KALEIDO_API_KEY"))
-	consortium := NewConsortium("invitationTest", "invitations", "single-org")
+
+	defer gock.Off()
+
+	gock.New("http://example.com").
+		Post("/api/v1/consortia").
+		MatchType("json").
+		JSON(map[string]interface{}{
+			"name":        "invitationTest",
+			"description": "invitations",
+		}).
+		Reply(201).
+		JSON(Consortium{
+			ID:          "cons1",
+			Name:        "invitationTest",
+			Description: "invitations",
+		})
+
+	gock.New("http://example.com").
+		Post("/api/v1/consortia/cons1/invitations").
+		MatchType("json").
+		JSON(map[string]interface{}{
+			"org_name": "Test Organization",
+			"email":    "someone@example.com",
+		}).
+		Reply(201).
+		JSON(Invitation{
+			ID:      "inv1",
+			OrgName: "Test Organization",
+			Email:   "someone@example.com",
+		})
+
+	gock.New("http://example.com").
+		Get("/api/v1/consortia/cons1/invitations/inv1").
+		Reply(200).
+		JSON(Invitation{
+			ID:      "inv1",
+			OrgName: "Test Organization",
+			Email:   "someone@example.com",
+			State:   "pending",
+		})
+
+	gock.New("http://example.com").
+		Delete("/api/v1/consortia/cons1/invitations/inv1").
+		Reply(204)
+
+	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
+	consortium := NewConsortium("invitationTest", "invitations")
 	res, err := client.CreateConsortium(&consortium)
 	if err != nil {
 		t.Fatal(err)
@@ -29,10 +75,10 @@ func TestInvitation(t *testing.T) {
 	if res.StatusCode() != 201 {
 		t.Fatalf("Failed to create consortium with status: %d", res.StatusCode())
 	}
-	defer client.DeleteConsortium(consortium.Id)
+	defer client.DeleteConsortium(consortium.ID)
 
 	invitation := NewInvitation("Test Organization", "someone@example.com")
-	res, err = client.CreateInvitation(consortium.Id, &invitation)
+	res, err = client.CreateInvitation(consortium.ID, &invitation)
 
 	if err != nil {
 		t.Fatal(err)
@@ -42,7 +88,7 @@ func TestInvitation(t *testing.T) {
 	}
 
 	var invitation2 Invitation
-	res, err = client.GetInvitation(consortium.Id, invitation.Id, &invitation2)
+	res, err = client.GetInvitation(consortium.ID, invitation.ID, &invitation2)
 
 	if err != nil {
 		t.Fatal(err)
@@ -52,16 +98,16 @@ func TestInvitation(t *testing.T) {
 		t.Fatalf("Failed to fetch invitation with status: %d", res.StatusCode())
 	}
 
-	if invitation.Id != invitation2.Id {
-		t.Fatalf("Fetched invitation id %s did not match %s.", invitation2.Id, invitation.Id)
+	if invitation.ID != invitation2.ID {
+		t.Fatalf("Fetched invitation id %s did not match %s.", invitation2.ID, invitation.ID)
 	}
 
-	res, err = client.DeleteInvitation(consortium.Id, invitation.Id)
+	res, err = client.DeleteInvitation(consortium.ID, invitation.ID)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	if res.StatusCode() != 204 {
-		t.Fatalf("Failed to delete invitation %s with status: %d", invitation.Id, res.StatusCode())
+		t.Fatalf("Failed to delete invitation %s with status: %d", invitation.ID, res.StatusCode())
 	}
 }

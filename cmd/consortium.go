@@ -45,7 +45,7 @@ var consortiumGetCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		client := getNewClient()
 		var consortium kld.Consortium
-		res, err := client.GetConsortium(consortiumId, &consortium)
+		res, err := client.GetConsortium(consortiumID, &consortium)
 		validateGetResponse(res, err, "consortium")
 	},
 }
@@ -67,17 +67,17 @@ var consortiumDeleteCmd = &cobra.Command{
 	Use:   "consortium",
 	Short: "Delete a consortium",
 	Run: func(cmd *cobra.Command, args []string) {
-		validateDeleteId("consortium")
+		validateDeleteID("consortium")
 
 		client := getNewClient()
-		res, err := client.DeleteConsortium(deleteId)
+		res, err := client.DeleteConsortium(deleteID)
 		validateDeletionResponse(res, err, "consortium")
 	},
 }
 
 func newConsortiumGetCmd() *cobra.Command {
 	flags := consortiumGetCmd.Flags()
-	flags.StringVar(&consortiumId, "id", "", "Id of the consortium to retrieve")
+	flags.StringVar(&consortiumID, "id", "", "ID of the consortium to retrieve")
 
 	return consortiumGetCmd
 }
@@ -96,7 +96,7 @@ func newConsortiumCreateCmd() *cobra.Command {
 
 func newConsortiumDeleteCmd() *cobra.Command {
 	flags := consortiumDeleteCmd.Flags()
-	flags.StringVar(&deleteId, "id", "", "Id of the consortium to delete")
+	flags.StringVar(&deleteID, "id", "", "ID of the consortium to delete")
 
 	return consortiumDeleteCmd
 }

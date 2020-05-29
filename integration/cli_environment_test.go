@@ -51,38 +51,38 @@ func TestEnvironment_Create(t *testing.T) {
 	t.Parallel()
 
 	consortium := createConsortium(t)
-	defer deleteConsortium(t, consortium.Id)
+	defer deleteConsortium(t, consortium.ID)
 
-	environment := createEnvironment(t, consortium.Id)
-	defer deleteEnvironment(t, consortium.Id, environment.Id)
+	environment := createEnvironment(t, consortium.ID)
+	defer deleteEnvironment(t, consortium.ID, environment.ID)
 }
 
 func TestEnvironment_Get(t *testing.T) {
 	t.Parallel()
 
 	consortium := createConsortium(t)
-	defer deleteConsortium(t, consortium.Id)
+	defer deleteConsortium(t, consortium.ID)
 
-	environment := createEnvironment(t, consortium.Id)
-	defer deleteEnvironment(t, consortium.Id, environment.Id)
+	environment := createEnvironment(t, consortium.ID)
+	defer deleteEnvironment(t, consortium.ID, environment.ID)
 
-	environment2 := getEnvironment(t, consortium.Id, environment.Id)
-	st.Expect(t, environment.Id, environment2.Id)
+	environment2 := getEnvironment(t, consortium.ID, environment.ID)
+	st.Expect(t, environment.ID, environment2.ID)
 }
 
 func TestEnvironment_List(t *testing.T) {
 	t.Parallel()
 
 	consortium := createConsortium(t)
-	defer deleteConsortium(t, consortium.Id)
+	defer deleteConsortium(t, consortium.ID)
 
-	origList := listEnvironments(t, consortium.Id)
+	origList := listEnvironments(t, consortium.ID)
 	st.Expect(t, len(*origList), 0)
 
-	environment := createEnvironment(t, consortium.Id)
-	defer deleteEnvironment(t, consortium.Id, environment.Id)
+	environment := createEnvironment(t, consortium.ID)
+	defer deleteEnvironment(t, consortium.ID, environment.ID)
 
-	newList := listEnvironments(t, consortium.Id)
+	newList := listEnvironments(t, consortium.ID)
 	st.Expect(t, len(*newList), 1)
 }
 
@@ -90,8 +90,8 @@ func TestEnvironment_Delete(t *testing.T) {
 	t.Parallel()
 
 	consortium := createConsortium(t)
-	defer deleteConsortium(t, consortium.Id)
+	defer deleteConsortium(t, consortium.ID)
 
-	environment := createEnvironment(t, consortium.Id)
-	defer deleteEnvironment(t, consortium.Id, environment.Id)
+	environment := createEnvironment(t, consortium.ID)
+	defer deleteEnvironment(t, consortium.ID, environment.ID)
 }

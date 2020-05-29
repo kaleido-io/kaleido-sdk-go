@@ -35,19 +35,19 @@ func TestService_Deploy(t *testing.T) {
 	t.Parallel()
 
 	consortium := createConsortium(t)
-	defer deleteConsortium(t, consortium.Id)
+	defer deleteConsortium(t, consortium.ID)
 
-	environment := createEnvironment(t, consortium.Id)
-	defer deleteEnvironment(t, consortium.Id, environment.Id)
+	environment := createEnvironment(t, consortium.ID)
+	defer deleteEnvironment(t, consortium.ID, environment.ID)
 
-	memberships := listMembership(t, consortium.Id)
-	membershipID := (*memberships)[0].Id
+	memberships := listMembership(t, consortium.ID)
+	membershipID := (*memberships)[0].ID
 
-	createNode(t, consortium.Id, environment.Id, membershipID)
+	createNode(t, consortium.ID, environment.ID, membershipID)
 	// defer deleteNode, skipped to allow environment deletion to take care of the node
 
-	idRegistry := deployService(t, consortium.Id, environment.Id, membershipID, "idregistry")
-	hdWallet := deployService(t, consortium.Id, environment.Id, membershipID, "hdwallet")
+	idRegistry := deployService(t, consortium.ID, environment.ID, membershipID, "idregistry")
+	hdWallet := deployService(t, consortium.ID, environment.ID, membershipID, "hdwallet")
 
 	st.Expect(t, idRegistry.Service, "idregistry")
 	st.Expect(t, hdWallet.Service, "hdwallet")
@@ -57,23 +57,23 @@ func TestService_List(t *testing.T) {
 	t.Parallel()
 
 	consortium := createConsortium(t)
-	defer deleteConsortium(t, consortium.Id)
+	defer deleteConsortium(t, consortium.ID)
 
-	environment := createEnvironment(t, consortium.Id)
-	defer deleteEnvironment(t, consortium.Id, environment.Id)
+	environment := createEnvironment(t, consortium.ID)
+	defer deleteEnvironment(t, consortium.ID, environment.ID)
 
-	memberships := listMembership(t, consortium.Id)
-	membershipID := (*memberships)[0].Id
+	memberships := listMembership(t, consortium.ID)
+	membershipID := (*memberships)[0].ID
 
-	createNode(t, consortium.Id, environment.Id, membershipID)
+	createNode(t, consortium.ID, environment.ID, membershipID)
 	// defer deleteNode, skipped to allow environment deletion to take care of the node
 
-	servicesOrig := listServices(t, consortium.Id, environment.Id)
+	servicesOrig := listServices(t, consortium.ID, environment.ID)
 	st.Expect(t, len(*servicesOrig), 0)
 
-	deployService(t, consortium.Id, environment.Id, membershipID, "idregistry")
-	deployService(t, consortium.Id, environment.Id, membershipID, "hdwallet")
+	deployService(t, consortium.ID, environment.ID, membershipID, "idregistry")
+	deployService(t, consortium.ID, environment.ID, membershipID, "hdwallet")
 
-	services := listServices(t, consortium.Id, environment.Id)
+	services := listServices(t, consortium.ID, environment.ID)
 	st.Expect(t, len(*services), 2)
 }

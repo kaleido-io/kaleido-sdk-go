@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package kaleido
 
 import (
@@ -25,9 +26,9 @@ const (
 
 type Node struct {
 	Name          string `json:"name"`
-	MembershipId  string `json:"membership_id"`
-	ZoneId        string `json:"zone_id,omitempty"`
-	Id            string `json:"_id,omitempty"`
+	MembershipID  string `json:"membership_id"`
+	ZoneID        string `json:"zone_id,omitempty"`
+	ID            string `json:"_id,omitempty"`
 	State         string `json:"state,omitempty"`
 	Role          string `json:"role,omitempty"`
 	Provider      string `json:"provider,omitempty"`
@@ -35,39 +36,39 @@ type Node struct {
 	Size          string `json:"size,omitempty"`
 	Urls          *struct {
 		RPC string `json:"rpc,omitempty"`
-		WSS string `json:"wss, omitempty"`
+		WSS string `json:"wss,omitempty"`
 	} `json:"urls,omitempty"`
 }
 
-func NewNode(name, membershipId, ezoneId string) Node {
+func NewNode(name, membershipID, ezoneID string) Node {
 	return Node{
 		Name:          name,
-		MembershipId:  membershipId,
-		Id:            "",
+		MembershipID:  membershipID,
+		ID:            "",
 		State:         "",
 		Provider:      "",
 		ConsensusType: "",
 		Size:          "",
-		ZoneId:        ezoneId,
+		ZoneID:        ezoneID,
 	}
 }
 
-func (c *KaleidoClient) CreateNode(consortium, envId string, node *Node) (*resty.Response, error) {
-	path := fmt.Sprintf(nodeBasePath, consortium, envId)
+func (c *KaleidoClient) CreateNode(consortium, envID string, node *Node) (*resty.Response, error) {
+	path := fmt.Sprintf(nodeBasePath, consortium, envID)
 	return c.Client.R().SetResult(node).SetBody(node).Post(path)
 }
 
-func (c *KaleidoClient) DeleteNode(consortium, envId, nodeId string) (*resty.Response, error) {
-	path := fmt.Sprintf(nodeBasePath+"/%s", consortium, envId, nodeId)
+func (c *KaleidoClient) DeleteNode(consortium, envID, nodeID string) (*resty.Response, error) {
+	path := fmt.Sprintf(nodeBasePath+"/%s", consortium, envID, nodeID)
 	return c.Client.R().Delete(path)
 }
 
-func (c *KaleidoClient) ListNodes(consortium, envId string, resultBox *[]Node) (*resty.Response, error) {
-	path := fmt.Sprintf(nodeBasePath, consortium, envId)
+func (c *KaleidoClient) ListNodes(consortium, envID string, resultBox *[]Node) (*resty.Response, error) {
+	path := fmt.Sprintf(nodeBasePath, consortium, envID)
 	return c.Client.R().SetResult(resultBox).Get(path)
 }
 
-func (c *KaleidoClient) GetNode(consortiumId, envId, nodeId string, resultBox *Node) (*resty.Response, error) {
-	path := fmt.Sprintf(nodeBasePath+"/%s", consortiumId, envId, nodeId)
+func (c *KaleidoClient) GetNode(consortiumID, envID, nodeID string, resultBox *Node) (*resty.Response, error) {
+	path := fmt.Sprintf(nodeBasePath+"/%s", consortiumID, envID, nodeID)
 	return c.Client.R().SetResult(resultBox).Get(path)
 }

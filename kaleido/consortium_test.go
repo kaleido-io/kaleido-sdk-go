@@ -18,7 +18,7 @@ import (
 	"testing"
 
 	"github.com/nbio/st"
-	"gopkg.in/h2non/gock.v1"
+	gock "gopkg.in/h2non/gock.v1"
 )
 
 func TestConsortiumCreationListDeletion(t *testing.T) {
@@ -26,13 +26,11 @@ func TestConsortiumCreationListDeletion(t *testing.T) {
 	consortiaPostBody := map[string]string{
 		"name":        "testConsortium",
 		"description": "test description",
-		"mode":        "single-org",
 	}
 
 	consortiaReplyBody := map[string]string{
 		"_id":         "zzam3flatl",
 		"description": "test description",
-		"mode":        "single-org",
 		"name":        "testConsortium",
 		"owner":       "zzgl55vock",
 		"state":       "setup",
@@ -71,7 +69,7 @@ func TestConsortiumCreationListDeletion(t *testing.T) {
 	// a response as opposed to the response itself which is pretty much useless but left in place here
 	// for now)
 	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
-	consortium := NewConsortium("testConsortium", "test description", "single-org")
+	consortium := NewConsortium("testConsortium", "test description")
 	res, err := client.CreateConsortium(&consortium)
 	st.Expect(t, err, nil)
 	st.Expect(t, res.StatusCode(), 201) // this will always be true,
@@ -83,7 +81,7 @@ func TestConsortiumCreationListDeletion(t *testing.T) {
 	st.Expect(t, respBody, consortiaReplyBody)
 
 	var consortium2 Consortium
-	res, err = client.GetConsortium(consortium.Id, &consortium2)
+	res, err = client.GetConsortium(consortium.ID, &consortium2)
 	st.Expect(t, err, nil)
 	st.Expect(t, res.StatusCode(), 200)
 
@@ -107,8 +105,8 @@ func TestConsortiumCreationListDeletion(t *testing.T) {
 	countNew := 0
 	for _, x := range consortia {
 		t.Logf("\n%v", x)
-		if x.Name == "testConsortium" && (x.State != DELETED && x.State != DELETE_PENDING) {
-			res, err = client.DeleteConsortium(x.Id)
+		if x.Name == "testConsortium" && (x.State != "deleted" && x.State != "delete_pending") {
+			res, err = client.DeleteConsortium(x.ID)
 			st.Expect(t, err, nil)
 			st.Expect(t, res.StatusCode(), 202)
 			countNew++

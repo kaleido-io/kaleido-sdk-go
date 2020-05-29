@@ -52,15 +52,15 @@ func TestAppCredsCreate(t *testing.T) {
 	t.Parallel()
 
 	consortium := createConsortium(t)
-	defer deleteConsortium(t, consortium.Id)
+	defer deleteConsortium(t, consortium.ID)
 
-	environment := createEnvironment(t, consortium.Id)
-	defer deleteEnvironment(t, consortium.Id, environment.Id)
+	environment := createEnvironment(t, consortium.ID)
+	defer deleteEnvironment(t, consortium.ID, environment.ID)
 
-	memberships := listMembership(t, consortium.Id)
+	memberships := listMembership(t, consortium.ID)
 
-	appCreds := createAppCreds(t, consortium.Id, environment.Id, (*memberships)[0].Id)
-	defer deleteAppCreds(t, consortium.Id, environment.Id, appCreds.Id)
+	appCreds := createAppCreds(t, consortium.ID, environment.ID, (*memberships)[0].ID)
+	defer deleteAppCreds(t, consortium.ID, environment.ID, appCreds.ID)
 
 	if len(appCreds.Username) == 0 || len(appCreds.Password) == 0 {
 		t.Fatal(errors.New("appcreds create failed, username or password is empty"))
@@ -71,38 +71,38 @@ func TestAppCredsGet(t *testing.T) {
 	t.Parallel()
 
 	consortium := createConsortium(t)
-	defer deleteConsortium(t, consortium.Id)
+	defer deleteConsortium(t, consortium.ID)
 
-	environment := createEnvironment(t, consortium.Id)
-	defer deleteEnvironment(t, consortium.Id, environment.Id)
+	environment := createEnvironment(t, consortium.ID)
+	defer deleteEnvironment(t, consortium.ID, environment.ID)
 
-	memberships := listMembership(t, consortium.Id)
+	memberships := listMembership(t, consortium.ID)
 
-	appCreds := createAppCreds(t, consortium.Id, environment.Id, (*memberships)[0].Id)
-	defer deleteAppCreds(t, consortium.Id, environment.Id, appCreds.Id)
+	appCreds := createAppCreds(t, consortium.ID, environment.ID, (*memberships)[0].ID)
+	defer deleteAppCreds(t, consortium.ID, environment.ID, appCreds.ID)
 
-	appCredsSaved := getAppCreds(t, consortium.Id, environment.Id, appCreds.Id)
-	st.Expect(t, appCreds.Id, appCredsSaved.Id)
+	appCredsSaved := getAppCreds(t, consortium.ID, environment.ID, appCreds.ID)
+	st.Expect(t, appCreds.ID, appCredsSaved.ID)
 }
 
 func TestAppCredsList(t *testing.T) {
 	t.Parallel()
 
 	consortium := createConsortium(t)
-	defer deleteConsortium(t, consortium.Id)
+	defer deleteConsortium(t, consortium.ID)
 
-	environment := createEnvironment(t, consortium.Id)
-	defer deleteEnvironment(t, consortium.Id, environment.Id)
+	environment := createEnvironment(t, consortium.ID)
+	defer deleteEnvironment(t, consortium.ID, environment.ID)
 
-	memberships := listMembership(t, consortium.Id)
+	memberships := listMembership(t, consortium.ID)
 
-	appCreds := createAppCreds(t, consortium.Id, environment.Id, (*memberships)[0].Id)
-	defer deleteAppCreds(t, consortium.Id, environment.Id, appCreds.Id)
+	appCreds := createAppCreds(t, consortium.ID, environment.ID, (*memberships)[0].ID)
+	defer deleteAppCreds(t, consortium.ID, environment.ID, appCreds.ID)
 
-	newList := listAppCreds(t, consortium.Id, environment.Id)
+	newList := listAppCreds(t, consortium.ID, environment.ID)
 	found := false
 	for _, a := range *newList {
-		if a.Id == appCreds.Id {
+		if a.ID == appCreds.ID {
 			found = true
 		}
 	}

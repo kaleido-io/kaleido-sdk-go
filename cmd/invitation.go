@@ -26,14 +26,14 @@ var invitationListCmd = &cobra.Command{
 	Use:   "invitation",
 	Short: "List invitations of a consortium",
 	Run: func(cmd *cobra.Command, args []string) {
-		if consortiumId == "" {
-			fmt.Println("Missing required parameter: --consortiumId for the consortium to list invitations of")
+		if consortiumID == "" {
+			fmt.Println("Missing required parameter: --consortiumID for the consortium to list invitations of")
 			os.Exit(1)
 		}
 
 		client := getNewClient()
 		var invitations []kld.Invitation
-		_, err := client.ListInvitations(consortiumId, &invitations)
+		_, err := client.ListInvitations(consortiumID, &invitations)
 
 		if err != nil {
 			fmt.Printf("Failed to list invitations. %v\n", err)
@@ -49,9 +49,9 @@ var invitationGetCmd = &cobra.Command{
 	Use:   "invitation",
 	Short: "Get invitation details",
 	Run: func(cmd *cobra.Command, args []string) {
-		validateConsortiumId("invitation")
+		validateConsortiumID("invitation")
 
-		if invitationId == "" {
+		if invitationID == "" {
 			fmt.Println("Missing required parameter: --id for the invitation to retrieve")
 
 			os.Exit(1)
@@ -59,7 +59,7 @@ var invitationGetCmd = &cobra.Command{
 
 		client := getNewClient()
 		var invitation kld.Invitation
-		res, err := client.GetInvitation(consortiumId, invitationId, &invitation)
+		res, err := client.GetInvitation(consortiumID, invitationID, &invitation)
 
 		validateGetResponse(res, err, "invitation")
 	},
@@ -71,11 +71,11 @@ var invitationCreateCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		validateName()
 		validateEmail()
-		validateConsortiumId("invitation")
+		validateConsortiumID("invitation")
 
 		client := getNewClient()
 		invitation := kld.NewInvitation(name, email)
-		res, err := client.CreateInvitation(consortiumId, &invitation)
+		res, err := client.CreateInvitation(consortiumID, &invitation)
 
 		validateCreationResponse(res, err, "invitation")
 	},
@@ -85,11 +85,11 @@ var invitationDeleteCmd = &cobra.Command{
 	Use:   "invitation",
 	Short: "Delete a invitation from a consortium",
 	Run: func(cmd *cobra.Command, args []string) {
-		validateConsortiumId("invitation", false)
-		validateDeleteId("invitation")
+		validateConsortiumID("invitation", false)
+		validateDeleteID("invitation")
 
 		client := getNewClient()
-		res, err := client.DeleteInvitation(consortiumId, deleteId)
+		res, err := client.DeleteInvitation(consortiumID, deleteID)
 
 		validateDeletionResponse(res, err, "invitation")
 	},
@@ -97,15 +97,15 @@ var invitationDeleteCmd = &cobra.Command{
 
 func newInvitationListCmd() *cobra.Command {
 	flags := invitationListCmd.Flags()
-	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium to retrieve the invitations from")
+	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium to retrieve the invitations from")
 
 	return invitationListCmd
 }
 
 func newInvitationGetCmd() *cobra.Command {
 	flags := invitationGetCmd.Flags()
-	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium to retrieve the invitation from")
-	flags.StringVar(&invitationId, "id", "", "Id of the invitation to retrieve")
+	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium to retrieve the invitation from")
+	flags.StringVar(&invitationID, "id", "", "ID of the invitation to retrieve")
 
 	return invitationGetCmd
 }
@@ -114,15 +114,15 @@ func newInvitationCreateCmd() *cobra.Command {
 	flags := invitationCreateCmd.Flags()
 	flags.StringVarP(&name, "name", "n", "", "Name of the organization to create the invitation for")
 	flags.StringVarP(&email, "email", "e", "", "Email of the delegate of the organization to create the invitation for")
-	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium to add the new invitation to")
+	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium to add the new invitation to")
 
 	return invitationCreateCmd
 }
 
 func newInvitationDeleteCmd() *cobra.Command {
 	flags := invitationDeleteCmd.Flags()
-	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium to delete the invitation from")
-	flags.StringVar(&deleteId, "id", "", "Id of the invitation to delete")
+	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium to delete the invitation from")
+	flags.StringVar(&deleteID, "id", "", "ID of the invitation to delete")
 
 	return invitationDeleteCmd
 }

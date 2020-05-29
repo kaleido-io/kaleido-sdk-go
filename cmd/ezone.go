@@ -26,19 +26,19 @@ var ezoneListCmd = &cobra.Command{
 	Use:   "ezone",
 	Short: "List deployment zones under an environment",
 	Run: func(cmd *cobra.Command, args []string) {
-		if consortiumId == "" {
-			fmt.Println("Missing required parameter: --consortiumId for the consortium to list deployment zones of")
+		if consortiumID == "" {
+			fmt.Println("Missing required parameter: --consortiumID for the consortium to list deployment zones of")
 			os.Exit(1)
 		}
 
-		if environmentId == "" {
-			fmt.Println("Missing required parameter: --environmentId for the environment to list deployment zones of")
+		if environmentID == "" {
+			fmt.Println("Missing required parameter: --environmentID for the environment to list deployment zones of")
 			os.Exit(1)
 		}
 
 		client := getNewClient()
 		var ezones []kld.EZone
-		_, err := client.ListEZones(consortiumId, environmentId, &ezones)
+		_, err := client.ListEZones(consortiumID, environmentID, &ezones)
 
 		if err != nil {
 			fmt.Printf("Failed to list ezones. %v\n", err)
@@ -54,24 +54,24 @@ var ezoneGetCmd = &cobra.Command{
 	Use:   "ezone",
 	Short: "Retrieves a ezone details",
 	Run: func(cmd *cobra.Command, args []string) {
-		if consortiumId == "" {
-			fmt.Println("Missing required parameter: --consortiumId for the consortium that the deployment zone belongs to")
+		if consortiumID == "" {
+			fmt.Println("Missing required parameter: --consortiumID for the consortium that the deployment zone belongs to")
 			os.Exit(1)
 		}
 
-		if environmentId == "" {
-			fmt.Println("Missing required parameter: --environmentId for the environment that the deployment zone belongs to")
+		if environmentID == "" {
+			fmt.Println("Missing required parameter: --environmentID for the environment that the deployment zone belongs to")
 			os.Exit(1)
 		}
 
-		if ezoneId == "" {
+		if ezoneID == "" {
 			fmt.Println("Missing required parameter: --id for the ezone to retrieve")
 			os.Exit(1)
 		}
 
 		client := getNewClient()
 		var ezone kld.EZone
-		res, err := client.GetEZone(consortiumId, environmentId, ezoneId, &ezone)
+		res, err := client.GetEZone(consortiumID, environmentID, ezoneID, &ezone)
 
 		validateGetResponse(res, err, "ezone")
 	},
@@ -81,12 +81,12 @@ var ezoneCreateCmd = &cobra.Command{
 	Use:   "ezone",
 	Short: "Create a ezone",
 	Run: func(cmd *cobra.Command, args []string) {
-		validateConsortiumId("ezone")
-		validateEnvironmentId("ezone")
+		validateConsortiumID("ezone")
+		validateEnvironmentID("ezone")
 
 		client := getNewClient()
 		ezone := kld.NewEZone(name, region, cloud)
-		res, err := client.CreateEZone(consortiumId, environmentId, &ezone)
+		res, err := client.CreateEZone(consortiumID, environmentID, &ezone)
 
 		validateCreationResponse(res, err, "ezone")
 	},
@@ -96,23 +96,23 @@ var ezoneDeleteCmd = &cobra.Command{
 	Use:   "ezone",
 	Short: "Delete a ezone",
 	Run: func(cmd *cobra.Command, args []string) {
-		if consortiumId == "" {
-			fmt.Println("Missing required parameter: --consortiumId for the consortium that the deployment zone belongs to")
+		if consortiumID == "" {
+			fmt.Println("Missing required parameter: --consortiumID for the consortium that the deployment zone belongs to")
 			os.Exit(1)
 		}
 
-		if environmentId == "" {
-			fmt.Println("Missing required parameter: --environmentId for the environment that the deployment zone belongs to")
+		if environmentID == "" {
+			fmt.Println("Missing required parameter: --environmentID for the environment that the deployment zone belongs to")
 			os.Exit(1)
 		}
 
-		if ezoneId == "" {
+		if ezoneID == "" {
 			fmt.Println("Missing required parameter: --id for the deployment zone to retrieve")
 			os.Exit(1)
 		}
 
 		client := getNewClient()
-		res, err := client.DeleteEZone(consortiumId, environmentId, ezoneId)
+		res, err := client.DeleteEZone(consortiumID, environmentID, ezoneID)
 
 		validateDeletionResponse(res, err, "ezone")
 	},
@@ -120,17 +120,17 @@ var ezoneDeleteCmd = &cobra.Command{
 
 func newEZoneListCmd() *cobra.Command {
 	flags := ezoneListCmd.Flags()
-	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium to retrieve the deployment zones from")
-	flags.StringVarP(&environmentId, "environment", "e", "", "Id of the environment to retrieve the deployment zones from")
+	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium to retrieve the deployment zones from")
+	flags.StringVarP(&environmentID, "environment", "e", "", "ID of the environment to retrieve the deployment zones from")
 
 	return ezoneListCmd
 }
 
 func newEZoneGetCmd() *cobra.Command {
 	flags := ezoneGetCmd.Flags()
-	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium to retrieve the deployment zone from")
-	flags.StringVarP(&environmentId, "environment", "e", "", "Id of the environment to retrieve the deployment zone from")
-	flags.StringVarP(&ezoneId, "ezone", "n", "", "Id of the deployment zone to retrieve")
+	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium to retrieve the deployment zone from")
+	flags.StringVarP(&environmentID, "environment", "e", "", "ID of the environment to retrieve the deployment zone from")
+	flags.StringVarP(&ezoneID, "ezone", "n", "", "ID of the deployment zone to retrieve")
 
 	return ezoneGetCmd
 }
@@ -138,8 +138,8 @@ func newEZoneGetCmd() *cobra.Command {
 func newEZoneCreateCmd() *cobra.Command {
 	flags := ezoneCreateCmd.Flags()
 	flags.StringVarP(&name, "name", "n", "", "Name of the ezone")
-	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium this deployment zone is created under")
-	flags.StringVarP(&environmentId, "environment", "e", "", "Id of the environment this deployment zone is created for")
+	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium this deployment zone is created under")
+	flags.StringVarP(&environmentID, "environment", "e", "", "ID of the environment this deployment zone is created for")
 	flags.StringVarP(&region, "region", "r", "", "Region for the new zone")
 	flags.StringVarP(&cloud, "cloud", "C", "", "Cloud for the new zone")
 
@@ -148,9 +148,9 @@ func newEZoneCreateCmd() *cobra.Command {
 
 func newEZoneDeleteCmd() *cobra.Command {
 	flags := ezoneDeleteCmd.Flags()
-	flags.StringVarP(&consortiumId, "consortium", "c", "", "Id of the consortium this deployment zone is created under")
-	flags.StringVarP(&environmentId, "environment", "e", "", "Id of the environment this deployment zone is created for")
-	flags.StringVarP(&ezoneId, "ezone", "n", "", "Id of the deployment zone to retrieve")
+	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium this deployment zone is created under")
+	flags.StringVarP(&environmentID, "environment", "e", "", "ID of the environment this deployment zone is created for")
+	flags.StringVarP(&ezoneID, "ezone", "n", "", "ID of the deployment zone to retrieve")
 
 	return ezoneDeleteCmd
 }

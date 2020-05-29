@@ -22,16 +22,16 @@ func createNode(t *testing.T, consortiumID string, environmentID string, members
 
 	maxWaitTime := 600 // secs
 	runningTime := 0
-	savedNode := getNode(t, consortiumID, environmentID, node.Id)
+	savedNode := getNode(t, consortiumID, environmentID, node.ID)
 	for strings.Compare(savedNode.State, "started") != 0 && runningTime < maxWaitTime {
 		time.Sleep(500 * time.Millisecond) // wait 5 sec
 		runningTime += 5
 		// wait until node is initialized (otherwise, it future ops will fail)
-		savedNode = getNode(t, consortiumID, environmentID, node.Id)
+		savedNode = getNode(t, consortiumID, environmentID, node.ID)
 	}
 
 	if savedNode.State != "started" {
-		t.Fatalf("node %s failed to start within 30 seconds", node.Id)
+		t.Fatalf("node %s failed to start within 30 seconds", node.ID)
 	}
 
 	return savedNode
@@ -67,17 +67,17 @@ func TestNode_Create(t *testing.T) {
 	t.Parallel()
 
 	consortium := createConsortium(t)
-	defer deleteConsortium(t, consortium.Id)
+	defer deleteConsortium(t, consortium.ID)
 
-	environment := createEnvironment(t, consortium.Id)
-	defer deleteEnvironment(t, consortium.Id, environment.Id)
+	environment := createEnvironment(t, consortium.ID)
+	defer deleteEnvironment(t, consortium.ID, environment.ID)
 
-	memberships := listMembership(t, consortium.Id)
+	memberships := listMembership(t, consortium.ID)
 
 	/*node := */
-	createNode(t, consortium.Id, environment.Id, (*memberships)[0].Id)
+	createNode(t, consortium.ID, environment.ID, (*memberships)[0].ID)
 	// TODO deleteNode fails most of the time, so we are relying on cleaning up the environment via environment delete
-	// defer deleteNode(t, consortium.Id, environment.Id, node.Id)
+	// defer deleteNode(t, consortium.ID, environment.ID, node.ID)
 }
 
 func TestNode_Get(t *testing.T) {
@@ -88,22 +88,22 @@ func TestNode_List(t *testing.T) {
 	t.Parallel()
 
 	consortium := createConsortium(t)
-	defer deleteConsortium(t, consortium.Id)
+	defer deleteConsortium(t, consortium.ID)
 
-	environment := createEnvironment(t, consortium.Id)
-	defer deleteEnvironment(t, consortium.Id, environment.Id)
+	environment := createEnvironment(t, consortium.ID)
+	defer deleteEnvironment(t, consortium.ID, environment.ID)
 
-	memberships := listMembership(t, consortium.Id)
+	memberships := listMembership(t, consortium.ID)
 
-	node := createNode(t, consortium.Id, environment.Id, (*memberships)[0].Id)
-	// defer deleteNode(t, consortium.Id, environment.Id, node.Id)
+	node := createNode(t, consortium.ID, environment.ID, (*memberships)[0].ID)
+	// defer deleteNode(t, consortium.ID, environment.ID, node.ID)
 
-	nodes := listNode(t, consortium.Id, environment.Id)
+	nodes := listNode(t, consortium.ID, environment.ID)
 	st.Expect(t, len(*nodes), 2)
 
 	found := false
 	for _, n := range *nodes {
-		if n.Id == node.Id {
+		if n.ID == node.ID {
 			found = true
 		}
 	}

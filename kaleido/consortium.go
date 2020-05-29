@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package kaleido
 
 import (
@@ -20,19 +21,14 @@ import (
 	"gopkg.in/resty.v1"
 )
 
-const (
-	SingleOrg      = "single-org"
-	MultiOrg       = "multi-org"
-	DELETE_PENDING = "delete_pending"
-	DELETED        = "deleted"
-)
-
+// KaleidoClient is the REST client
 type KaleidoClient struct {
 	Client *resty.Client
 }
 
+// Consortium consortium
 type Consortium struct {
-	Id          string `json:"_id,omitempty"`
+	ID          string `json:"_id,omitempty"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	DeletedAt   string `json:"deleted_at,omitempty"`
@@ -41,7 +37,7 @@ type Consortium struct {
 
 func NewConsortium(name, description string) Consortium {
 	return Consortium{
-		Id:          "",
+		ID:          "",
 		Name:        name,
 		Description: description,
 		DeletedAt:   "",
@@ -68,6 +64,6 @@ func (c *KaleidoClient) GetConsortium(id string, resultBox *Consortium) (*resty.
 	return c.Client.R().SetResult(resultBox).Get(path)
 }
 
-func (c *KaleidoClient) DeleteConsortium(consortiumId string) (*resty.Response, error) {
-	return c.Client.R().Delete(fmt.Sprintf("/consortia/%s", consortiumId))
+func (c *KaleidoClient) DeleteConsortium(consortiumID string) (*resty.Response, error) {
+	return c.Client.R().Delete(fmt.Sprintf("/consortia/%s", consortiumID))
 }

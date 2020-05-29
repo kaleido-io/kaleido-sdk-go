@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package kaleido
 
 import (
@@ -25,29 +26,29 @@ const (
 
 type Membership struct {
 	OrgName string `json:"org_name"`
-	Id      string `json:"_id,omitempty"`
+	ID      string `json:"_id,omitempty"`
 }
 
 func NewMembership(orgName string) Membership {
 	return Membership{orgName, ""}
 }
 
-func (c *KaleidoClient) ListMemberships(consortiaId string, resultBox *[]Membership) (*resty.Response, error) {
-	path := fmt.Sprintf(memBasePath, consortiaId)
+func (c *KaleidoClient) ListMemberships(consortiaID string, resultBox *[]Membership) (*resty.Response, error) {
+	path := fmt.Sprintf(memBasePath, consortiaID)
 	return c.Client.R().SetResult(resultBox).Get(path)
 }
 
-func (c *KaleidoClient) CreateMembership(consortiaId string, membership *Membership) (*resty.Response, error) {
-	path := fmt.Sprintf(memBasePath, consortiaId)
+func (c *KaleidoClient) CreateMembership(consortiaID string, membership *Membership) (*resty.Response, error) {
+	path := fmt.Sprintf(memBasePath, consortiaID)
 	return c.Client.R().SetResult(membership).SetBody(membership).Post(path)
 }
 
-func (c *KaleidoClient) DeleteMembership(consortiaId, membershipId string) (*resty.Response, error) {
-	path := fmt.Sprintf(memBasePath+"/%s", consortiaId, membershipId)
+func (c *KaleidoClient) DeleteMembership(consortiaID, membershipID string) (*resty.Response, error) {
+	path := fmt.Sprintf(memBasePath+"/%s", consortiaID, membershipID)
 	return c.Client.R().Delete(path)
 }
 
-func (c *KaleidoClient) GetMembership(consortiaId, membershipId string, resultBox *Membership) (*resty.Response, error) {
-	path := fmt.Sprintf(memBasePath+"/%s", consortiaId, membershipId)
+func (c *KaleidoClient) GetMembership(consortiaID, membershipID string, resultBox *Membership) (*resty.Response, error) {
+	path := fmt.Sprintf(memBasePath+"/%s", consortiaID, membershipID)
 	return c.Client.R().SetResult(resultBox).Get(path)
 }

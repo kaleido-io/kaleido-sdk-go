@@ -17,14 +17,18 @@ import (
 	"testing"
 
 	"github.com/nbio/st"
-	"gopkg.in/h2non/gock.v1"
+	gock "gopkg.in/h2non/gock.v1"
 )
 
-var mockEnvCreatePayload = map[string]string{
+var mockEnvCreatePayload = map[string]interface{}{
 	"name":           "testingEnvironment",
 	"description":    "just test",
 	"provider":       "quorum",
 	"consensus_type": "raft",
+	"block_period":   0,
+	"test_features": map[string]interface{}{
+		"multi_region": true,
+	},
 }
 
 var mockEnv = map[string]string{
@@ -50,7 +54,7 @@ func TestEnvironmentCreation(t *testing.T) {
 
 	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
 
-	env := NewEnvironment("testingEnvironment", "just test", "quorum", "raft")
+	env := NewEnvironment("testingEnvironment", "just test", "quorum", "raft", true, 0)
 	_, err := client.CreateEnvironment("cid", &env)
 
 	st.Expect(t, err, nil)

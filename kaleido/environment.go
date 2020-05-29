@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package kaleido
 
 import (
@@ -20,15 +21,15 @@ import (
 )
 
 type Environment struct {
-	Name          string       `json:"name"`
-	Description   string       `json:"description"`
-	Provider      string       `json:"provider"`
-	ConsensusType string       `json:"consensus_type"`
-	Id            string       `json:"_id,omitempty"`
-	State         string       `json:"state,omitempty"`
-	ReleaseId     string       `json:"release_id,omitempty"`
-	TestFeatures  TestFeatures `json:"test_features,omitempty"`
-	BlockPeriod   int          `json:"block_period"`
+	Name          string        `json:"name"`
+	Description   string        `json:"description"`
+	Provider      string        `json:"provider"`
+	ConsensusType string        `json:"consensus_type"`
+	ID            string        `json:"_id,omitempty"`
+	State         string        `json:"state,omitempty"`
+	ReleaseID     string        `json:"release_id,omitempty"`
+	TestFeatures  *TestFeatures `json:"test_features,omitempty"`
+	BlockPeriod   int           `json:"block_period"`
 }
 
 type TestFeatures struct {
@@ -40,34 +41,37 @@ const (
 )
 
 func NewEnvironment(name, description, provider, consensus string, multiRegion bool, blockPeriod int) Environment {
-	return Environment{
+	e := Environment{
 		Name:          name,
 		Description:   description,
 		Provider:      provider,
 		ConsensusType: consensus,
-		TestFeatures: TestFeatures{
-			MultiRegion: multiRegion,
-		},
-		BlockPeriod: blockPeriod,
+		BlockPeriod:   blockPeriod,
 	}
+	if multiRegion {
+		e.TestFeatures = &TestFeatures{
+			MultiRegion: multiRegion,
+		}
+	}
+	return e
 }
 
-func (c *KaleidoClient) ListEnvironments(consortiumId string, resultBox *[]Environment) (*resty.Response, error) {
-	path := fmt.Sprintf(envBasePath, consortiumId)
+func (c *KaleidoClient) ListEnvironments(consortiumID string, resultBox *[]Environment) (*resty.Response, error) {
+	path := fmt.Sprintf(envBasePath, consortiumID)
 	return c.Client.R().SetResult(resultBox).Get(path)
 }
 
-func (c *KaleidoClient) CreateEnvironment(consortiumId string, environment *Environment) (*resty.Response, error) {
-	path := fmt.Sprintf(envBasePath, consortiumId)
+func (c *KaleidoClient) CreateEnvironment(consortiumID string, environment *Environment) (*resty.Response, error) {
+	path := fmt.Sprintf(envBasePath, consortiumID)
 	return c.Client.R().SetResult(environment).SetBody(environment).Post(path)
 }
 
-func (c *KaleidoClient) DeleteEnvironment(consortiumId, environmentId string) (*resty.Response, error) {
-	path := fmt.Sprintf(envBasePath+"/%s", consortiumId, environmentId)
+func (c *KaleidoClient) DeleteEnvironment(consortiumID, environmentID string) (*resty.Response, error) {
+	path := fmt.Sprintf(envBasePath+"/%s", consortiumID, environmentID)
 	return c.Client.R().Delete(path)
 }
 
-func (c *KaleidoClient) GetEnvironment(consortiumId, environmentId string, resultBox *Environment) (*resty.Response, error) {
-	path := fmt.Sprintf(envBasePath+"/%s", consortiumId, environmentId)
+func (c *KaleidoClient) GetEnvironment(consortiumID, environmentID string, resultBox *Environment) (*resty.Response, error) {
+	path := fmt.Sprintf(envBasePath+"/%s", consortiumID, environmentID)
 	return c.Client.R().SetResult(resultBox).Get(path)
 }

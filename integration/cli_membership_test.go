@@ -51,38 +51,38 @@ func TestMembership_Create(t *testing.T) {
 	t.Parallel()
 
 	consortium := createConsortium(t)
-	defer deleteConsortium(t, consortium.Id)
+	defer deleteConsortium(t, consortium.ID)
 
-	membership := createMembership(t, consortium.Id)
-	defer deleteMembership(t, consortium.Id, membership.Id)
+	membership := createMembership(t, consortium.ID)
+	defer deleteMembership(t, consortium.ID, membership.ID)
 }
 
 func TestMembership_Get(t *testing.T) {
 	t.Parallel()
 
 	consortium := createConsortium(t)
-	defer deleteConsortium(t, consortium.Id)
+	defer deleteConsortium(t, consortium.ID)
 
-	membership := createMembership(t, consortium.Id)
-	defer deleteMembership(t, consortium.Id, membership.Id)
+	membership := createMembership(t, consortium.ID)
+	defer deleteMembership(t, consortium.ID, membership.ID)
 
-	membershipSaved := getMembership(t, consortium.Id, membership.Id)
-	st.Expect(t, membership.Id, membershipSaved.Id)
+	membershipSaved := getMembership(t, consortium.ID, membership.ID)
+	st.Expect(t, membership.ID, membershipSaved.ID)
 }
 
 func TestMembership_List(t *testing.T) {
 	t.Parallel()
 
 	consortium := createConsortium(t)
-	defer deleteConsortium(t, consortium.Id)
+	defer deleteConsortium(t, consortium.ID)
 
-	origList := listMembership(t, consortium.Id)
+	origList := listMembership(t, consortium.ID)
 	st.Expect(t, len(*origList), 1)
 
-	membership := createMembership(t, consortium.Id)
-	defer deleteMembership(t, consortium.Id, membership.Id)
+	membership := createMembership(t, consortium.ID)
+	defer deleteMembership(t, consortium.ID, membership.ID)
 
-	newList := listMembership(t, consortium.Id)
+	newList := listMembership(t, consortium.ID)
 	st.Expect(t, len(*newList), 2)
 
 }
@@ -91,19 +91,19 @@ func TestMembership_Delete(t *testing.T) {
 	t.Parallel()
 
 	consortium := createConsortium(t)
-	defer deleteConsortium(t, consortium.Id)
+	defer deleteConsortium(t, consortium.ID)
 
-	membership := createMembership(t, consortium.Id)
-	defer deleteMembership(t, consortium.Id, membership.Id)
+	membership := createMembership(t, consortium.ID)
+	defer deleteMembership(t, consortium.ID, membership.ID)
 }
 
 func TestMembership_Default(t *testing.T) {
 	t.Parallel()
 
 	consortium := createConsortium(t)
-	defer deleteConsortium(t, consortium.Id)
+	defer deleteConsortium(t, consortium.ID)
 
-	memberships := listMembership(t, consortium.Id)
+	memberships := listMembership(t, consortium.ID)
 	st.Expect(t, len(*memberships), 1)
 	st.Expect(t, (*memberships)[0].OrgName, "Default Organization")
 
