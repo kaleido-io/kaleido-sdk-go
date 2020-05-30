@@ -46,6 +46,7 @@ var opsmetricID string
 var backupID string
 var networkingID string
 var nodeConfigID string
+var bafID string
 
 // use for both create, list, get and delete commands
 var consortiumID string

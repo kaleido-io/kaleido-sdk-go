@@ -43,6 +43,7 @@ type Node struct {
 	KmsID        string `json:"kms_id,omitempty"`
 	BackupID     string `json:"backup_id,omitempty"`
 	NodeConfigID string `json:"node_config_id,omitempty"`
+	BafID        string `json:"baf_id,omitempty"`
 }
 
 func NewNode(name, membershipID, ezoneID string) Node {
