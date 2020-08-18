@@ -160,7 +160,7 @@ func newNodeCreateCmd() *cobra.Command {
 	flags.StringVarP(&backupID, "backup-id", "b", "", "Backup config ID to attach to the node")
 	flags.StringVarP(&networkingID, "networking-id", "N", "", "Networking config ID to attach to the node")
 	flags.StringVarP(&nodeConfigID, "node-config-id", "C", "", "Node config ID to attach to the node")
-	flags.StringVarP(&bafID, "baf-id", "b", "", "Blockchain Application Firewall policy ID to attach to the node")
+	flags.StringVarP(&bafID, "baf-id", "B", "", "Blockchain Application Firewall policy ID to attach to the node")
 
 	return nodeCreateCmd
 }
