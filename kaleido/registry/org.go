@@ -187,8 +187,8 @@ func (org *Organization) createSignedRequestForRegistration() (*SignedRequest, e
 	}
 
 	jsonBytes, err := json.Marshal(map[string]interface{}{
-		"envID":   org.Environment,
-		"memID":   org.MemberID,
+		"envId":   org.Environment,
+		"memId":   org.MemberID,
 		"nonce":   nonce,
 		"name":    registryName,
 		"proof":   string(proofPEM),
