@@ -39,10 +39,14 @@ func NewAppCreds(membershipID string) AppCreds {
 	}
 }
 
-func (c *KaleidoClient) CreateAppCreds(consortiumID, envID, name string, appcreds *AppCreds) (*resty.Response, error) {
-	if name != "" {
-		appcreds.Name = name
+func NewAppCredsWithName(membershipID, name string) AppCreds {
+	return AppCreds{
+		MembershipID: membershipID,
+		Name:         name,
 	}
+}
+
+func (c *KaleidoClient) CreateAppCreds(consortiumID, envID string, appcreds *AppCreds) (*resty.Response, error) {
 	path := fmt.Sprintf(appcredsBasePath, consortiumID, envID)
 	return c.Client.R().SetBody(appcreds).SetResult(appcreds).Post(path)
 }

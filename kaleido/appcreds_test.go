@@ -22,6 +22,10 @@ import (
 
 var mockAppCredCreatePayload = map[string]string{
 	"membership_id": "member1",
+}
+
+var mockAppCredCreateWithNamePayload = map[string]string{
+	"membership_id": "member1",
 	"name":          "testCred",
 }
 
@@ -48,7 +52,24 @@ func TestAppCredCreate(t *testing.T) {
 
 	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
 	var appCreds = NewAppCreds("member1")
-	_, err := client.CreateAppCreds("c1", "env1", "testCred", &appCreds)
+	_, err := client.CreateAppCreds("c1", "env1", &appCreds)
+	st.Expect(t, err, nil)
+	st.Expect(t, gock.IsDone(), true)
+}
+
+func TestAppCredCreateWithName(t *testing.T) {
+	defer gock.Off()
+
+	gock.New("http://example.com").
+		Post("/api/v1/consortia/c1/environments/env1/appcreds").
+		MatchType("json").
+		JSON(mockAppCredCreateWithNamePayload).
+		Reply(201).
+		JSON(mockAppCred)
+
+	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
+	var appCreds = NewAppCredsWithName("member1", "testCred")
+	_, err := client.CreateAppCreds("c1", "env1", &appCreds)
 	st.Expect(t, err, nil)
 	st.Expect(t, gock.IsDone(), true)
 }
