@@ -31,8 +31,10 @@ var appCredsCreateCmd = &cobra.Command{
 		validateEnvironmentID("appcreds")
 		validateMembershipID("appcreds")
 		client := getNewClient()
-		appcreds := kld.NewAppCreds(membershipID)
-		if name != "" {
+		var appcreds kld.AppCreds
+		if name == "" {
+			appcreds = kld.NewAppCreds(membershipID)
+		} else {
 			appcreds = kld.NewAppCredsWithName(membershipID, name)
 		}
 		res, err := client.CreateAppCreds(consortiumID, environmentID, &appcreds)
