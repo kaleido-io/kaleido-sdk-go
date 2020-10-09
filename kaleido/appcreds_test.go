@@ -22,10 +22,12 @@ import (
 
 var mockAppCredCreatePayload = map[string]string{
 	"membership_id": "member1",
+	"name":          "testCred",
 }
 
 var mockAppCred = map[string]string{
 	"membership_id": "zzzipxyjew",
+	"name":          "testCred",
 	"auth_type":     "basic_auth",
 	"_id":           "zzstcszriw",
 	"username":      "userid",
@@ -46,7 +48,7 @@ func TestAppCredCreate(t *testing.T) {
 
 	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
 	var appCreds = NewAppCreds("member1")
-	_, err := client.CreateAppCreds("c1", "env1", &appCreds)
+	_, err := client.CreateAppCreds("c1", "env1", "testCred", &appCreds)
 	st.Expect(t, err, nil)
 	st.Expect(t, gock.IsDone(), true)
 }

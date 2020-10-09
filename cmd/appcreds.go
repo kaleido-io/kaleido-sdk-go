@@ -32,7 +32,7 @@ var appCredsCreateCmd = &cobra.Command{
 		validateMembershipID("appcreds")
 		client := getNewClient()
 		appcreds := kld.NewAppCreds(membershipID)
-		res, err := client.CreateAppCreds(consortiumID, environmentID, &appcreds)
+		res, err := client.CreateAppCreds(consortiumID, environmentID, name, &appcreds)
 		validateCreationResponse(res, err, "appcreds")
 	},
 }
@@ -88,6 +88,7 @@ func newAppCredsCreateCmd() *cobra.Command {
 	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium to to add the application credentials")
 	flags.StringVarP(&environmentID, "environment", "e", "", "ID of the environment to add the application credentials")
 	flags.StringVarP(&membershipID, "membership", "m", "", "ID of the membership to issue the application credentials to")
+	flags.StringVarP(&name, "name", "n", "", "Name of the application credential")
 	return appCredsCreateCmd
 }
 
