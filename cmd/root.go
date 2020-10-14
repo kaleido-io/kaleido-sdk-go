@@ -60,6 +60,8 @@ var appCredsID string
 var service string
 var invitationID string
 var configID string
+var accounts []string
+var balances []string
 
 // for delete command
 var deleteID string

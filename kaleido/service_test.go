@@ -172,7 +172,7 @@ func TestServiceCreation(t *testing.T) {
 		t.Fatalf("Could not create consortium status code: %d.", res.StatusCode())
 	}
 	defer client.DeleteConsortium(consortium.ID)
-	env := NewEnvironment("serviceCreate", "just create some services", "quorum", "raft", false, 0)
+	env := NewEnvironment("serviceCreate", "just create some services", "quorum", "raft", false, 0, map[string]string{})
 
 	res, err = client.CreateEnvironment(consortium.ID, &env)
 
