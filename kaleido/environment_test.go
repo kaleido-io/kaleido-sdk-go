@@ -29,6 +29,11 @@ var mockEnvCreatePayload = map[string]interface{}{
 	"test_features": map[string]interface{}{
 		"multi_region": true,
 	},
+	"prefunded_accounts": map[string]interface{}{
+		"f601c8a58a738c1055094d0cf3018266d562c4a5": map[string]string{
+			"balance": "10000000",
+		},
+	},
 }
 
 var mockEnv = map[string]string{
@@ -54,7 +59,9 @@ func TestEnvironmentCreation(t *testing.T) {
 
 	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
 
-	env := NewEnvironment("testingEnvironment", "just test", "quorum", "raft", true, 0)
+	balances := map[string]string{}
+	balances["f601c8a58a738c1055094d0cf3018266d562c4a5"] = "10000000"
+	env := NewEnvironment("testingEnvironment", "just test", "quorum", "raft", true, 0, balances)
 	_, err := client.CreateEnvironment("cid", &env)
 
 	st.Expect(t, err, nil)

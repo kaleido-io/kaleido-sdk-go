@@ -20,33 +20,49 @@ import (
 	resty "gopkg.in/resty.v1"
 )
 
+// Environment fields
 type Environment struct {
-	Name          string        `json:"name"`
-	Description   string        `json:"description"`
-	Provider      string        `json:"provider"`
-	ConsensusType string        `json:"consensus_type"`
-	ID            string        `json:"_id,omitempty"`
-	State         string        `json:"state,omitempty"`
-	ReleaseID     string        `json:"release_id,omitempty"`
-	TestFeatures  *TestFeatures `json:"test_features,omitempty"`
-	BlockPeriod   int           `json:"block_period"`
+	Name              string                 `json:"name"`
+	Description       string                 `json:"description"`
+	Provider          string                 `json:"provider"`
+	ConsensusType     string                 `json:"consensus_type"`
+	ID                string                 `json:"_id,omitempty"`
+	State             string                 `json:"state,omitempty"`
+	ReleaseID         string                 `json:"release_id,omitempty"`
+	TestFeatures      *TestFeatures          `json:"test_features,omitempty"`
+	BlockPeriod       int                    `json:"block_period"`
+	PrefundedAccounts map[string]interface{} `json:"prefunded_accounts,omitempty"`
 }
 
+// TestFeatures fields
 type TestFeatures struct {
 	MultiRegion bool `json:"multi_region,omitempty"`
+}
+
+// AccountBalance represents an account's balance
+type AccountBalance struct {
+	Balance string `json:"balance,omitempty"`
 }
 
 const (
 	envBasePath = "/consortia/%s/environments"
 )
 
-func NewEnvironment(name, description, provider, consensus string, multiRegion bool, blockPeriod int) Environment {
+// NewEnvironment creates a new environment
+func NewEnvironment(name, description, provider, consensus string, multiRegion bool, blockPeriod int, prefundedAccounts map[string]string) Environment {
+	accounts := map[string]interface{}{}
+	for account, balance := range prefundedAccounts {
+		accountBalance := &AccountBalance{}
+		accountBalance.Balance = balance
+		accounts[account] = accountBalance
+	}
 	e := Environment{
-		Name:          name,
-		Description:   description,
-		Provider:      provider,
-		ConsensusType: consensus,
-		BlockPeriod:   blockPeriod,
+		Name:              name,
+		Description:       description,
+		Provider:          provider,
+		ConsensusType:     consensus,
+		BlockPeriod:       blockPeriod,
+		PrefundedAccounts: accounts,
 	}
 	if multiRegion {
 		e.TestFeatures = &TestFeatures{
@@ -56,21 +72,25 @@ func NewEnvironment(name, description, provider, consensus string, multiRegion b
 	return e
 }
 
+// ListEnvironments lists existing environment
 func (c *KaleidoClient) ListEnvironments(consortiumID string, resultBox *[]Environment) (*resty.Response, error) {
 	path := fmt.Sprintf(envBasePath, consortiumID)
 	return c.Client.R().SetResult(resultBox).Get(path)
 }
 
+// CreateEnvironment initiates request to create a new environment
 func (c *KaleidoClient) CreateEnvironment(consortiumID string, environment *Environment) (*resty.Response, error) {
 	path := fmt.Sprintf(envBasePath, consortiumID)
 	return c.Client.R().SetResult(environment).SetBody(environment).Post(path)
 }
 
+// DeleteEnvironment deletes an environment
 func (c *KaleidoClient) DeleteEnvironment(consortiumID, environmentID string) (*resty.Response, error) {
 	path := fmt.Sprintf(envBasePath+"/%s", consortiumID, environmentID)
 	return c.Client.R().Delete(path)
 }
 
+// GetEnvironment details
 func (c *KaleidoClient) GetEnvironment(consortiumID, environmentID string, resultBox *Environment) (*resty.Response, error) {
 	path := fmt.Sprintf(envBasePath+"/%s", consortiumID, environmentID)
 	return c.Client.R().SetResult(resultBox).Get(path)

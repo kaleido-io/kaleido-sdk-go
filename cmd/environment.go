@@ -77,7 +77,15 @@ var environmentCreateCmd = &cobra.Command{
 		validateConsortiumID("environment")
 
 		client := getNewClient()
-		environment := kld.NewEnvironment(name, desc, provider, consensus, multiRegion, blockPeriod)
+		accountBalances := map[string]string{}
+		if len(accounts) != len(balances) {
+			fmt.Println("For pre-funded accounts, provide accounts (--accounts) and corresponding balances (--balances)")
+			os.Exit(1)
+		}
+		for i := range accounts {
+			accountBalances[accounts[i]] = balances[i]
+		}
+		environment := kld.NewEnvironment(name, desc, provider, consensus, multiRegion, blockPeriod, accountBalances)
 		res, err := client.CreateEnvironment(consortiumID, &environment)
 
 		validateCreationResponse(res, err, "environment")
@@ -122,6 +130,8 @@ func newEnvironmentCreateCmd() *cobra.Command {
 	flags.StringVarP(&consensus, "consensus", "k", "raft", "consensus algorithm to use for the given protocol, raft or ibft for quorum, poa for geth")
 	flags.BoolVarP(&multiRegion, "multi-region", "R", false, "whether to enable multi region")
 	flags.IntVarP(&blockPeriod, "block-period", "P", 0, "block period in seconds")
+	flags.StringArrayVarP(&accounts, "accounts", "a", []string{}, "Account addresses without 0x prefix - for pre-funded accounts")
+	flags.StringArrayVarP(&balances, "balances", "b", []string{}, "Account balances for addresses - for pre-funded accounts")
 
 	return environmentCreateCmd
 }
