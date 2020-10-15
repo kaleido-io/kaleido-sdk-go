@@ -22,6 +22,7 @@ import (
 
 type AppCreds struct {
 	MembershipID string `json:"membership_id"`
+	Name         string `json:"name,omitempty"`
 	AuthType     string `json:"auth_type,omitempty"`
 	Username     string `json:"username,omitempty"`
 	Password     string `json:"password,omitempty"`
@@ -35,6 +36,13 @@ const (
 func NewAppCreds(membershipID string) AppCreds {
 	return AppCreds{
 		MembershipID: membershipID,
+	}
+}
+
+func NewAppCredsWithName(membershipID, name string) AppCreds {
+	return AppCreds{
+		MembershipID: membershipID,
+		Name:         name,
 	}
 }
 
