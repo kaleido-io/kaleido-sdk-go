@@ -142,8 +142,8 @@ func bindProperties(address common.Address, caller bind.ContractCaller, transact
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_Properties *PropertiesRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
-	return _Properties.Contract.PropertiesCaller.contract.Call(opts, result, method, params...)
+func (_Properties *PropertiesRaw) Call(opts *bind.CallOpts, results *[]interface{}, method string, params ...interface{}) error {
+	return _Properties.Contract.PropertiesCaller.contract.Call(opts, results, method, params...)
 }
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
@@ -161,8 +161,8 @@ func (_Properties *PropertiesRaw) Transact(opts *bind.TransactOpts, method strin
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_Properties *PropertiesCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
-	return _Properties.Contract.contract.Call(opts, result, method, params...)
+func (_Properties *PropertiesCallerRaw) Call(opts *bind.CallOpts, results *[]interface{}, method string, params ...interface{}) error {
+	return _Properties.Contract.contract.Call(opts, results, method, params...)
 }
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
@@ -183,7 +183,9 @@ func (_Properties *PropertiesCaller) ExistsByKey(opts *bind.CallOpts, key [32]by
 	var (
 		ret0 = new(bool)
 	)
-	out := ret0
+	out := &[]interface{}{
+		ret0,
+	}
 	err := _Properties.contract.Call(opts, out, "existsByKey", key)
 	return *ret0, err
 }
@@ -209,7 +211,9 @@ func (_Properties *PropertiesCaller) ExistsByName(opts *bind.CallOpts, name stri
 	var (
 		ret0 = new(bool)
 	)
-	out := ret0
+	out := &[]interface{}{
+		ret0,
+	}
 	err := _Properties.contract.Call(opts, out, "existsByName", name)
 	return *ret0, err
 }
@@ -235,7 +239,9 @@ func (_Properties *PropertiesCaller) ExistsByOwnerAndKey(opts *bind.CallOpts, ow
 	var (
 		ret0 = new(bool)
 	)
-	out := ret0
+	out := &[]interface{}{
+		ret0,
+	}
 	err := _Properties.contract.Call(opts, out, "existsByOwnerAndKey", owner, key)
 	return *ret0, err
 }
@@ -445,7 +451,9 @@ func (_Properties *PropertiesCaller) GetContractVersion(opts *bind.CallOpts) (st
 	var (
 		ret0 = new(string)
 	)
-	out := ret0
+	out := &[]interface{}{
+		ret0,
+	}
 	err := _Properties.contract.Call(opts, out, "getContractVersion")
 	return *ret0, err
 }
@@ -471,7 +479,9 @@ func (_Properties *PropertiesCaller) GetKeyCount(opts *bind.CallOpts) (*big.Int,
 	var (
 		ret0 = new(*big.Int)
 	)
-	out := ret0
+	out := &[]interface{}{
+		ret0,
+	}
 	err := _Properties.contract.Call(opts, out, "getKeyCount")
 	return *ret0, err
 }
@@ -617,7 +627,9 @@ func (_Properties *PropertiesCaller) VersionsByName(opts *bind.CallOpts, name st
 	var (
 		ret0 = new(*big.Int)
 	)
-	out := ret0
+	out := &[]interface{}{
+		ret0,
+	}
 	err := _Properties.contract.Call(opts, out, "versionsByName", name)
 	return *ret0, err
 }
@@ -643,7 +655,9 @@ func (_Properties *PropertiesCaller) VersionsByOwnerAndKey(opts *bind.CallOpts, 
 	var (
 		ret0 = new(*big.Int)
 	)
-	out := ret0
+	out := &[]interface{}{
+		ret0,
+	}
 	err := _Properties.contract.Call(opts, out, "versionsByOwnerAndKey", owner, key)
 	return *ret0, err
 }
@@ -669,7 +683,9 @@ func (_Properties *PropertiesCaller) VersionsByOwnerAndName(opts *bind.CallOpts,
 	var (
 		ret0 = new(*big.Int)
 	)
-	out := ret0
+	out := &[]interface{}{
+		ret0,
+	}
 	err := _Properties.contract.Call(opts, out, "versionsByOwnerAndName", owner, name)
 	return *ret0, err
 }

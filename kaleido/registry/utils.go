@@ -298,7 +298,7 @@ func (u *utilsImpl) readPassword(envVarName string, prompt string) (string, erro
 func (u *utilsImpl) newKeyStoreTransactor(from *accounts.Account, keystore *keystore.KeyStore, chainID *big.Int) *bind.TransactOpts {
 	return &bind.TransactOpts{
 		From: from.Address,
-		Signer: func(signer types.Signer, address common.Address, tx *types.Transaction) (*types.Transaction, error) {
+		Signer: func(address common.Address, tx *types.Transaction) (*types.Transaction, error) {
 			var txSigned *types.Transaction
 			var err error
 			// attempt to sign without a passphrase

@@ -142,8 +142,8 @@ func bindDirectory(address common.Address, caller bind.ContractCaller, transacto
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_Directory *DirectoryRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
-	return _Directory.Contract.DirectoryCaller.contract.Call(opts, result, method, params...)
+func (_Directory *DirectoryRaw) Call(opts *bind.CallOpts, results *[]interface{}, method string, params ...interface{}) error {
+	return _Directory.Contract.DirectoryCaller.contract.Call(opts, results, method, params...)
 }
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
@@ -161,8 +161,8 @@ func (_Directory *DirectoryRaw) Transact(opts *bind.TransactOpts, method string,
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_Directory *DirectoryCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
-	return _Directory.Contract.contract.Call(opts, result, method, params...)
+func (_Directory *DirectoryCallerRaw) Call(opts *bind.CallOpts, results *[]interface{}, method string, params ...interface{}) error {
+	return _Directory.Contract.contract.Call(opts, results, method, params...)
 }
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
@@ -219,7 +219,9 @@ func (_Directory *DirectoryCaller) ExistsByKey(opts *bind.CallOpts, parentNode [
 	var (
 		ret0 = new(bool)
 	)
-	out := ret0
+	out := &[]interface{}{
+		ret0,
+	}
 	err := _Directory.contract.Call(opts, out, "existsByKey", parentNode, key)
 	return *ret0, err
 }
@@ -245,7 +247,9 @@ func (_Directory *DirectoryCaller) ExistsByName(opts *bind.CallOpts, parentNode 
 	var (
 		ret0 = new(bool)
 	)
-	out := ret0
+	out := &[]interface{}{
+		ret0,
+	}
 	err := _Directory.contract.Call(opts, out, "existsByName", parentNode, name)
 	return *ret0, err
 }
@@ -303,7 +307,9 @@ func (_Directory *DirectoryCaller) GetAccountCount(opts *bind.CallOpts, parentNo
 	var (
 		ret0 = new(*big.Int)
 	)
-	out := ret0
+	out := &[]interface{}{
+		ret0,
+	}
 	err := _Directory.contract.Call(opts, out, "getAccountCount", parentNode, key)
 	return *ret0, err
 }
@@ -401,7 +407,9 @@ func (_Directory *DirectoryCaller) GetContractVersion(opts *bind.CallOpts) (stri
 	var (
 		ret0 = new(string)
 	)
-	out := ret0
+	out := &[]interface{}{
+		ret0,
+	}
 	err := _Directory.contract.Call(opts, out, "getContractVersion")
 	return *ret0, err
 }
@@ -529,7 +537,9 @@ func (_Directory *DirectoryCaller) NodeChildrenCount(opts *bind.CallOpts, nodeHa
 	var (
 		ret0 = new(*big.Int)
 	)
-	out := ret0
+	out := &[]interface{}{
+		ret0,
+	}
 	err := _Directory.contract.Call(opts, out, "nodeChildrenCount", nodeHash)
 	return *ret0, err
 }
@@ -595,7 +605,9 @@ func (_Directory *DirectoryCaller) NodeKey(opts *bind.CallOpts, index uint8) ([3
 	var (
 		ret0 = new([32]byte)
 	)
-	out := ret0
+	out := &[]interface{}{
+		ret0,
+	}
 	err := _Directory.contract.Call(opts, out, "nodeKey", index)
 	return *ret0, err
 }
@@ -621,7 +633,9 @@ func (_Directory *DirectoryCaller) NodeLabel(opts *bind.CallOpts, nodeHash [32]b
 	var (
 		ret0 = new(string)
 	)
-	out := ret0
+	out := &[]interface{}{
+		ret0,
+	}
 	err := _Directory.contract.Call(opts, out, "nodeLabel", nodeHash)
 	return *ret0, err
 }
@@ -647,7 +661,9 @@ func (_Directory *DirectoryCaller) NodeOwner(opts *bind.CallOpts, nodeHash [32]b
 	var (
 		ret0 = new(common.Address)
 	)
-	out := ret0
+	out := &[]interface{}{
+		ret0,
+	}
 	err := _Directory.contract.Call(opts, out, "nodeOwner", nodeHash)
 	return *ret0, err
 }
@@ -673,7 +689,9 @@ func (_Directory *DirectoryCaller) NodeProof(opts *bind.CallOpts, nodeHash [32]b
 	var (
 		ret0 = new(string)
 	)
-	out := ret0
+	out := &[]interface{}{
+		ret0,
+	}
 	err := _Directory.contract.Call(opts, out, "nodeProof", nodeHash)
 	return *ret0, err
 }
@@ -733,7 +751,9 @@ func (_Directory *DirectoryCaller) NodeUsersCount(opts *bind.CallOpts, nodeHash 
 	var (
 		ret0 = new(*big.Int)
 	)
-	out := ret0
+	out := &[]interface{}{
+		ret0,
+	}
 	err := _Directory.contract.Call(opts, out, "nodeUsersCount", nodeHash)
 	return *ret0, err
 }
@@ -759,7 +779,9 @@ func (_Directory *DirectoryCaller) NodesCount(opts *bind.CallOpts) (*big.Int, er
 	var (
 		ret0 = new(*big.Int)
 	)
-	out := ret0
+	out := &[]interface{}{
+		ret0,
+	}
 	err := _Directory.contract.Call(opts, out, "nodesCount")
 	return *ret0, err
 }
@@ -819,7 +841,9 @@ func (_Directory *DirectoryCaller) UserKey(opts *bind.CallOpts, index uint8) ([3
 	var (
 		ret0 = new([32]byte)
 	)
-	out := ret0
+	out := &[]interface{}{
+		ret0,
+	}
 	err := _Directory.contract.Call(opts, out, "userKey", index)
 	return *ret0, err
 }
@@ -845,7 +869,9 @@ func (_Directory *DirectoryCaller) UserName(opts *bind.CallOpts, userID [32]byte
 	var (
 		ret0 = new(string)
 	)
-	out := ret0
+	out := &[]interface{}{
+		ret0,
+	}
 	err := _Directory.contract.Call(opts, out, "userName", userID)
 	return *ret0, err
 }
@@ -871,7 +897,9 @@ func (_Directory *DirectoryCaller) UserOwner(opts *bind.CallOpts, userID [32]byt
 	var (
 		ret0 = new(common.Address)
 	)
-	out := ret0
+	out := &[]interface{}{
+		ret0,
+	}
 	err := _Directory.contract.Call(opts, out, "userOwner", userID)
 	return *ret0, err
 }
@@ -897,7 +925,9 @@ func (_Directory *DirectoryCaller) UserProfile(opts *bind.CallOpts, userID [32]b
 	var (
 		ret0 = new(common.Address)
 	)
-	out := ret0
+	out := &[]interface{}{
+		ret0,
+	}
 	err := _Directory.contract.Call(opts, out, "userProfile", userID)
 	return *ret0, err
 }
@@ -923,7 +953,9 @@ func (_Directory *DirectoryCaller) UsersCount(opts *bind.CallOpts) (*big.Int, er
 	var (
 		ret0 = new(*big.Int)
 	)
-	out := ret0
+	out := &[]interface{}{
+		ret0,
+	}
 	err := _Directory.contract.Call(opts, out, "usersCount")
 	return *ret0, err
 }
@@ -949,7 +981,9 @@ func (_Directory *DirectoryCaller) VersionsByKey(opts *bind.CallOpts, parentNode
 	var (
 		ret0 = new(*big.Int)
 	)
-	out := ret0
+	out := &[]interface{}{
+		ret0,
+	}
 	err := _Directory.contract.Call(opts, out, "versionsByKey", parentNode, key)
 	return *ret0, err
 }
@@ -975,7 +1009,9 @@ func (_Directory *DirectoryCaller) VersionsByName(opts *bind.CallOpts, parentNod
 	var (
 		ret0 = new(*big.Int)
 	)
-	out := ret0
+	out := &[]interface{}{
+		ret0,
+	}
 	err := _Directory.contract.Call(opts, out, "versionsByName", parentNode, name)
 	return *ret0, err
 }
