@@ -3,3 +3,4 @@ Gopkg.lock
 photic-sdk-go
 kld*
 coverage.txt
+kaleido-sdk-go
