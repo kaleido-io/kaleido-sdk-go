@@ -22,15 +22,15 @@ import (
 
 // Environment fields
 type Environment struct {
-	Name              string                 `json:"name"`
-	Description       string                 `json:"description"`
-	Provider          string                 `json:"provider"`
-	ConsensusType     string                 `json:"consensus_type"`
-	ID                string                 `json:"_id,omitempty"`
+	Name              string                 `json:"name,omitempty"`
+	Description       string                 `json:"description,omitempty"`
+	Provider          string                 `json:"provider,omitempty"`
+	ConsensusType     string                 `json:"consensus_type,omitempty"`
+	ID                string                 `json:"_id,omitempty,omitempty"`
 	State             string                 `json:"state,omitempty"`
 	ReleaseID         string                 `json:"release_id,omitempty"`
 	TestFeatures      *TestFeatures          `json:"test_features,omitempty"`
-	BlockPeriod       int                    `json:"block_period"`
+	BlockPeriod       int                    `json:"block_period,omitempty"`
 	PrefundedAccounts map[string]interface{} `json:"prefunded_accounts,omitempty"`
 }
 
@@ -82,6 +82,12 @@ func (c *KaleidoClient) ListEnvironments(consortiumID string, resultBox *[]Envir
 func (c *KaleidoClient) CreateEnvironment(consortiumID string, environment *Environment) (*resty.Response, error) {
 	path := fmt.Sprintf(envBasePath, consortiumID)
 	return c.Client.R().SetResult(environment).SetBody(environment).Post(path)
+}
+
+// UpdateEnvironment updates an environment
+func (c *KaleidoClient) UpdateEnvironment(consortiumID, environmentID string, environment *Environment) (*resty.Response, error) {
+	path := fmt.Sprintf(envBasePath+"/%s", consortiumID, environmentID)
+	return c.Client.R().SetResult(environment).SetBody(environment).Patch(path)
 }
 
 // DeleteEnvironment deletes an environment

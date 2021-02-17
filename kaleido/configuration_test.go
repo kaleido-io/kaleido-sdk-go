@@ -101,3 +101,16 @@ func TestConfigurationDelete(t *testing.T) {
 	st.Expect(t, err, nil)
 	st.Expect(t, gock.IsDone(), true)
 }
+
+func TestConfigurationUpdate(t *testing.T) {
+	defer gock.Off()
+
+	gock.New("http://example.com").
+		Patch("/api/v1/consortia/c1/environments/env1/configurations/configuration1").
+		Reply(202)
+
+	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
+	_, err := client.UpdateConfiguration("c1", "env1", "configuration1", &Configuration{})
+	st.Expect(t, err, nil)
+	st.Expect(t, gock.IsDone(), true)
+}

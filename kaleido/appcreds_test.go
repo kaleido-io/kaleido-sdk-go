@@ -114,3 +114,16 @@ func TestAppCredDelete(t *testing.T) {
 	st.Expect(t, err, nil)
 	st.Expect(t, gock.IsDone(), true)
 }
+
+func TestAppCredUpdate(t *testing.T) {
+	defer gock.Off()
+
+	gock.New("http://example.com").
+		Patch("/api/v1/consortia/c1/environments/env1/appcreds/appcred1").
+		Reply(202)
+
+	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
+	_, err := client.UpdateAppCreds("c1", "env1", "appcred1", &AppCreds{Name: "test"})
+	st.Expect(t, err, nil)
+	st.Expect(t, gock.IsDone(), true)
+}

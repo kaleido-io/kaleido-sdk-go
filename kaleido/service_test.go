@@ -43,8 +43,8 @@ func TestServiceCreation(t *testing.T) {
 			"name":           "serviceCreate",
 			"description":    "just create some services",
 			"provider":       "quorum",
-			"consensus_type": "raft",
-			"block_period":   0,
+			"consensus_type": "ibft",
+			"block_period":   5,
 		}).
 		Reply(201).
 		JSON(Environment{
@@ -52,8 +52,8 @@ func TestServiceCreation(t *testing.T) {
 			Name:          "serviceCreate",
 			Description:   "just create some services",
 			Provider:      "quorum",
-			ConsensusType: "raft",
-			BlockPeriod:   0,
+			ConsensusType: "ibft",
+			BlockPeriod:   5,
 		})
 
 	gock.New("http://example.com").
@@ -160,6 +160,14 @@ func TestServiceCreation(t *testing.T) {
 			State:        "started",
 		}})
 
+	gock.New("http://example.com").
+		Delete("/api/v1/consortia/cons1/environments/env1/services/svc1").
+		Reply(204)
+
+	gock.New("http://example.com").
+		Patch("/api/v1/consortia/cons1/environments/env1/services/svc1").
+		Reply(200)
+
 	serviceType := "idregistry"
 	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
 	consortium := NewConsortium("serviceTestConsortium", "service creation")
@@ -172,7 +180,7 @@ func TestServiceCreation(t *testing.T) {
 		t.Fatalf("Could not create consortium status code: %d.", res.StatusCode())
 	}
 	defer client.DeleteConsortium(consortium.ID)
-	env := NewEnvironment("serviceCreate", "just create some services", "quorum", "raft", false, 0, map[string]string{})
+	env := NewEnvironment("serviceCreate", "just create some services", "quorum", "ibft", false, 5, map[string]string{})
 
 	res, err = client.CreateEnvironment(consortium.ID, &env)
 
@@ -247,6 +255,15 @@ func TestServiceCreation(t *testing.T) {
 		t.Fatalf("Creating service failed status code: %d", res.StatusCode())
 	}
 
+	res, err = client.UpdateService(consortium.ID, env.ID, service.ID, &Service{Name: "New name"})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+	if res.StatusCode() != 200 {
+		t.Fatalf("Updating service failed status code: %d", res.StatusCode())
+	}
+
 	var fetchedService Service
 	res, err = client.GetService(consortium.ID, env.ID, service.ID, &fetchedService)
 	if err != nil {
@@ -299,6 +316,15 @@ func TestServiceCreation(t *testing.T) {
 	serviceCount := 1
 	if len(services) != serviceCount {
 		t.Fatalf("Found unexpected number of services: %d should be %d.", len(services), serviceCount)
+	}
+
+	res, err = client.DeleteService(consortium.ID, env.ID, service.ID)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+	if res.StatusCode() != 204 {
+		t.Fatalf("Deleting service failed status code: %d", res.StatusCode())
 	}
 
 }

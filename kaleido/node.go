@@ -25,8 +25,8 @@ const (
 )
 
 type Node struct {
-	Name          string `json:"name"`
-	MembershipID  string `json:"membership_id"`
+	Name          string `json:"name,omitempty"`
+	MembershipID  string `json:"membership_id,omitempty"`
 	ZoneID        string `json:"zone_id,omitempty"`
 	ID            string `json:"_id,omitempty"`
 	State         string `json:"state,omitempty"`
@@ -62,6 +62,11 @@ func NewNode(name, membershipID, ezoneID string) Node {
 func (c *KaleidoClient) CreateNode(consortium, envID string, node *Node) (*resty.Response, error) {
 	path := fmt.Sprintf(nodeBasePath, consortium, envID)
 	return c.Client.R().SetResult(node).SetBody(node).Post(path)
+}
+
+func (c *KaleidoClient) UpdateNode(consortium, envID, nodeID string, node *Node) (*resty.Response, error) {
+	path := fmt.Sprintf(nodeBasePath+"/%s", consortium, envID, nodeID)
+	return c.Client.R().SetResult(node).SetBody(node).Patch(path)
 }
 
 func (c *KaleidoClient) DeleteNode(consortium, envID, nodeID string) (*resty.Response, error) {

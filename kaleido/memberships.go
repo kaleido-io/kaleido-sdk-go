@@ -25,7 +25,7 @@ const (
 )
 
 type Membership struct {
-	OrgName string `json:"org_name"`
+	OrgName string `json:"org_name,omitempty"`
 	ID      string `json:"_id,omitempty"`
 }
 
@@ -41,6 +41,11 @@ func (c *KaleidoClient) ListMemberships(consortiaID string, resultBox *[]Members
 func (c *KaleidoClient) CreateMembership(consortiaID string, membership *Membership) (*resty.Response, error) {
 	path := fmt.Sprintf(memBasePath, consortiaID)
 	return c.Client.R().SetResult(membership).SetBody(membership).Post(path)
+}
+
+func (c *KaleidoClient) UpdateMembership(consortiaID, membershipID string, membership *Membership) (*resty.Response, error) {
+	path := fmt.Sprintf(memBasePath+"/%s", consortiaID, membershipID)
+	return c.Client.R().SetResult(membership).SetBody(membership).Patch(path)
 }
 
 func (c *KaleidoClient) DeleteMembership(consortiaID, membershipID string) (*resty.Response, error) {

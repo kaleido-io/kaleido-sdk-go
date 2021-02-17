@@ -59,6 +59,10 @@ func TestConsortiumCreationListDeletion(t *testing.T) {
 		JSON(mockConsortia)
 
 	gock.New("http://example.com").
+		Patch("/api/v1/consortia/zzam3flatl").
+		Reply(200)
+
+	gock.New("http://example.com").
 		Delete("/api/v1/consortia/zzam3flatl").
 		Reply(202)
 
@@ -100,6 +104,10 @@ func TestConsortiumCreationListDeletion(t *testing.T) {
 		panic(err)
 	}
 	st.Expect(t, respArray, mockConsortia)
+
+	res, err = client.UpdateConsortium(consortium.ID, &Consortium{Name: "test description 2"})
+	st.Expect(t, err, nil)
+	st.Expect(t, res.StatusCode(), 200)
 
 	//Check for a newly created consortia and delete it.
 	countNew := 0

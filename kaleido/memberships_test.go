@@ -101,3 +101,18 @@ func TestMembershipDelete(t *testing.T) {
 	st.Expect(t, err, nil)
 	st.Expect(t, gock.IsDone(), true)
 }
+
+func TestMembershipUpdate(t *testing.T) {
+	defer gock.Off()
+
+	gock.New("http://example.com").
+		Patch("/api/v1/consortia/cid/memberships/zze8pz9jed").
+		Reply(200)
+
+	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
+
+	_, err := client.UpdateMembership("cid", "zze8pz9jed", &Membership{OrgName: "new name"})
+
+	st.Expect(t, err, nil)
+	st.Expect(t, gock.IsDone(), true)
+}

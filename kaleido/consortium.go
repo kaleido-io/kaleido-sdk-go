@@ -29,8 +29,8 @@ type KaleidoClient struct {
 // Consortium consortium
 type Consortium struct {
 	ID          string `json:"_id,omitempty"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
+	Name        string `json:"name,omitempty"`
+	Description string `json:"description,omitempty"`
 	DeletedAt   string `json:"deleted_at,omitempty"`
 	State       string `json:"state,omitempty"`
 }
@@ -53,6 +53,11 @@ func NewClient(api string, apiKey string) KaleidoClient {
 
 func (c *KaleidoClient) CreateConsortium(consortium *Consortium) (*resty.Response, error) {
 	return c.Client.R().SetBody(consortium).SetResult(consortium).Post("/consortia")
+}
+
+func (c *KaleidoClient) UpdateConsortium(id string, consortium *Consortium) (*resty.Response, error) {
+	path := fmt.Sprintf("/consortia/%s", id)
+	return c.Client.R().SetBody(consortium).SetResult(consortium).Patch(path)
 }
 
 func (c *KaleidoClient) ListConsortium(resultBox *[]Consortium) (*resty.Response, error) {
