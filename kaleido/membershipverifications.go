@@ -21,12 +21,17 @@ import (
 )
 
 const (
-	memVerifyBasePath = "/consortia/%s/memberships/%s/verify"
+	memVerifyBasePath    = "/consortia/%s/memberships/%s/verify"
+	registerIdentityPath = "/idregistry/%s/identity"
 )
 
 type MembershipVerification struct {
 	TestCertificate bool   `json:"test_certificate,omitempty"`
 	ProofID         string `json:"proof_id,omitempty"`
+}
+
+type MembershipIdentityRegistration struct {
+	MembershipID string `json:"membership_id,omitempty"`
 }
 
 func NewMembershipVerification() MembershipVerification {
@@ -39,4 +44,9 @@ func (c *KaleidoClient) CreateMembershipVerification(consortiaID, membershipID s
 	path := fmt.Sprintf(memVerifyBasePath, consortiaID, membershipID)
 	var membership Membership
 	return c.Client.R().SetResult(&membership).SetBody(verification).Post(path)
+}
+
+func (c *KaleidoClient) RegisterMembershipIdentity(idregistryID, membershipID string) (*resty.Response, error) {
+	path := fmt.Sprintf(registerIdentityPath, idregistryID)
+	return c.Client.R().SetBody(MembershipIdentityRegistration{MembershipID: membershipID}).Post(path)
 }

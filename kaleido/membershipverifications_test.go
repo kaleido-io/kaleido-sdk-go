@@ -52,3 +52,19 @@ func TestMembershipVerificationCreate(t *testing.T) {
 	st.Expect(t, err, nil)
 	st.Expect(t, gock.IsDone(), true)
 }
+
+func TestRegisterMembershipIdentity(t *testing.T) {
+	defer gock.Off()
+
+	gock.New("http://example.com").
+		Post("/api/v1/idregistry/idreg1/identity").
+		MatchType("json").
+		Reply(200)
+
+	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
+
+	_, err := client.RegisterMembershipIdentity("idreg1", "member1")
+
+	st.Expect(t, err, nil)
+	st.Expect(t, gock.IsDone(), true)
+}
