@@ -148,3 +148,19 @@ func TestNodeUpdate(t *testing.T) {
 	st.Expect(t, res.StatusCode(), 200)
 	st.Expect(t, gock.IsDone(), true)
 }
+
+func TestNodeReset(t *testing.T) {
+	defer gock.Off()
+
+	gock.New("http://example.com").
+		Put("/api/v1/consortia/cid/environments/env1/nodes/zzy7ww2963/reset").
+		Reply(200)
+
+	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
+
+	res, err := client.ResetNode("cid", "env1", "zzy7ww2963")
+
+	st.Expect(t, err, nil)
+	st.Expect(t, res.StatusCode(), 200)
+	st.Expect(t, gock.IsDone(), true)
+}

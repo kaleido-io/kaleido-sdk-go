@@ -69,6 +69,11 @@ func (c *KaleidoClient) UpdateNode(consortium, envID, nodeID string, node *Node)
 	return c.Client.R().SetResult(node).SetBody(node).Patch(path)
 }
 
+func (c *KaleidoClient) ResetNode(consortium, envID, nodeID string) (*resty.Response, error) {
+	path := fmt.Sprintf(nodeBasePath+"/%s/reset", consortium, envID, nodeID)
+	return c.Client.R().SetBody(map[string]string{}).Put(path)
+}
+
 func (c *KaleidoClient) DeleteNode(consortium, envID, nodeID string) (*resty.Response, error) {
 	path := fmt.Sprintf(nodeBasePath+"/%s", consortium, envID, nodeID)
 	return c.Client.R().Delete(path)

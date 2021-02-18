@@ -58,6 +58,11 @@ func (c *KaleidoClient) UpdateService(consortium, envID, serviceID string, servi
 	return c.Client.R().SetResult(service).SetBody(service).Patch(path)
 }
 
+func (c *KaleidoClient) ResetService(consortium, envID, serviceID string) (*resty.Response, error) {
+	path := fmt.Sprintf(serviceBasePath+"/%s/reset", consortium, envID, serviceID)
+	return c.Client.R().SetBody(map[string]string{}).Put(path)
+}
+
 func (c *KaleidoClient) DeleteService(consortium, envID, serviceID string) (*resty.Response, error) {
 	path := fmt.Sprintf(serviceBasePath+"/%s", consortium, envID, serviceID)
 	return c.Client.R().Delete(path)

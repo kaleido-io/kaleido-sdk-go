@@ -168,6 +168,10 @@ func TestServiceCreation(t *testing.T) {
 		Patch("/api/v1/consortia/cons1/environments/env1/services/svc1").
 		Reply(200)
 
+	gock.New("http://example.com").
+		Put("/api/v1/consortia/cons1/environments/env1/services/svc1/reset").
+		Reply(200)
+
 	serviceType := "idregistry"
 	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
 	consortium := NewConsortium("serviceTestConsortium", "service creation")
@@ -316,6 +320,15 @@ func TestServiceCreation(t *testing.T) {
 	serviceCount := 1
 	if len(services) != serviceCount {
 		t.Fatalf("Found unexpected number of services: %d should be %d.", len(services), serviceCount)
+	}
+
+	res, err = client.ResetService(consortium.ID, env.ID, service.ID)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+	if res.StatusCode() != 200 {
+		t.Fatalf("Resetting service failed status code: %d", res.StatusCode())
 	}
 
 	res, err = client.DeleteService(consortium.ID, env.ID, service.ID)
