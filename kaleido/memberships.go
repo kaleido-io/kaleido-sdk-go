@@ -25,12 +25,13 @@ const (
 )
 
 type Membership struct {
-	OrgName string `json:"org_name,omitempty"`
-	ID      string `json:"_id,omitempty"`
+	OrgName           string `json:"org_name,omitempty"`
+	ID                string `json:"_id,omitempty"`
+	VerificationProof string `json:"verification_proof,omitempty"`
 }
 
 func NewMembership(orgName string) Membership {
-	return Membership{orgName, ""}
+	return Membership{orgName, "", ""}
 }
 
 func (c *KaleidoClient) ListMemberships(consortiaID string, resultBox *[]Membership) (*resty.Response, error) {
