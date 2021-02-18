@@ -25,12 +25,13 @@ const (
 )
 
 type Membership struct {
-	OrgName string `json:"org_name"`
-	ID      string `json:"_id,omitempty"`
+	OrgName           string `json:"org_name,omitempty"`
+	ID                string `json:"_id,omitempty"`
+	VerificationProof string `json:"verification_proof,omitempty"`
 }
 
 func NewMembership(orgName string) Membership {
-	return Membership{orgName, ""}
+	return Membership{orgName, "", ""}
 }
 
 func (c *KaleidoClient) ListMemberships(consortiaID string, resultBox *[]Membership) (*resty.Response, error) {
@@ -41,6 +42,11 @@ func (c *KaleidoClient) ListMemberships(consortiaID string, resultBox *[]Members
 func (c *KaleidoClient) CreateMembership(consortiaID string, membership *Membership) (*resty.Response, error) {
 	path := fmt.Sprintf(memBasePath, consortiaID)
 	return c.Client.R().SetResult(membership).SetBody(membership).Post(path)
+}
+
+func (c *KaleidoClient) UpdateMembership(consortiaID, membershipID string, membership *Membership) (*resty.Response, error) {
+	path := fmt.Sprintf(memBasePath+"/%s", consortiaID, membershipID)
+	return c.Client.R().SetResult(membership).SetBody(membership).Patch(path)
 }
 
 func (c *KaleidoClient) DeleteMembership(consortiaID, membershipID string) (*resty.Response, error) {

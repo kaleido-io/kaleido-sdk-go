@@ -65,6 +65,10 @@ func TestInvitation(t *testing.T) {
 		Delete("/api/v1/consortia/cons1/invitations/inv1").
 		Reply(204)
 
+	gock.New("http://example.com").
+		Patch("/api/v1/consortia/cons1/invitations/inv1").
+		Reply(200)
+
 	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
 	consortium := NewConsortium("invitationTest", "invitations")
 	res, err := client.CreateConsortium(&consortium)
@@ -100,6 +104,14 @@ func TestInvitation(t *testing.T) {
 
 	if invitation.ID != invitation2.ID {
 		t.Fatalf("Fetched invitation id %s did not match %s.", invitation2.ID, invitation.ID)
+	}
+
+	res, err = client.UpdateInvitation(consortium.ID, invitation.ID, &Invitation{OrgName: "updated"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if res.StatusCode() != 200 {
+		t.Fatalf("Failed to update invitation with status: %d", res.StatusCode())
 	}
 
 	res, err = client.DeleteInvitation(consortium.ID, invitation.ID)

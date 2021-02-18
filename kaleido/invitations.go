@@ -25,8 +25,8 @@ const (
 )
 
 type Invitation struct {
-	OrgName string `json:"org_name"`
-	Email   string `json:"email"`
+	OrgName string `json:"org_name,omitempty"`
+	Email   string `json:"email,omitempty"`
 	ID      string `json:"_id,omitempty"`
 	State   string `json:"state,omitempty"`
 }
@@ -43,6 +43,11 @@ func (c *KaleidoClient) ListInvitations(consortiaID string, resultBox *[]Invitat
 func (c *KaleidoClient) CreateInvitation(consortiaID string, invitation *Invitation) (*resty.Response, error) {
 	path := fmt.Sprintf(invBasePath, consortiaID)
 	return c.Client.R().SetResult(invitation).SetBody(invitation).Post(path)
+}
+
+func (c *KaleidoClient) UpdateInvitation(consortiaID, invitationID string, invitation *Invitation) (*resty.Response, error) {
+	path := fmt.Sprintf(invBasePath+"/%s", consortiaID, invitationID)
+	return c.Client.R().SetResult(invitation).SetBody(invitation).Patch(path)
 }
 
 func (c *KaleidoClient) DeleteInvitation(consortiaID, invitationID string) (*resty.Response, error) {

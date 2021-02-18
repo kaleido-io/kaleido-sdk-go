@@ -25,7 +25,7 @@ var mockEnvCreatePayload = map[string]interface{}{
 	"description":    "just test",
 	"provider":       "quorum",
 	"consensus_type": "raft",
-	"block_period":   0,
+	"block_period":   5,
 	"test_features": map[string]interface{}{
 		"multi_region": true,
 	},
@@ -61,7 +61,7 @@ func TestEnvironmentCreation(t *testing.T) {
 
 	balances := map[string]string{}
 	balances["f601c8a58a738c1055094d0cf3018266d562c4a5"] = "10000000"
-	env := NewEnvironment("testingEnvironment", "just test", "quorum", "raft", true, 0, balances)
+	env := NewEnvironment("testingEnvironment", "just test", "quorum", "raft", true, 5, balances)
 	_, err := client.CreateEnvironment("cid", &env)
 
 	st.Expect(t, err, nil)
@@ -78,6 +78,21 @@ func TestEnvironmentDelete(t *testing.T) {
 	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
 
 	_, err := client.DeleteEnvironment("cid", "envid")
+
+	st.Expect(t, err, nil)
+	st.Expect(t, gock.IsDone(), true)
+}
+
+func TestEnvironmentUpdate(t *testing.T) {
+	defer gock.Off()
+
+	gock.New("http://example.com").
+		Patch("/api/v1/consortia/cid/environments/envid").
+		Reply(200)
+
+	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
+
+	_, err := client.UpdateEnvironment("cid", "envid", &Environment{Name: "updated"})
 
 	st.Expect(t, err, nil)
 	st.Expect(t, gock.IsDone(), true)

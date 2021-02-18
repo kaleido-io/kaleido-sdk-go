@@ -25,7 +25,7 @@ const (
 )
 
 type EZone struct {
-	Name   string `json:"name"`
+	Name   string `json:"name,omitempty"`
 	ID     string `json:"_id,omitempty"`
 	Region string `json:"region,omitempty"`
 	Cloud  string `json:"cloud,omitempty"`
@@ -45,6 +45,11 @@ func NewEZone(name, region, cloud string) EZone {
 func (c *KaleidoClient) CreateEZone(consortium, envID string, ezone *EZone) (*resty.Response, error) {
 	path := fmt.Sprintf(ezoneBasePath, consortium, envID)
 	return c.Client.R().SetResult(ezone).SetBody(ezone).Post(path)
+}
+
+func (c *KaleidoClient) UpdateEZone(consortium, envID, ezoneID string, ezone *EZone) (*resty.Response, error) {
+	path := fmt.Sprintf(ezoneBasePath+"/%s", consortium, envID, ezoneID)
+	return c.Client.R().SetResult(ezone).SetBody(ezone).Patch(path)
 }
 
 func (c *KaleidoClient) DeleteEZone(consortium, envID, ezoneID string) (*resty.Response, error) {

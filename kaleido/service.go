@@ -25,13 +25,13 @@ const (
 )
 
 type Service struct {
-	Name         string                 `json:"name"`
-	Service      string                 `json:"service"`
-	ZoneID       string                 `json:"zone_id"`
-	MembershipID string                 `json:"membership_id"`
+	Name         string                 `json:"name,omitempty"`
+	Service      string                 `json:"service,omitempty"`
+	ZoneID       string                 `json:"zone_id,omitempty"`
+	MembershipID string                 `json:"membership_id,omitempty"`
 	ID           string                 `json:"_id,omitempty"`
+	Size         string                 `json:"size,omitempty"`
 	State        string                 `json:"state,omitempty"`
-	Role         string                 `json:"role,omitempty"`
 	Urls         map[string]interface{} `json:"urls,omitempty"`
 	Details      map[string]interface{} `json:"details,omitempty"`
 }
@@ -51,6 +51,16 @@ func NewService(name, service, membershipID string, zoneID string, details map[s
 func (c *KaleidoClient) CreateService(consortium, envID string, service *Service) (*resty.Response, error) {
 	path := fmt.Sprintf(serviceBasePath, consortium, envID)
 	return c.Client.R().SetResult(service).SetBody(service).Post(path)
+}
+
+func (c *KaleidoClient) UpdateService(consortium, envID, serviceID string, service *Service) (*resty.Response, error) {
+	path := fmt.Sprintf(serviceBasePath+"/%s", consortium, envID, serviceID)
+	return c.Client.R().SetResult(service).SetBody(service).Patch(path)
+}
+
+func (c *KaleidoClient) ResetService(consortium, envID, serviceID string) (*resty.Response, error) {
+	path := fmt.Sprintf(serviceBasePath+"/%s/reset", consortium, envID, serviceID)
+	return c.Client.R().SetBody(map[string]string{}).Put(path)
 }
 
 func (c *KaleidoClient) DeleteService(consortium, envID, serviceID string) (*resty.Response, error) {

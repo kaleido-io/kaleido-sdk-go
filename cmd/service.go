@@ -105,6 +105,7 @@ var serviceCreateCmd = &cobra.Command{
 
 		client := getNewClient()
 		service := kld.NewService(name, serviceType, membershipID, ezoneID, details)
+		service.Size = size
 		res, err := client.CreateService(consortiumID, environmentID, &service)
 
 		validateCreationResponse(res, err, "service")
@@ -135,6 +136,8 @@ func newServiceCreateCmd() *cobra.Command {
 	flags.StringVarP(&membershipID, "membership", "m", "", "ID of the membership this service belongs to")
 	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium this service is created under")
 	flags.StringVarP(&environmentID, "environment", "e", "", "ID of the environment this service is created for")
+	flags.StringVarP(&size, "size", "s", "", "Size for the service")
+	flags.StringVarP(&ezoneID, "zone", "z", "", "ID of the environment deployment zone where this service should be created")
 	flags.StringVarP(&detailsFile, "file", "f", "", "JSON file containing type specific details of the service to create")
 
 	return serviceCreateCmd

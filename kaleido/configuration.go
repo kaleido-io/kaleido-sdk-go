@@ -29,7 +29,7 @@ type Configuration struct {
 	Name         string                 `json:"name,omitempty"`
 	MembershipID string                 `json:"membership_id,omitempty"`
 	Type         string                 `json:"type,omitempty"`
-	Details      map[string]interface{} `json:"details"`
+	Details      map[string]interface{} `json:"details,omitempty"`
 }
 
 func NewConfiguration(name, membershipID, configType string, details map[string]interface{}) Configuration {
@@ -44,6 +44,11 @@ func NewConfiguration(name, membershipID, configType string, details map[string]
 func (c *KaleidoClient) CreateConfiguration(consortium, envID string, config *Configuration) (*resty.Response, error) {
 	path := fmt.Sprintf(configurationsBasePath, consortium, envID)
 	return c.Client.R().SetResult(config).SetBody(config).Post(path)
+}
+
+func (c *KaleidoClient) UpdateConfiguration(consortium, envID, configID string, config *Configuration) (*resty.Response, error) {
+	path := fmt.Sprintf(configurationsBasePath+"/%s", consortium, envID, configID)
+	return c.Client.R().SetResult(config).SetBody(config).Patch(path)
 }
 
 func (c *KaleidoClient) DeleteConfiguration(consortium, envID, configID string) (*resty.Response, error) {

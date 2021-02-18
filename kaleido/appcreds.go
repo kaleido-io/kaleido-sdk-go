@@ -21,7 +21,7 @@ import (
 )
 
 type AppCreds struct {
-	MembershipID string `json:"membership_id"`
+	MembershipID string `json:"membership_id,omitempty"`
 	Name         string `json:"name,omitempty"`
 	AuthType     string `json:"auth_type,omitempty"`
 	Username     string `json:"username,omitempty"`
@@ -49,6 +49,11 @@ func NewAppCredsWithName(membershipID, name string) AppCreds {
 func (c *KaleidoClient) CreateAppCreds(consortiumID, envID string, appcreds *AppCreds) (*resty.Response, error) {
 	path := fmt.Sprintf(appcredsBasePath, consortiumID, envID)
 	return c.Client.R().SetBody(appcreds).SetResult(appcreds).Post(path)
+}
+
+func (c *KaleidoClient) UpdateAppCreds(consortiumID, envID, appcredsID string, appcreds *AppCreds) (*resty.Response, error) {
+	path := fmt.Sprintf(appcredsBasePath+"/%s", consortiumID, envID, appcredsID)
+	return c.Client.R().SetBody(appcreds).SetResult(appcreds).Patch(path)
 }
 
 func (c *KaleidoClient) GetAppCreds(consortiumID, envID, appcredsID string, resultBox *AppCreds) (*resty.Response, error) {
