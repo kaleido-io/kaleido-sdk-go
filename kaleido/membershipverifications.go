@@ -16,6 +16,7 @@ package kaleido
 
 import (
 	"fmt"
+	"sync"
 
 	resty "gopkg.in/resty.v1"
 )
@@ -23,6 +24,10 @@ import (
 const (
 	memVerifyBasePath    = "/consortia/%s/memberships/%s/verify"
 	registerIdentityPath = "/idregistry/%s/identity"
+)
+
+var (
+	idregmux = sync.Mutex{} // Observed  issues performing multiple concurrent registrations
 )
 
 type MembershipVerification struct {
@@ -47,6 +52,8 @@ func (c *KaleidoClient) CreateMembershipVerification(consortiaID, membershipID s
 }
 
 func (c *KaleidoClient) RegisterMembershipIdentity(idregistryID, membershipID string) (*resty.Response, error) {
+	idregmux.Lock()
+	defer idregmux.Unlock()
 	path := fmt.Sprintf(registerIdentityPath, idregistryID)
 	return c.Client.R().SetBody(MembershipIdentityRegistration{MembershipID: membershipID}).Post(path)
 }
