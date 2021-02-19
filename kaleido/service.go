@@ -27,6 +27,7 @@ const (
 type Service struct {
 	Name         string                 `json:"name,omitempty"`
 	Service      string                 `json:"service,omitempty"`
+	ServiceType  string                 `json:"service_type,omitempty"`
 	ZoneID       string                 `json:"zone_id,omitempty"`
 	MembershipID string                 `json:"membership_id,omitempty"`
 	ID           string                 `json:"_id,omitempty"`
