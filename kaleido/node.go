@@ -38,12 +38,13 @@ type Node struct {
 		RPC string `json:"rpc,omitempty"`
 		WSS string `json:"wss,omitempty"`
 	} `json:"urls,omitempty"`
-	OpsmetricID  string `json:"opsmetric_id,omitempty"`
-	NetworkingID string `json:"networking_id,omitempty"`
-	KmsID        string `json:"kms_id,omitempty"`
-	BackupID     string `json:"backup_id,omitempty"`
-	NodeConfigID string `json:"node_config_id,omitempty"`
-	BafID        string `json:"baf_id,omitempty"`
+	FirstUserAccount string `json:"first_user_account,omitempty"`
+	OpsmetricID      string `json:"opsmetric_id,omitempty"`
+	NetworkingID     string `json:"networking_id,omitempty"`
+	KmsID            string `json:"kms_id,omitempty"`
+	BackupID         string `json:"backup_id,omitempty"`
+	NodeConfigID     string `json:"node_config_id,omitempty"`
+	BafID            string `json:"baf_id,omitempty"`
 }
 
 func NewNode(name, membershipID, ezoneID string) Node {
