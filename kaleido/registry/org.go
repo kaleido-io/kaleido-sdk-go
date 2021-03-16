@@ -142,7 +142,7 @@ func (org *Organization) createSignedRequestForRegistration() (*SignedRequest, e
 	}
 
 	CNTokens := strings.Split(cert.Subject.CommonName, "-")
-	if len(CNTokens) != 4 {
+	if len(CNTokens) < 4 {
 		return nil, errors.New("Certificate common name does not follow the format of <orgid>-<nonce>--<name>")
 	}
 
