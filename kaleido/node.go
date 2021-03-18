@@ -25,26 +25,23 @@ const (
 )
 
 type Node struct {
-	Name          string `json:"name,omitempty"`
-	MembershipID  string `json:"membership_id,omitempty"`
-	ZoneID        string `json:"zone_id,omitempty"`
-	ID            string `json:"_id,omitempty"`
-	State         string `json:"state,omitempty"`
-	Role          string `json:"role,omitempty"`
-	Provider      string `json:"provider,omitempty"`
-	ConsensusType string `json:"consensus_type,omitempty"`
-	Size          string `json:"size,omitempty"`
-	Urls          *struct {
-		RPC string `json:"rpc,omitempty"`
-		WSS string `json:"wss,omitempty"`
-	} `json:"urls,omitempty"`
-	FirstUserAccount string `json:"first_user_account,omitempty"`
-	OpsmetricID      string `json:"opsmetric_id,omitempty"`
-	NetworkingID     string `json:"networking_id,omitempty"`
-	KmsID            string `json:"kms_id,omitempty"`
-	BackupID         string `json:"backup_id,omitempty"`
-	NodeConfigID     string `json:"node_config_id,omitempty"`
-	BafID            string `json:"baf_id,omitempty"`
+	Name             string                 `json:"name,omitempty"`
+	MembershipID     string                 `json:"membership_id,omitempty"`
+	ZoneID           string                 `json:"zone_id,omitempty"`
+	ID               string                 `json:"_id,omitempty"`
+	State            string                 `json:"state,omitempty"`
+	Role             string                 `json:"role,omitempty"`
+	Provider         string                 `json:"provider,omitempty"`
+	ConsensusType    string                 `json:"consensus_type,omitempty"`
+	Size             string                 `json:"size,omitempty"`
+	Urls             map[string]interface{} `json:"urls,omitempty"`
+	FirstUserAccount string                 `json:"first_user_account,omitempty"`
+	OpsmetricID      string                 `json:"opsmetric_id,omitempty"`
+	NetworkingID     string                 `json:"networking_id,omitempty"`
+	KmsID            string                 `json:"kms_id,omitempty"`
+	BackupID         string                 `json:"backup_id,omitempty"`
+	NodeConfigID     string                 `json:"node_config_id,omitempty"`
+	BafID            string                 `json:"baf_id,omitempty"`
 }
 
 func NewNode(name, membershipID, ezoneID string) Node {
