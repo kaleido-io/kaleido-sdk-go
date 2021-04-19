@@ -29,15 +29,9 @@ type Environment struct {
 	ID                string                 `json:"_id,omitempty,omitempty"`
 	State             string                 `json:"state,omitempty"`
 	ReleaseID         string                 `json:"release_id,omitempty"`
-	TestFeatures      *TestFeatures          `json:"test_features,omitempty"`
+	TestFeatures      map[string]interface{} `json:"test_features,omitempty"`
 	BlockPeriod       int                    `json:"block_period,omitempty"`
 	PrefundedAccounts map[string]interface{} `json:"prefunded_accounts,omitempty"`
-}
-
-// TestFeatures fields
-type TestFeatures struct {
-	MultiRegion   *bool `json:"multi_region,omitempty"`
-	TLSMutualAuth *bool `json:"tls_mutual_auth,omitempty"`
 }
 
 // AccountBalance represents an account's balance
@@ -64,11 +58,10 @@ func NewEnvironment(name, description, provider, consensus string, multiRegion b
 		ConsensusType:     consensus,
 		BlockPeriod:       blockPeriod,
 		PrefundedAccounts: accounts,
+		TestFeatures:      make(map[string]interface{}),
 	}
-	e.TestFeatures = &TestFeatures{}
 	if multiRegion {
-		mr := multiRegion
-		e.TestFeatures.MultiRegion = &mr
+		e.TestFeatures["multi_region"] = &multiRegion
 	}
 	return e
 }
