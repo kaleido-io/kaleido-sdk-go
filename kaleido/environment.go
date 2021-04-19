@@ -36,7 +36,8 @@ type Environment struct {
 
 // TestFeatures fields
 type TestFeatures struct {
-	MultiRegion bool `json:"multi_region,omitempty"`
+	MultiRegion   *bool `json:"multi_region,omitempty"`
+	TLSMutualAuth *bool `json:"tls_mutual_auth,omitempty"`
 }
 
 // AccountBalance represents an account's balance
@@ -64,10 +65,10 @@ func NewEnvironment(name, description, provider, consensus string, multiRegion b
 		BlockPeriod:       blockPeriod,
 		PrefundedAccounts: accounts,
 	}
+	e.TestFeatures = &TestFeatures{}
 	if multiRegion {
-		e.TestFeatures = &TestFeatures{
-			MultiRegion: multiRegion,
-		}
+		mr := multiRegion
+		e.TestFeatures.MultiRegion = &mr
 	}
 	return e
 }
