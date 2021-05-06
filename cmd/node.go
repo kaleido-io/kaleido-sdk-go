@@ -28,12 +28,12 @@ var nodeListCmd = &cobra.Command{
 	Short: "List nodes under an environment",
 	Run: func(cmd *cobra.Command, args []string) {
 		if consortiumID == "" {
-			fmt.Println("Missing required parameter: --consortiumID for the consortium to list nodes of")
+			fmt.Println("Missing required parameter: --consortium for the consortium to list nodes of")
 			os.Exit(1)
 		}
 
 		if environmentID == "" {
-			fmt.Println("Missing required parameter: --environmentID for the environment to list nodes of")
+			fmt.Println("Missing required parameter: --environment for the environment to list nodes of")
 			os.Exit(1)
 		}
 
@@ -56,12 +56,12 @@ var nodeGetCmd = &cobra.Command{
 	Short: "Retrieves a node details",
 	Run: func(cmd *cobra.Command, args []string) {
 		if consortiumID == "" {
-			fmt.Println("Missing required parameter: --consortiumID for the consortium that the node belongs to")
+			fmt.Println("Missing required parameter: --consortium for the consortium that the node belongs to")
 			os.Exit(1)
 		}
 
 		if environmentID == "" {
-			fmt.Println("Missing required parameter: --environmentID for the environment that the node belongs to")
+			fmt.Println("Missing required parameter: --environment for the environment that the node belongs to")
 			os.Exit(1)
 		}
 
@@ -109,12 +109,12 @@ var nodeDeleteCmd = &cobra.Command{
 	Short: "Delete a node",
 	Run: func(cmd *cobra.Command, args []string) {
 		if consortiumID == "" {
-			fmt.Println("Missing required parameter: --consortiumID for the consortium that the node belongs to")
+			fmt.Println("Missing required parameter: --consortium for the consortium that the node belongs to")
 			os.Exit(1)
 		}
 
 		if environmentID == "" {
-			fmt.Println("Missing required parameter: --environmentID for the environment that the node belongs to")
+			fmt.Println("Missing required parameter: --environment for the environment that the node belongs to")
 			os.Exit(1)
 		}
 

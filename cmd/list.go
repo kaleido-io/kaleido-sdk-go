@@ -39,6 +39,7 @@ func newListCmd() *cobra.Command {
 	listCmd.AddCommand(newCZoneListCmd())
 	listCmd.AddCommand(newEZoneListCmd())
 	listCmd.AddCommand(newConfigurationListCmd())
+	listCmd.AddCommand(newChannelListCmd())
 
 	return listCmd
 }

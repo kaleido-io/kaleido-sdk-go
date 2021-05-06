@@ -80,9 +80,9 @@ func validateEmail() {
 func validateConsortiumID(resourceName string, isCreate ...bool) {
 	if consortiumID == "" {
 		if len(isCreate) == 0 || isCreate[0] {
-			fmt.Printf("Missing required parameter: --consortiumID for the consortium to add the new %s to\n", resourceName)
+			fmt.Printf("Missing required parameter: --consortium for the consortium to add the new %s to\n", resourceName)
 		} else {
-			fmt.Printf("Missing required parameter: --consortiumID for the consortium to delete the %s from\n", resourceName)
+			fmt.Printf("Missing required parameter: --consortium for the consortium to delete the %s from\n", resourceName)
 		}
 
 		os.Exit(1)
@@ -92,9 +92,9 @@ func validateConsortiumID(resourceName string, isCreate ...bool) {
 func validateAppCredsID(resourceName string, isGet ...bool) {
 	if appCredsID == "" {
 		if len(isGet) == 0 || isGet[0] {
-			fmt.Printf("Missing required parameter: --appcredsID to get the appilcation credentials %s to\n", resourceName)
+			fmt.Printf("Missing required parameter: --appcreds to get the appilcation credentials %s to\n", resourceName)
 		} else {
-			fmt.Printf("Missing required parameter: --appcredsID to delete the appilcation credentials %s from\n", resourceName)
+			fmt.Printf("Missing required parameter: --appcreds to delete the appilcation credentials %s from\n", resourceName)
 		}
 
 		os.Exit(1)
@@ -104,9 +104,9 @@ func validateAppCredsID(resourceName string, isGet ...bool) {
 func validateEnvironmentID(resourceName string, isCreate ...bool) {
 	if environmentID == "" {
 		if len(isCreate) == 0 || isCreate[0] {
-			fmt.Printf("Missing required parameter: --environmentID for the environment to add the new %s to\n", resourceName)
+			fmt.Printf("Missing required parameter: --environment for the environment to add the new %s to\n", resourceName)
 		} else {
-			fmt.Printf("Missing required parameter: --environmentID for the environment to delete the %s from\n", resourceName)
+			fmt.Printf("Missing required parameter: --environment for the environment to delete the %s from\n", resourceName)
 		}
 
 		os.Exit(1)
@@ -116,9 +116,9 @@ func validateEnvironmentID(resourceName string, isCreate ...bool) {
 func validateMembershipID(resourceName string, isCreate ...bool) {
 	if membershipID == "" {
 		if len(isCreate) == 0 || isCreate[0] {
-			fmt.Printf("Missing required parameter: --membershipID for the membership to add the new %s to\n", resourceName)
+			fmt.Printf("Missing required parameter: --membership for the membership to add the new %s to\n", resourceName)
 		} else {
-			fmt.Printf("Missing required parameter: --membershipID for the membership to delete the %s from\n", resourceName)
+			fmt.Printf("Missing required parameter: --membership for the membership to delete the %s from\n", resourceName)
 		}
 
 		os.Exit(1)
@@ -128,9 +128,9 @@ func validateMembershipID(resourceName string, isCreate ...bool) {
 func validateInvitationID(resourceName string, isCreate ...bool) {
 	if invitationID == "" {
 		if len(isCreate) == 0 || isCreate[0] {
-			fmt.Printf("Missing required parameter: --invitationID for the invitation to add the new %s to\n", resourceName)
+			fmt.Printf("Missing required parameter: --invitation for the invitation to add the new %s to\n", resourceName)
 		} else {
-			fmt.Printf("Missing required parameter: --invitationID for the invitation to delete the %s from\n", resourceName)
+			fmt.Printf("Missing required parameter: --invitation for the invitation to delete the %s from\n", resourceName)
 		}
 
 		os.Exit(1)
