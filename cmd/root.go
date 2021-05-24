@@ -62,6 +62,7 @@ var invitationID string
 var configID string
 var accounts []string
 var balances []string
+var channelID string
 
 // for delete command
 var deleteID string

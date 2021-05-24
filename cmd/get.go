@@ -39,6 +39,7 @@ func newGetCmd() *cobra.Command {
 	getCmd.AddCommand(newCZoneGetCmd())
 	getCmd.AddCommand(newEZoneGetCmd())
 	getCmd.AddCommand(newConfigurationGetCmd())
+	getCmd.AddCommand(newChannelGetCmd())
 
 	return getCmd
 }
