@@ -38,6 +38,7 @@ var region string
 var cloud string
 var multiRegion bool
 var blockPeriod int
+var chainID uint
 var configType string
 var detailsFile string
 var size string
