@@ -31,6 +31,7 @@ type Environment struct {
 	ReleaseID         string                 `json:"release_id,omitempty"`
 	TestFeatures      map[string]interface{} `json:"test_features,omitempty"`
 	BlockPeriod       int                    `json:"block_period,omitempty"`
+	ChainID           uint                   `json:"chain_id,omitempty"`
 	PrefundedAccounts map[string]interface{} `json:"prefunded_accounts,omitempty"`
 }
 
@@ -44,7 +45,7 @@ const (
 )
 
 // NewEnvironment creates a new environment
-func NewEnvironment(name, description, provider, consensus string, multiRegion bool, blockPeriod int, prefundedAccounts map[string]string) Environment {
+func NewEnvironment(name, description, provider, consensus string, multiRegion bool, blockPeriod int, prefundedAccounts map[string]string, chainID uint) Environment {
 	accounts := map[string]interface{}{}
 	for account, balance := range prefundedAccounts {
 		accountBalance := &AccountBalance{}
@@ -59,6 +60,9 @@ func NewEnvironment(name, description, provider, consensus string, multiRegion b
 		BlockPeriod:       blockPeriod,
 		PrefundedAccounts: accounts,
 		TestFeatures:      make(map[string]interface{}),
+	}
+	if chainID > 0 {
+		e.ChainID = chainID
 	}
 	if multiRegion {
 		e.TestFeatures["multi_region"] = &multiRegion

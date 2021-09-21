@@ -61,7 +61,7 @@ func TestEnvironmentCreation(t *testing.T) {
 
 	balances := map[string]string{}
 	balances["f601c8a58a738c1055094d0cf3018266d562c4a5"] = "10000000"
-	env := NewEnvironment("testingEnvironment", "just test", "quorum", "raft", true, 5, balances)
+	env := NewEnvironment("testingEnvironment", "just test", "quorum", "raft", true, 5, balances, 0)
 	_, err := client.CreateEnvironment("cid", &env)
 
 	st.Expect(t, err, nil)
