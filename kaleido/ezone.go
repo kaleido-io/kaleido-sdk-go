@@ -25,11 +25,12 @@ const (
 )
 
 type EZone struct {
-	Name   string `json:"name,omitempty"`
-	ID     string `json:"_id,omitempty"`
-	Region string `json:"region,omitempty"`
-	Cloud  string `json:"cloud,omitempty"`
-	Type   string `json:"type,omitempty"`
+	Name     string `json:"name,omitempty"`
+	ID       string `json:"_id,omitempty"`
+	Region   string `json:"region,omitempty"`
+	Cloud    string `json:"cloud,omitempty"`
+	Type     string `json:"type,omitempty"`
+	BridgeID string `json:"bridge_id,omitempty"`
 }
 
 func NewEZone(name, region, cloud string) EZone {
