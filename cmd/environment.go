@@ -130,10 +130,9 @@ func newEnvironmentCreateCmd() *cobra.Command {
 	flags.StringVarP(&consensus, "consensus", "k", "raft", "consensus algorithm to use for the given protocol, raft or ibft for quorum, poa for geth")
 	flags.BoolVarP(&multiRegion, "multi-region", "R", false, "whether to enable multi region")
 	flags.IntVarP(&blockPeriod, "block-period", "P", 0, "block period in seconds")
-	flags.UintVarP(&chainID, "chain-id", "c", 0, "Chain ID")
+	flags.UintVarP(&chainID, "chain-id", "C", 0, "Chain ID")
 	flags.StringArrayVarP(&accounts, "accounts", "a", []string{}, "Account addresses without 0x prefix - for pre-funded accounts")
 	flags.StringArrayVarP(&balances, "balances", "b", []string{}, "Account balances for addresses - for pre-funded accounts")
-
 	return environmentCreateCmd
 }
 
