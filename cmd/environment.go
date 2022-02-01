@@ -133,6 +133,7 @@ func newEnvironmentCreateCmd() *cobra.Command {
 	flags.UintVarP(&chainID, "chain-id", "C", 0, "Chain ID")
 	flags.StringArrayVarP(&accounts, "accounts", "a", []string{}, "Account addresses without 0x prefix - for pre-funded accounts")
 	flags.StringArrayVarP(&balances, "balances", "b", []string{}, "Account balances for addresses - for pre-funded accounts")
+
 	return environmentCreateCmd
 }
 
