@@ -44,6 +44,11 @@ var consortiumGetCmd = &cobra.Command{
 	Use:   "consortium",
 	Short: "Get the consortium details",
 	Run: func(cmd *cobra.Command, args []string) {
+		if consortiumID == "" {
+			fmt.Println("Missing required parameter: --id for the consortium to retrieve")
+			os.Exit(1)
+		}
+
 		client := getNewClient()
 		var consortium kld.Consortium
 		res, err := client.GetConsortium(consortiumID, &consortium)
