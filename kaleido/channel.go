@@ -27,7 +27,7 @@ const (
 type Contract struct {
 	Label        string `json:"label,omitempty"`
 	Sequence     string `json:"sequence,omitempty"`
-	InitRequired string `json:"init_required,omitempty"`
+	InitRequired bool   `json:"init_required,omitempty"`
 	ContractId   string `json:"contract_id,omitempty"`
 }
 

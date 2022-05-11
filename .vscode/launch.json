@@ -13,7 +13,10 @@
       "port": 2345,
       "host": "127.0.0.1",
       "program": "${workspaceRoot}",
-      "env": {},
+      "env": {
+        "APIKEY": "zzu7h4x5x6-qd3L30OK52QzVZUgrquyeG9ht4OSHPGFBOphEfHxofg=",
+        "KALEIDO_URL": "https://control-dev.photic.io/api/v1"
+      },
       "args": ["registry", "create", "org", "-p", "./cert.pem", "kaleido.io", "-k", "private.pk8.key", "-o", "0x0b5f0dce6b8a4dc0c245cb3924fc480f8ccb9a6e"],
 //      "args": [ "registry", "get", "org", "0x7c909827dc917047b239b495ac7dada5284053624a72c9dc0ff3f0a2434c0e17", "-c", "zzyvgergbw",  "-e", "env1", "-m", "zzhytojgmv"],
 //      "args": [ "registry", "get", "orgs", "-c", "zzyvgergbw",  "-e", "env1", "-m", "zzhytojgmv"],
