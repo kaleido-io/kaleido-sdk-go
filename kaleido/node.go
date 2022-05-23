@@ -44,6 +44,7 @@ type Node struct {
 	BafID                string                 `json:"baf_id,omitempty"`
 	HybridPortAllocation int64                  `json:"hybrid_port_allocation,omitempty"`
 	NodeIdentity         string                 `json:"node_identity_data,omitempty"`
+	DatabaseType         string                 `json:"database_type,omitempty"`
 }
 
 func NewNode(name, membershipID, ezoneID string) Node {
