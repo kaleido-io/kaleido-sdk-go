@@ -123,14 +123,14 @@ func newEnvironmentListCmd() *cobra.Command {
 
 func newEnvironmentCreateCmd() *cobra.Command {
 	flags := environmentCreateCmd.Flags()
-	flags.StringVarP(&name, "name", "n", "", "Name of the consortium")
+	flags.StringVarP(&name, "name", "n", "", "Name of the environment")
 	flags.StringVarP(&desc, "desc", "d", "", "Short description of the purpose of the consortium")
 	flags.StringVarP(&consortiumID, "consortium", "c", "", "ID of the consortium to create the environment under")
 	flags.StringVarP(&provider, "provider", "p", "quorum", "underlying protocol to use for this network, quorum or geth")
 	flags.StringVarP(&consensus, "consensus", "k", "raft", "consensus algorithm to use for the given protocol, raft or ibft for quorum, poa for geth")
 	flags.BoolVarP(&multiRegion, "multi-region", "R", false, "whether to enable multi region")
 	flags.IntVarP(&blockPeriod, "block-period", "P", 0, "block period in seconds")
-	flags.UintVarP(&chainID, "chain-id", "h", 0, "Chain ID")
+	flags.UintVarP(&chainID, "chain-id", "C", 0, "Chain ID")
 	flags.StringArrayVarP(&accounts, "accounts", "a", []string{}, "Account addresses without 0x prefix - for pre-funded accounts")
 	flags.StringArrayVarP(&balances, "balances", "b", []string{}, "Account balances for addresses - for pre-funded accounts")
 
