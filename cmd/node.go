@@ -97,6 +97,7 @@ var nodeCreateCmd = &cobra.Command{
 		node.NetworkingID = networkingID
 		node.NodeConfigID = nodeConfigID
 		node.BafID = bafID
+		node.DatabaseType = databaseType
 
 		res, err := client.CreateNode(consortiumID, environmentID, &node)
 
@@ -161,7 +162,7 @@ func newNodeCreateCmd() *cobra.Command {
 	flags.StringVarP(&networkingID, "networking-id", "N", "", "Networking config ID to attach to the node")
 	flags.StringVarP(&nodeConfigID, "node-config-id", "C", "", "Node config ID to attach to the node")
 	flags.StringVarP(&bafID, "baf-id", "B", "", "Blockchain Application Firewall policy ID to attach to the node")
-
+	flags.StringVarP(&databaseType, "database-type", "d", "", "Only applicable to Corda nodes, the type of database for saving state data.")
 	return nodeCreateCmd
 }
 
