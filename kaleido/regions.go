@@ -24,7 +24,7 @@ const (
 	regionBasePath = "/regions"
 )
 
-type Region struct {
+type Regions struct {
 	U0 RegionInfo `json:"u0,omitempty"`
 	E0 RegionInfo `json:"e0,omitempty"`
 	A0 RegionInfo `json:"a0,omitempty"`
@@ -43,6 +43,6 @@ type DeploymentZone struct {
 	AcceptingDeployments bool   `json:"accepting_deployments,omitempty"`
 }
 
-func (c *KaleidoClient) ListRegions(resultBox *[]Region) (*resty.Response, error) {
+func (c *KaleidoClient) GetRegions(resultBox *Regions) (*resty.Response, error) {
 	return c.Client.R().SetResult(resultBox).Get(regionBasePath)
 }

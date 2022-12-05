@@ -45,3 +45,5 @@ require (
 	gopkg.in/resty.v1 v1.12.0
 	gopkg.in/square/go-jose.v2 v2.5.1
 )
+
+replace github.com/kaleido-io/kaleido-sdk-go => /Users/cxing/go/src/github.com/kaleido-io/kaleido-sdk-go

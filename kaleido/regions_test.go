@@ -31,7 +31,7 @@ func TestListRegions(t *testing.T) {
 		Reply(200)
 
 	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
-	_, err := client.ListRegions(&[]Region{})
+	_, err := client.GetRegions(&Regions{})
 	st.Expect(t, err, nil)
 	st.Expect(t, gock.IsDone(), true)
 }
