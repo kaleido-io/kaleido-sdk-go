@@ -31,6 +31,7 @@ type Consortium struct {
 	ID          string `json:"_id,omitempty"`
 	Name        string `json:"name,omitempty"`
 	Description string `json:"description,omitempty"`
+	OrgID       string `json:"owner,omitempty"`
 	DeletedAt   string `json:"deleted_at,omitempty"`
 	State       string `json:"state,omitempty"`
 }
