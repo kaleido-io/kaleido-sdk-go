@@ -35,7 +35,11 @@ func NewMembership(orgName string) Membership {
 }
 
 func (c *KaleidoClient) ListMemberships(consortiaID string, resultBox *[]Membership) (*resty.Response, error) {
-	path := fmt.Sprintf(memBasePath, consortiaID)
+	path := "/memberships"
+	if consortiaID != "" {
+		// if a consortium is provided, use consortia membership API
+		path = fmt.Sprintf(memBasePath, consortiaID)
+	}
 	return c.Client.R().SetResult(resultBox).Get(path)
 }
 

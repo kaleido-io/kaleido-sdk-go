@@ -87,6 +87,23 @@ func TestMembershipList(t *testing.T) {
 	st.Expect(t, gock.IsDone(), true)
 }
 
+func TestGlobalMembershipList(t *testing.T) {
+	defer gock.Off()
+
+	gock.New("http://example.com").
+		Get("/api/v1/memberships").
+		Reply(200).
+		JSON(mockMemberships)
+
+	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
+
+	var memberships []Membership
+	_, err := client.ListMemberships("", &memberships)
+
+	st.Expect(t, err, nil)
+	st.Expect(t, gock.IsDone(), true)
+}
+
 func TestMembershipDelete(t *testing.T) {
 	defer gock.Off()
 
