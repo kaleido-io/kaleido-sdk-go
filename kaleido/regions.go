@@ -24,14 +24,7 @@ const (
 	regionBasePath = "/regions"
 )
 
-type Regions struct {
-	U0 RegionInfo `json:"u0,omitempty"`
-	E0 RegionInfo `json:"e0,omitempty"`
-	A0 RegionInfo `json:"a0,omitempty"`
-	K0 RegionInfo `json:"k0,omitempty"`
-	U1 RegionInfo `json:"u1,omitempty"`
-	E1 RegionInfo `json:"e1,omitempty"`
-}
+type Regions map[string]RegionInfo
 
 type RegionInfo struct {
 	APIHost         string           `json:"api_host,omitempty"`
