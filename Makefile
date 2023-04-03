@@ -1,5 +1,11 @@
  # Go parameters
 GOCMD=go
+# Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
+ifeq (,$(shell go env GOBIN))
+GOBIN=$(shell go env GOPATH)/bin
+else
+GOBIN=$(shell go env GOBIN)
+endif
 GOBUILD=$(GOCMD) build
 GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
@@ -13,7 +19,15 @@ LDFLAGS="-X main.buildDate=`date -u +\"%Y-%m-%dT%H:%M:%SZ\"` -X main.buildVersio
 DEPS=https://gmplib.org/download/gmp/gmp-6.0.0a.tar.bz2
 TARGETS="windows-10.0/*,darwin-10.10/*"
 
-all: deps build test
+all: deps govulncheck build test
+# govulncheck
+GOVULNCHECK := $(GOBIN)/govulncheck
+.PHONY: govulncheck
+govulncheck: ${GOVULNCHECK}
+	./govulnchecktool.sh
+${GOVULNCHECK}:
+	${GOCMD} install golang.org/x/vuln/cmd/govulncheck@latest
+
 build:
 	$(GOBUILD) -o kld
 package: build-linux build-mac build-win
