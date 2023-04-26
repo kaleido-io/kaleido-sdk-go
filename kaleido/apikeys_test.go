@@ -1,16 +1,19 @@
-// Copyright 2018 Kaleido, a ConsenSys business
-
+// Copyright © 2022 Kaleido, Inc.
+//
+// SPDX-License-Identifier: Apache-2.0
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package kaleido
 
 import (
@@ -20,116 +23,107 @@ import (
 	"gopkg.in/h2non/gock.v1"
 )
 
-var mockMembershipCreatePlayload = map[string]string{
-	"org_name": "member1",
+var mockApiKeyCreatePayload = map[string]string{
+	"org_id": "u0vjobhsvw",
 }
 
-var mockMembership = map[string]string{
-	"org_name":     "member1",
-	"org_id":       "zzgl55vock",
-	"state":        "active",
-	"_id":          "zze8pz9jed",
-	"consortia_id": "cid",
+var mockApiKeyCreateWithNamePayload = map[string]string{
+	"org_id": "u0vjobhsvw",
+	"name":   "testApiKey",
 }
 
-var mockMemberships = []map[string]string{mockMembership}
+var mockApiKey = map[string]string{
+	"org_id": "u0vjobhsvw",
+	"name":   "testApiKey",
+	"_id":    "u0pggiazfk",
+}
 
-func TestMembershipCreate(t *testing.T) {
+var mockApiKeys = []map[string]string{mockApiKey}
+
+func TestApiKeyCreate(t *testing.T) {
 	defer gock.Off()
 
 	gock.New("http://example.com").
-		Post("/api/v1/consortia/cid/memberships").
+		Post("/api/v1/apikeys").
 		MatchType("json").
-		JSON(mockMembershipCreatePlayload).
+		JSON(mockApiKeyCreatePayload).
 		Reply(201).
-		JSON(mockMembership)
+		JSON(mockApiKey)
 
 	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
-
-	membership := NewMembership("member1")
-	_, err := client.CreateMembership("cid", &membership)
-
+	var apikey = NewApiKey("u0vjobhsvw")
+	_, err := client.CreateApiKey(&apikey)
 	st.Expect(t, err, nil)
 	st.Expect(t, gock.IsDone(), true)
 }
 
-func TestMembershipGet(t *testing.T) {
+func TestApiKeyCreateWithName(t *testing.T) {
 	defer gock.Off()
 
 	gock.New("http://example.com").
-		Get("/api/v1/consortia/cid/memberships/zze8pz9jed").
+		Post("/api/v1/apikeys").
+		MatchType("json").
+		JSON(mockApiKeyCreateWithNamePayload).
+		Reply(201).
+		JSON(mockApiKey)
+
+	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
+	var apikey = NewApiKeyWithName("u0vjobhsvw", "testApiKey")
+	_, err := client.CreateApiKey(&apikey)
+	st.Expect(t, err, nil)
+	st.Expect(t, gock.IsDone(), true)
+}
+
+func TestApiKeyGet(t *testing.T) {
+	defer gock.Off()
+
+	gock.New("http://example.com").
+		Get("/api/v1/apikeys/u0pggiazfk").
 		Reply(200).
-		JSON(mockMembership)
+		JSON(mockApiKey)
 
 	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
-
-	var membership Membership
-	_, err := client.GetMembership("cid", "zze8pz9jed", &membership)
-
+	_, err := client.GetApiKey("u0pggiazfk", &ApiKey{})
 	st.Expect(t, err, nil)
 	st.Expect(t, gock.IsDone(), true)
 }
 
-func TestMembershipList(t *testing.T) {
+func TestApiKeyList(t *testing.T) {
 	defer gock.Off()
 
 	gock.New("http://example.com").
-		Get("/api/v1/consortia/cid/memberships").
+		Get("/api/v1/apikeys").
 		Reply(200).
-		JSON(mockMemberships)
+		JSON(mockApiKeys)
 
 	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
-
-	var memberships []Membership
-	_, err := client.ListMemberships("cid", &memberships)
-
+	_, err := client.ListApiKey(&[]ApiKey{})
 	st.Expect(t, err, nil)
 	st.Expect(t, gock.IsDone(), true)
 }
 
-func TestGlobalMembershipList(t *testing.T) {
+func TestApiKeyDelete(t *testing.T) {
 	defer gock.Off()
 
 	gock.New("http://example.com").
-		Get("/api/v1/memberships").
-		Reply(200).
-		JSON(mockMemberships)
-
-	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
-
-	var memberships []Membership
-	_, err := client.ListMemberships("", &memberships)
-
-	st.Expect(t, err, nil)
-	st.Expect(t, gock.IsDone(), true)
-}
-
-func TestMembershipDelete(t *testing.T) {
-	defer gock.Off()
-
-	gock.New("http://example.com").
-		Delete("/api/v1/consortia/cid/memberships/zze8pz9jed").
+		Delete("/api/v1/apikeys/u0pggiazfk").
 		Reply(202)
 
 	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
-
-	_, err := client.DeleteMembership("cid", "zze8pz9jed")
-
+	_, err := client.DeleteApiKey("u0pggiazfk")
 	st.Expect(t, err, nil)
 	st.Expect(t, gock.IsDone(), true)
 }
 
-func TestMembershipUpdate(t *testing.T) {
+func TestApiKeyUpdate(t *testing.T) {
 	defer gock.Off()
 
 	gock.New("http://example.com").
-		Patch("/api/v1/consortia/cid/memberships/zze8pz9jed").
-		Reply(200)
+		Patch("/api/v1/apikeys/u0pggiazfk").
+		Reply(202)
 
 	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
-
-	_, err := client.UpdateMembership("cid", "zze8pz9jed", &Membership{OrgName: "new name"})
-
+	_, err := client.UpdateApiKey("u0pggiazfk", &ApiKey{Name: "test"})
 	st.Expect(t, err, nil)
 	st.Expect(t, gock.IsDone(), true)
 }
