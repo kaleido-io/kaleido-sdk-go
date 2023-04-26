@@ -127,3 +127,17 @@ func TestAppCredUpdate(t *testing.T) {
 	st.Expect(t, err, nil)
 	st.Expect(t, gock.IsDone(), true)
 }
+
+func TestAppCredRegenerate(t *testing.T) {
+	defer gock.Off()
+
+	gock.New("http://example.com").
+		Post("/api/v1/consortia/c1/environments/env1/appcreds/appcred1/regenerate").
+		Reply(200).
+		JSON(mockAppCred)
+
+	client := NewClient("http://example.com/api/v1", "KALEIDO_API_KEY")
+	_, err := client.RegenerateAppCreds("c1", "env1", "appcred1", &AppCreds{Name: "test"})
+	st.Expect(t, err, nil)
+	st.Expect(t, gock.IsDone(), true)
+}
