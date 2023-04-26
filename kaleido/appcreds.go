@@ -56,6 +56,11 @@ func (c *KaleidoClient) UpdateAppCreds(consortiumID, envID, appcredsID string, a
 	return c.Client.R().SetBody(appcreds).SetResult(appcreds).Patch(path)
 }
 
+func (c *KaleidoClient) RegenerateAppCreds(consortiumID, envID, appcredsID string, appcreds *AppCreds) (*resty.Response, error) {
+	path := fmt.Sprintf(appcredsBasePath+"/%s/regenerate", consortiumID, envID, appcredsID)
+	return c.Client.R().SetHeader("Content-Type", "application/json").SetResult(appcreds).Post(path)
+}
+
 func (c *KaleidoClient) GetAppCreds(consortiumID, envID, appcredsID string, resultBox *AppCreds) (*resty.Response, error) {
 	path := fmt.Sprintf(appcredsBasePath+"/%s", consortiumID, envID, appcredsID)
 	return c.Client.R().SetResult(resultBox).Get(path)
