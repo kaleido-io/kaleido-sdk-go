@@ -16,9 +16,10 @@ package kaleido
 
 import (
 	"fmt"
+	"net/http"
 
+	"github.com/go-resty/resty/v2"
 	"github.com/spf13/viper"
-	"gopkg.in/resty.v1"
 )
 
 // KaleidoClient is the REST client
@@ -46,8 +47,11 @@ func NewConsortium(name, description string) Consortium {
 }
 
 func NewClient(api string, apiKey string) KaleidoClient {
-	r := resty.New().SetHostURL(api).SetAuthToken(apiKey)
-	r.SetDebug(viper.GetBool("api.debug"))
+	r := resty.New().
+		SetBaseURL(api).
+		SetAuthToken(apiKey).
+		SetTransport(http.DefaultTransport).
+		SetDebug(viper.GetBool("api.debug"))
 	return KaleidoClient{r}
 }
 

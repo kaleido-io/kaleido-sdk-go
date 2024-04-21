@@ -16,10 +16,10 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	ethclient "github.com/ethereum/go-ethereum/ethclient"
+	resty "github.com/go-resty/resty/v2"
 	kaleido "github.com/kaleido-io/kaleido-sdk-go/common"
 	"github.com/spf13/viper"
 	"golang.org/x/crypto/ssh/terminal"
-	resty "gopkg.in/resty.v1"
 )
 
 type utilsInterface interface {

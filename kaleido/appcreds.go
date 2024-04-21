@@ -17,7 +17,7 @@ package kaleido
 import (
 	"fmt"
 
-	resty "gopkg.in/resty.v1"
+	resty "github.com/go-resty/resty/v2"
 )
 
 type AppCreds struct {

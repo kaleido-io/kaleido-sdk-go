@@ -4,15 +4,15 @@ go 1.19
 
 require (
 	github.com/ethereum/go-ethereum v1.10.25
+	github.com/go-resty/resty/v2 v2.12.0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/nbio/st v0.0.0-20140626010706-e9e8d9816f32
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.1.3
 	github.com/spf13/viper v1.7.1
 	github.com/youmark/pkcs8 v0.0.0-20201027041543-1326539a0a0a
-	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e
+	golang.org/x/crypto v0.21.0
 	gopkg.in/h2non/gock.v1 v1.0.15
-	gopkg.in/resty.v1 v1.12.0
 	gopkg.in/square/go-jose.v2 v2.5.1
 )
 
@@ -50,10 +50,10 @@ require (
 	github.com/tklauser/go-sysconf v0.3.5 // indirect
 	github.com/tklauser/numcpus v0.2.2 // indirect
 	github.com/tyler-smith/go-bip39 v1.1.0 // indirect
-	golang.org/x/net v0.0.0-20220607020251-c690dde0001d // indirect
-	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
-	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
-	golang.org/x/text v0.3.7 // indirect
+	golang.org/x/net v0.22.0 // indirect
+	golang.org/x/sys v0.18.0 // indirect
+	golang.org/x/term v0.18.0 // indirect
+	golang.org/x/text v0.14.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
 	gopkg.in/ini.v1 v1.62.0 // indirect
 	gopkg.in/natefinch/npipe.v2 v2.0.0-20160621034901-c1b8fa8bdcce // indirect
