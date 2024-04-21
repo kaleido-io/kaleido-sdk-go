@@ -18,10 +18,10 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/go-resty/resty/v2"
 	kld "github.com/kaleido-io/kaleido-sdk-go/kaleido"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
-	"gopkg.in/resty.v1"
 )
 
 func getNewClient() kld.KaleidoClient {
